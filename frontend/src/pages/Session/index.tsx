@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import {
   newSocketRoom, Response, socket,
 } from '../../util/websocket'
-import * as styles from './style.module.sass'
+import * as styles from './styles.module.sass'
 
 export default function Session() {
   const [response, setResponse] = useState<Response>({ source: '', message: { payload: '' } })

@@ -1,16 +1,16 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import './App.css'
+import * as styles from './App.module.sass'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
-import Auth from './pages/auth'
+import Auth from './pages/Auth'
 import Session from './pages/Session'
 import Room from './pages/Room'
 
 function App() {
   return (
-    <div className="App">
+    <div className={styles.app}>
       <Router>
         <Navbar />
         <Switch>

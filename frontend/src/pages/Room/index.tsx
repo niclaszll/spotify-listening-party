@@ -4,7 +4,7 @@ import { removeData } from '../../util/auth'
 import {
   socket, Response, sendMessage, joinSocketRoom,
 } from '../../util/websocket'
-import * as styles from './style.module.sass'
+import * as styles from './styles.module.sass'
 
 export default function Room() {
   const [messages, setMessages] = useState<string[]>([])

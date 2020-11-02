@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { removeData } from '../../util/auth'
-import * as styles from './style.module.sass'
+import * as styles from './styles.module.sass'
 
 export default function Navbar() {
   const history = useHistory()

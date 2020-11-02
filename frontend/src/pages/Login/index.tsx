@@ -1,6 +1,6 @@
 import React from 'react'
 import SpotifyLogo from '../../img/Spotify_Logo_RGB_Green.png'
-import * as styles from './style.module.sass'
+import * as styles from './styles.module.sass'
 
 export const authEndpoint = 'https://accounts.spotify.com/authorize'
 
