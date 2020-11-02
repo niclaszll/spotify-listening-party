@@ -1,7 +1,7 @@
 import React from 'react'
 import { Redirect, Route } from 'react-router-dom'
-import { getData } from './auth'
-import { SpotifyAuthInfo } from './getHash'
+import { getData } from '../../util/auth'
+import { SpotifyAuthInfo } from '../../util/getHash'
 
 export default function PrivateRoute({ component, ...rest }: any) {
   const spotifyAuth: SpotifyAuthInfo = getData(
