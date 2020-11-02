@@ -1,0 +1,8 @@
+FROM node:alpine
+
+WORKDIR /api
+COPY package*.json /api/
+RUN yarn install
+COPY . /api/
+EXPOSE 80
+CMD ["yarn", "start.dev"]

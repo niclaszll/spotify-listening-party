@@ -1,0 +1,33 @@
+version: "3.5"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+    links:
+      - api
+    networks:
+      - app-network
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./api:/api
+      - /api/node_modules
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: app-network
