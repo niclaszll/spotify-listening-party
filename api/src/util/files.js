@@ -1,6 +1,7 @@
 import fs from 'fs'
 
 export const dataPath = './src/data/rooms.json'
+export const dataDir = './src/data'
 
 export function readFile(callback, returnJson = false, filePath, encoding = 'utf8') {
   fs.readFile(filePath, encoding, (err, data) => {
@@ -30,4 +31,10 @@ export function deleteFile(filePath, callback) {
 
     callback()
   })
+}
+
+export function createDir(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath)
+  }
 }

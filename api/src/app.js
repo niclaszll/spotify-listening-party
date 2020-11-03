@@ -8,7 +8,7 @@ import dotenv from 'dotenv'
 import debug from 'debug'
 import roomRouter from './routes/room.js'
 import {normalizePort} from './util/common.js'
-import {writeFile, dataPath} from './util/files.js'
+import {createDir, writeFile, dataPath, dataDir} from './util/files.js'
 
 /**
  * Setup stuff
@@ -25,6 +25,8 @@ const rr = roomRouter(io)
 /**
  * Reset "DB" on startup
  */
+
+createDir(dataDir)
 
 writeFile(
   JSON.stringify({}, null, 2),
