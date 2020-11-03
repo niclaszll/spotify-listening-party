@@ -6,9 +6,9 @@ import logger from 'morgan'
 import http from 'http'
 import dotenv from 'dotenv'
 import debug from 'debug'
-import fs from 'fs'
 import roomRouter from './routes/room.js'
 import {normalizePort} from './util/common.js'
+import {writeFile, dataPath} from './util/files.js'
 
 /**
  * Setup stuff
@@ -20,7 +20,19 @@ debug('api:server')
 const app = express()
 const server = http.createServer(app)
 const io = socket(server, {pingTimeout: 60000})
-const rr = roomRouter(io, fs)
+const rr = roomRouter(io)
+
+/**
+ * Reset "DB" on startup
+ */
+
+writeFile(
+  JSON.stringify({}, null, 2),
+  () => {
+    console.log('reset rooms.json')
+  },
+  dataPath
+)
 
 /**
  * Get port from environment and store in Express.

@@ -1,35 +1,14 @@
 import express from 'express'
 import {id} from '../util/common.js'
+import {readFile, writeFile, dataPath} from '../util/files.js'
 
-export default function roomRouter(io, fs) {
+export default function roomRouter(io) {
   const router = express.Router()
-
-  const dataPath = './src/data/rooms.json'
 
   const sendMessage = (socket, msg) => {
     socket.emit('room', {
       source: 'server',
       message: {payload: msg},
-    })
-  }
-
-  const readFile = (callback, returnJson = false, filePath = dataPath, encoding = 'utf8') => {
-    fs.readFile(filePath, encoding, (err, data) => {
-      if (err) {
-        throw err
-      }
-
-      callback(returnJson ? JSON.parse(data) : data)
-    })
-  }
-
-  const writeFile = (fileData, callback, filePath = dataPath, encoding = 'utf8') => {
-    fs.writeFile(filePath, fileData, encoding, (err) => {
-      if (err) {
-        throw err
-      }
-
-      callback()
     })
   }
 
@@ -43,30 +22,42 @@ export default function roomRouter(io, fs) {
   const createRoom = (socket, name) => {
     const roomId = `room${id()}`
 
-    readFile((data) => {
-      // add the new room
-      const roomName = name !== '' ? name : roomId
-      data[roomId] = {name: roomName}
+    readFile(
+      (data) => {
+        // add the new room
+        const roomName = name !== '' ? name : roomId
+        data[roomId] = {name: roomName}
 
-      writeFile(JSON.stringify(data, null, 2), () => {
-        sendMessage(socket, roomId)
-        console.log(`Created room ${roomName} with id ${roomId}`)
-      })
-    }, true)
+        writeFile(
+          JSON.stringify(data, null, 2),
+          () => {
+            sendMessage(socket, roomId)
+            console.log(`Created room ${roomName} with id ${roomId}`)
+          },
+          dataPath
+        )
+      },
+      true,
+      dataPath
+    )
   }
 
   const joinRoom = (socket, roomId) => {
-    readFile((data) => {
-      // try to find room (if it exists -> else catch and send error)
-      try {
-        const room = data[roomId]
-        leaveActiveRoom(socket)
-        socket.join(roomId)
-        console.log(`Joined room ${room.name} with id ${roomId}`)
-      } catch (e) {
-        socket.emit('error-event')
-      }
-    }, true)
+    readFile(
+      (data) => {
+        // try to find room (if it exists -> else catch and send error)
+        try {
+          const room = data[roomId]
+          leaveActiveRoom(socket)
+          socket.join(roomId)
+          console.log(`Joined room ${room.name} with id ${roomId}`)
+        } catch (e) {
+          socket.emit('error-event')
+        }
+      },
+      true,
+      dataPath
+    )
   }
 
   const distributeMessage = (socket, msg) => {
