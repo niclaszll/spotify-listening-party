@@ -4,6 +4,7 @@ import { removeData } from '../../util/auth'
 import {
   socket, Response, sendMessage, joinSocketRoom,
 } from '../../util/websocket'
+import WebPlayer from './components/Player'
 import * as styles from './styles.module.sass'
 
 export default function Room() {
@@ -42,6 +43,7 @@ export default function Room() {
     <div className={styles.container}>
       <input value={newMsg} onChange={handleChange} />
       <button type="button" onClick={handleClick}>Send</button>
+      <WebPlayer />
       <div>
         {messages.map((msg) => (
           <p>{msg}</p>

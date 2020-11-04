@@ -25,6 +25,9 @@ module.exports = {
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
     semi: [2, 'never'],
+    camelcase: 'off',
+    'no-console': 'off',
+    'no-unused-vars': 'off',
   },
   settings: {
     'import/resolver': {
@@ -33,4 +36,4 @@ module.exports = {
       },
     },
   },
-};
+}

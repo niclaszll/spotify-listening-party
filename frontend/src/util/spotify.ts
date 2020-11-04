@@ -1,3 +1,5 @@
+import { SpotifyPlayOptions } from './types/spotify'
+
 interface ScriptAttributes {
   async?: boolean;
   defer?: boolean;
@@ -6,7 +8,7 @@ interface ScriptAttributes {
 }
 
 // load the spotify web playback sdk via script and make it accessible
-export default function loadScript(attributes: ScriptAttributes): Promise<any> {
+export function loadScript(attributes: ScriptAttributes): Promise<any> {
   if (!attributes || !attributes.source) {
     throw new Error('Invalid attributes')
   }
@@ -37,5 +39,36 @@ export default function loadScript(attributes: ScriptAttributes): Promise<any> {
     } else {
       resolve()
     }
+  })
+}
+
+export async function play(
+  token: string,
+  {
+    context_uri, deviceId, offset = 0, uris,
+  }: SpotifyPlayOptions,
+) {
+  let body
+
+  if (context_uri) {
+    const isArtist = context_uri.indexOf('artist') >= 0
+    let position
+
+    if (!isArtist) {
+      position = { position: offset }
+    }
+
+    body = JSON.stringify({ context_uri, offset: position })
+  } else if (Array.isArray(uris) && uris.length) {
+    body = JSON.stringify({ uris, offset: { position: offset } })
+  }
+
+  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    method: 'PUT',
   })
 }

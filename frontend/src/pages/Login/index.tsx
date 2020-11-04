@@ -9,7 +9,11 @@ const clientId = process.env.REACT_APP_CLIENT_ID
 const redirectUri = process.env.REACT_APP_REDIRECT_URL || 'http://localhost:3000/auth'
 const scopes = [
   'user-read-currently-playing',
+  'streaming',
+  'user-read-email',
+  'user-read-private',
   'user-read-playback-state',
+  'user-modify-playback-state',
 ]
 
 export default function Login() {
