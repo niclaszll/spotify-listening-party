@@ -8,6 +8,7 @@ import {
 import {
   PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer, SpotifyPlaylistTrackObject,
 } from '../../../../util/types/spotify'
+import { socket, Response, sendPlayUri } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 
 export default function WebPlayer() {
@@ -73,8 +74,20 @@ export default function WebPlayer() {
     getPlaylists(authInfo.access_token).then((res) => setUserPlaylists(res))
   }, [])
 
+  useEffect(() => {
+    if (deviceId) {
+      socket.on('play-song', (data: Response) => {
+        play(token, { uris: [data.message.payload], deviceId })
+      })
+    }
+    return () => {
+      socket.off('play-song')
+    }
+  }, [deviceId])
+
   const playSong = async (uri: string) => {
-    await play(token, { context_uri: uri, deviceId })
+    sendPlayUri(uri)
+    // await play(token, { context_uri: uri, deviceId })
   }
 
   const handleSelectPlaylist = async (playlist: SpotifyPlaylist) => {
@@ -115,7 +128,8 @@ export default function WebPlayer() {
           (activePlaylistTracks.items as SpotifyPlaylistTrackObject[]).map((trackObject: SpotifyPlaylistTrackObject) => (
             <div>
               <span>{trackObject.track.name}</span>
-              <button type="button" onClick={() => play(token, { uris: [trackObject.track.uri], deviceId })}>Play</button>
+              {/* <button type="button" onClick={() => play(token, { uris: [trackObject.track.uri], deviceId })}>Play</button> */}
+              <button type="button" onClick={() => playSong(trackObject.track.uri)}>Play</button>
             </div>
           ))
         )}

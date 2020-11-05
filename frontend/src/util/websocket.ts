@@ -31,3 +31,10 @@ export function sendMessage(msg: string) {
     message: { msg },
   })
 }
+
+export function sendPlayUri(msg: string) {
+  socket.emit('play', {
+    source: 'client',
+    message: { msg },
+  })
+}

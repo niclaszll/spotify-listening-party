@@ -69,6 +69,14 @@ export default function roomRouter(io) {
     })
   }
 
+  const playSong = (socket, msg) => {
+    const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+    io.sockets.in(room).emit('play-song', {
+      source: 'server',
+      message: {payload: msg},
+    })
+  }
+
   io.on('connection', (socket) => {
     console.log('New client connected')
 
@@ -82,6 +90,10 @@ export default function roomRouter(io) {
 
     socket.on('new-message', (data) => {
       distributeMessage(socket, data.message.msg)
+    })
+
+    socket.on('play', (data) => {
+      playSong(socket, data.message.msg)
     })
 
     socket.on('disconnect', () => {
