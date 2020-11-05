@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { useEffect, useState } from 'react'
 import { getData } from '../../../../util/auth'
 import { SpotifyAuthInfo } from '../../../../util/getHash'
@@ -6,6 +5,7 @@ import { getPlaylists, loadScript, play } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer,
 } from '../../../../util/types/spotify'
+import * as styles from './style.module.sass'
 
 export default function WebPlayer() {
   const [token, setToken] = useState<string>('')
@@ -72,16 +72,17 @@ export default function WebPlayer() {
   }
 
   return (
-    <div>
-      {/* <button type="button" onClick={playSong}>Play</button> */}
+    <div className={styles.container}>
       {userPlaylists ? console.log(userPlaylists) : null}
-      <div>
+      <div className={styles.playlists}>
         {userPlaylists && (
           userPlaylists.items.map((playlist, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <div key={index}>
-              <button type="button" onClick={() => playSong(playlist.uri)}>{playlist.name}</button>
-            </div>
+            <button type="button" onClick={() => playSong(playlist.uri)} title={playlist.name}>
+              <div className={styles.imgContainer}>
+                <img src={playlist.images[0].url} alt="" />
+              </div>
+            </button>
           ))
         )}
       </div>
