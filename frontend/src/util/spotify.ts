@@ -83,3 +83,14 @@ export async function getPlaylists(token: string) {
     method: 'GET',
   }).then((res) => res.json())
 }
+
+export async function getPlaylistTracks(token: string, id: string) {
+  return fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  }).then((res) => res.json())
+}

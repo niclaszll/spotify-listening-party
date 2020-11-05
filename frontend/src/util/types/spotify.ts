@@ -218,6 +218,13 @@ export interface WebPlaybackTrack {
   uri: string;
 }
 
+export type SpotifyPlaylistTrackObject = {
+  added_at: string,
+  added_by: SpotifyUser,
+  is_local: Boolean,
+  track: WebPlaybackTrack,
+}
+
 export type SpotifyUser = {
   display_name: string,
   external_urls: {
@@ -261,7 +268,7 @@ export type SpotifyPlaylist = {
 
 export type PagingObject = {
   href: string,
-  items: SpotifyPlaylist[],
+  items: SpotifyPlaylist[] | SpotifyPlaylistTrackObject[],
   limit: number,
   next: string,
   offset: number,

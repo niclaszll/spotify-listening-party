@@ -1,9 +1,12 @@
+/* eslint-disable max-len */
 import React, { useEffect, useState } from 'react'
 import { getData } from '../../../../util/auth'
 import { SpotifyAuthInfo } from '../../../../util/getHash'
-import { getPlaylists, loadScript, play } from '../../../../util/spotify'
 import {
-  PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer,
+  getPlaylists, getPlaylistTracks, loadScript, play,
+} from '../../../../util/spotify'
+import {
+  PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer, SpotifyPlaylistTrackObject,
 } from '../../../../util/types/spotify'
 import * as styles from './style.module.sass'
 
@@ -12,6 +15,8 @@ export default function WebPlayer() {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
   const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
+  const [activePlaylist, setActivePlaylist] = useState<SpotifyPlaylist>()
+  const [activePlaylistTracks, setActivePlaylistTracks] = useState<PagingObject>()
 
   let player: WebPlaybackPlayer
 
@@ -71,19 +76,31 @@ export default function WebPlayer() {
     await play(token, { context_uri: uri, deviceId })
   }
 
+  const handleSelectPlaylist = async (playlist: SpotifyPlaylist) => {
+    setActivePlaylist(playlist)
+    // fetch all tracks of selected playlist
+    const tracks = await getPlaylistTracks(token, playlist.id)
+    setActivePlaylistTracks(tracks)
+  }
+
   return (
     <div className={styles.container}>
       {userPlaylists ? console.log(userPlaylists) : null}
       <div className={styles.playlists}>
         {userPlaylists && (
-          userPlaylists.items.map((playlist, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <button type="button" onClick={() => playSong(playlist.uri)} title={playlist.name}>
+          (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
+            <button type="button" onClick={() => handleSelectPlaylist(playlist)} title={playlist.name}>
               <div className={styles.imgContainer}>
-                <img src={playlist.images[0].url} alt="" />
+                <img src={playlist.images[0].url} alt={playlist.name} />
               </div>
             </button>
           ))
+        )}
+      </div>
+      <div>
+        {activePlaylistTracks && (
+          // eslint-disable-next-line max-len
+          (activePlaylistTracks.items as SpotifyPlaylistTrackObject[]).map((trackObject: SpotifyPlaylistTrackObject) => <span>{trackObject.track.name}</span>)
         )}
       </div>
     </div>
