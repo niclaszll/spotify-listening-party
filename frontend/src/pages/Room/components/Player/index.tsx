@@ -1,13 +1,17 @@
+/* eslint-disable max-len */
 import React, { useEffect, useState } from 'react'
 import { getData } from '../../../../util/auth'
 import { SpotifyAuthInfo } from '../../../../util/getHash'
-import { loadScript, play } from '../../../../util/spotify'
-import { SpotifyPlayerCallback, WebPlaybackPlayer } from '../../../../util/types/spotify'
+import { getPlaylists, loadScript, play } from '../../../../util/spotify'
+import {
+  PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer,
+} from '../../../../util/types/spotify'
 
 export default function WebPlayer() {
   const [token, setToken] = useState<string>('')
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
+  const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
 
   let player: WebPlaybackPlayer
 
@@ -60,16 +64,27 @@ export default function WebPlayer() {
       })
     }
     loadSpotify()
+    getPlaylists(authInfo.access_token).then((res) => setUserPlaylists(res))
   }, [])
 
-  const playSong = async () => {
-    await play(token, { context_uri: 'spotify:playlist:2fDhGP0CTTxrCDl4FLZUHt', deviceId })
+  const playSong = async (uri: string) => {
+    await play(token, { context_uri: uri, deviceId })
   }
 
   return (
     <div>
-      Player
-      <button type="button" onClick={playSong}>Play</button>
+      {/* <button type="button" onClick={playSong}>Play</button> */}
+      {userPlaylists ? console.log(userPlaylists) : null}
+      <div>
+        {userPlaylists && (
+          userPlaylists.items.map((playlist, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <div key={index}>
+              <button type="button" onClick={() => playSong(playlist.uri)}>{playlist.name}</button>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   )
 }

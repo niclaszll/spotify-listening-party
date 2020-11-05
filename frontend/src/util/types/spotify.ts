@@ -217,3 +217,54 @@ export interface WebPlaybackTrack {
   type: string;
   uri: string;
 }
+
+export type SpotifyUser = {
+  display_name: string,
+  external_urls: {
+    spotify: string
+  },
+  href: string,
+  id: string,
+  images: {
+    height: number,
+    url: string,
+    width: number,
+  },
+  type: string,
+  uri: string,
+}
+
+export type SpotifyPlaylist = {
+  collaborative: Boolean,
+  description: string,
+  external_urls: {
+    spotify: string
+  },
+  href: string,
+  id: string,
+  images: {
+    height: number,
+    url: string,
+    width: number,
+  },
+  name: string,
+  owner: SpotifyUser
+  public: Boolean,
+  snapshot_id: string,
+  tracks: {
+    href: string,
+    total: number
+  },
+  type: string,
+  uri: string,
+}
+
+export type PagingObject = {
+  href: string,
+  items: SpotifyPlaylist[],
+  limit: number,
+  next: string,
+  offset: number,
+  previous: string,
+  total: number,
+}

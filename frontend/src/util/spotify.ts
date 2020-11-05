@@ -72,3 +72,14 @@ export async function play(
     method: 'PUT',
   })
 }
+
+export async function getPlaylists(token: string) {
+  return fetch('https://api.spotify.com/v1/me/playlists', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  }).then((res) => res.json())
+}
