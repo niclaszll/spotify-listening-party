@@ -73,6 +73,15 @@ export async function play(
   })
 }
 
+export function pausePlayback(token: string) {
+  return fetch('https://api.spotify.com/v1/me/player/pause', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: 'PUT',
+  })
+}
+
 export async function getPlaylists(token: string) {
   return fetch('https://api.spotify.com/v1/me/playlists', {
     headers: {
@@ -85,7 +94,7 @@ export async function getPlaylists(token: string) {
 }
 
 export async function getPlaylistTracks(token: string, id: string) {
-  return fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+  return fetch(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`, {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json',

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { getData } from '../../../../util/auth'
 import { SpotifyAuthInfo } from '../../../../util/getHash'
 import {
-  getPlaylists, getPlaylistTracks, loadScript, play,
+  getPlaylists, getPlaylistTracks, loadScript, pausePlayback, play,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer, SpotifyPlaylistTrackObject,
@@ -17,6 +17,7 @@ export default function WebPlayer() {
   const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
   const [activePlaylist, setActivePlaylist] = useState<SpotifyPlaylist>()
   const [activePlaylistTracks, setActivePlaylistTracks] = useState<PagingObject>()
+  const [isPaused, setIsPaused] = useState<Boolean>(false)
 
   let player: WebPlaybackPlayer
 
@@ -80,12 +81,23 @@ export default function WebPlayer() {
     setActivePlaylist(playlist)
     // fetch all tracks of selected playlist
     const tracks = await getPlaylistTracks(token, playlist.id)
+    console.log(tracks)
     setActivePlaylistTracks(tracks)
+  }
+
+  const pause = () => {
+    pausePlayback(token)
+    setIsPaused(true)
+  }
+
+  const resume = () => {
+    play(token, { deviceId })
+    setIsPaused(false)
   }
 
   return (
     <div className={styles.container}>
-      {userPlaylists ? console.log(userPlaylists) : null}
+      {isPaused ? <button type="button" onClick={resume}>Resume</button> : <button type="button" onClick={pause}>Pause</button>}
       <div className={styles.playlists}>
         {userPlaylists && (
           (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
@@ -97,10 +109,15 @@ export default function WebPlayer() {
           ))
         )}
       </div>
-      <div>
+      <div className={styles.playlistTracks}>
         {activePlaylistTracks && (
           // eslint-disable-next-line max-len
-          (activePlaylistTracks.items as SpotifyPlaylistTrackObject[]).map((trackObject: SpotifyPlaylistTrackObject) => <span>{trackObject.track.name}</span>)
+          (activePlaylistTracks.items as SpotifyPlaylistTrackObject[]).map((trackObject: SpotifyPlaylistTrackObject) => (
+            <div>
+              <span>{trackObject.track.name}</span>
+              <button type="button" onClick={() => play(token, { uris: [trackObject.track.uri], deviceId })}>Play</button>
+            </div>
+          ))
         )}
       </div>
     </div>
