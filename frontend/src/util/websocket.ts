@@ -4,10 +4,10 @@ const ENDPOINT = process.env.REACT_APP_API_URL || 'http://localhost:9000'
 
 export const socket = socketIOClient(`${ENDPOINT}`)
 
-export type Response = {
+export type Response<T> = {
   source: string
   message: {
-    payload: string
+    payload: T
   }
 }
 
@@ -36,5 +36,11 @@ export function sendPlayUri(msg: string) {
   socket.emit('play', {
     source: 'client',
     message: { msg },
+  })
+}
+
+export function getAvailableRooms() {
+  socket.emit('get-available-rooms', {
+    source: 'client',
   })
 }

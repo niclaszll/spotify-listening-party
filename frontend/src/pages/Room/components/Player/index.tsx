@@ -76,7 +76,7 @@ export default function WebPlayer() {
 
   useEffect(() => {
     if (deviceId) {
-      socket.on('play-song', (data: Response) => {
+      socket.on('play-song', (data: Response<string>) => {
         play(token, { uris: [data.message.payload], deviceId })
       })
     }

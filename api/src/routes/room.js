@@ -5,13 +5,6 @@ import {readFile, writeFile, dataPath} from '../util/files.js'
 export default function roomRouter(io) {
   const router = express.Router()
 
-  const sendMessage = (socket, msg) => {
-    socket.emit('room', {
-      source: 'server',
-      message: {payload: msg},
-    })
-  }
-
   const leaveActiveRoom = (socket) => {
     const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
     if (room) {
@@ -26,12 +19,15 @@ export default function roomRouter(io) {
       (data) => {
         // add the new room
         const roomName = name !== '' ? name : roomId
-        data[roomId] = {name: roomName}
+        data[roomId] = {id: roomId, name: roomName}
 
         writeFile(
           JSON.stringify(data, null, 2),
           () => {
-            sendMessage(socket, roomId)
+            socket.emit('room', {
+              source: 'server',
+              message: {payload: roomId},
+            })
             console.log(`Created room ${roomName} with id ${roomId}`)
           },
           dataPath
@@ -54,6 +50,20 @@ export default function roomRouter(io) {
         } catch (e) {
           socket.emit('error-event')
         }
+      },
+      true,
+      dataPath
+    )
+  }
+
+  const getAvailableRooms = (socket) => {
+    readFile(
+      (data) => {
+        const rooms = Object.values(data)
+        socket.emit('available-rooms', {
+          source: 'server',
+          message: {payload: rooms},
+        })
       },
       true,
       dataPath
@@ -94,6 +104,10 @@ export default function roomRouter(io) {
 
     socket.on('play', (data) => {
       playSong(socket, data.message.msg)
+    })
+
+    socket.on('get-available-rooms', () => {
+      getAvailableRooms(socket)
     })
 
     socket.on('disconnect', () => {

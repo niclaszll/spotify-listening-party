@@ -19,7 +19,7 @@ export default function Room() {
       removeData('spotifyAuthInfo')
       history.push('/')
     })
-    socket.on('room', (data: Response) => {
+    socket.on('room', (data: Response<string>) => {
       setMessages((oldMessages) => [...oldMessages, data.message.payload])
     })
     return () => {
