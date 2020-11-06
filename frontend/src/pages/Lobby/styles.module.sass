@@ -1,3 +1,5 @@
+@import '../../styles/colors'
+
 .container
   display: flex
   justify-content: center
@@ -6,7 +8,7 @@
   .roomName
     input
       padding: 10px 15px
-      border-radius: 1px
+      border-radius: 20px
       border: none
       outline: none
       font-size: 15px
@@ -28,27 +30,28 @@
       text-transform: uppercase
       font-weight: bold
       &:first-child
-        background: #1DB954
+        background: $spotifyGreen
         color: #ffffff
         margin-right: 30px
         &:hover
-          background: #1ED760
+          background: $spotifyGreenLight
       &:nth-child(2)
         background: #ffffff
-        color: #212121
+        color: $spotifyDarkGrey
         &:hover
-          color: #1ED760
+          color: $spotifyGreenLight
 
   h4
     width: 100%
     margin-top: 50px
+    color: $spotifyTextLightGrey
 
   .availableRoomsContainer
     width: 30%
 
     .room
       background: #ffffff
-      color: #212121
+      color: $spotifyDarkGrey
       font-weight: bold
       font-size: 14px
       padding: 10px 25px
@@ -57,4 +60,4 @@
       cursor: pointer
       margin-right: 15px
       &:hover
-        color: #1ED760
+        color: $spotifyGreenLight
