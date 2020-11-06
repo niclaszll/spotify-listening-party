@@ -8,7 +8,7 @@ import dotenv from 'dotenv'
 import debug from 'debug'
 import roomRouter from './routes/room.js'
 import {normalizePort} from './util/common.js'
-import {createDir, writeFile, dataPath, dataDir} from './util/files.js'
+import {initDB} from './util/files.js'
 
 /**
  * Setup stuff
@@ -25,16 +25,7 @@ const rr = roomRouter(io)
 /**
  * Reset "DB" on startup
  */
-
-createDir(dataDir)
-
-writeFile(
-  JSON.stringify({}, null, 2),
-  () => {
-    console.log('reset rooms.json')
-  },
-  dataPath
-)
+initDB()
 
 /**
  * Get port from environment and store in Express.
