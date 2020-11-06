@@ -11,6 +11,7 @@ export default function Session() {
   const [response, setResponse] = useState<Response<string>>({ source: '', message: { payload: '' } })
   const [roomName, setRoomName] = useState<string>('')
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
+  const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
   const history = useHistory()
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export default function Session() {
     })
     socket.on('available-rooms', (data: Response<Room[]>) => {
       setAvailableRooms(data.message.payload)
+      setVisibleRooms(data.message.payload)
     })
     return () => {
       socket.off('room')
@@ -48,6 +50,17 @@ export default function Session() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = e
     setRoomName(target.value)
+    if (target.value !== '') {
+      setVisibleRooms(
+        (previousState) => previousState.filter(
+          (room) => room.name.toLowerCase().includes(target.value.toLowerCase()),
+        ),
+      )
+    } else {
+      setVisibleRooms(
+        availableRooms,
+      )
+    }
   }
 
   return (
@@ -61,7 +74,7 @@ export default function Session() {
       </div>
       <h4>Available rooms</h4>
       <div className={styles.availableRoomsContainer}>
-        {availableRooms.map((room) => <button key={room.id} type="button" className={styles.room} onClick={() => joinRoomViaList(room.id)}>{room.name}</button>)}
+        {visibleRooms.map((room) => <button key={room.id} type="button" className={styles.room} onClick={() => joinRoomViaList(room.id)}>{room.name}</button>)}
       </div>
     </div>
   )
