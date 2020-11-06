@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Auth from './pages/Authentication'
-import Session from './pages/Session'
+import Session from './pages/Lobby'
 import Room from './pages/Room'
 
 function App() {
