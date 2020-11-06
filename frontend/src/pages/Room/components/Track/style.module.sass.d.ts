@@ -1,2 +1,2 @@
 export const container: string
-export const extra: string
+export const trackInfo: string

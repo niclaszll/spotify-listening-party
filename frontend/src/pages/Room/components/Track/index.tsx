@@ -12,7 +12,11 @@ export default function Track(props: TrackProps) {
 
   return (
     <div className={styles.container}>
-      <span>{track.name}</span>
+      <div className={styles.trackInfo}>
+        <div>{track.name}</div>
+        <div>{track.artists.map((artistObject) => artistObject.name).join(', ')}</div>
+      </div>
+
       <button type="button" onClick={() => sendPlayUri(track.uri)}>Play</button>
     </div>
   )
