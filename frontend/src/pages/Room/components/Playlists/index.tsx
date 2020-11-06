@@ -4,18 +4,18 @@ import * as styles from './style.module.sass'
 
 type PlaylistProps = {
   userPlaylists: PagingObject,
-  loadTrackList: (id: string) => void
+  selectPlaylist: (id: string) => void
 }
 
 export default function Playlists(props: PlaylistProps) {
-  const { userPlaylists, loadTrackList } = props
+  const { userPlaylists, selectPlaylist } = props
   return (
     <div className={styles.playlists}>
       {userPlaylists && (
         (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
           <button
             type="button"
-            onClick={() => loadTrackList(playlist.id)}
+            onClick={() => selectPlaylist(playlist.id)}
             title={playlist.name}
           >
             <div className={styles.imgContainer}>
