@@ -1,20 +1,35 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { removeData } from '../../util/auth'
+import { getData, removeData } from '../../util/auth'
+import { SpotifyAuthInfo } from '../../util/getHash'
+import { getPlaylists, getPlaylistTracks } from '../../util/spotify'
+import { PagingObject } from '../../util/types/spotify'
 import {
   socket, Response, sendMessage, joinSocketRoom,
 } from '../../util/websocket'
-import WebPlayer from './components/Player'
+import Playlists from './components/Playlists'
+import TrackList from './components/TrackList'
+import WebPlayer from './components/WebPlayer'
 import * as styles from './styles.module.sass'
 
 export default function Room() {
   const [messages, setMessages] = useState<string[]>([])
   const [newMsg, setNewMsg] = useState<string>()
+
+  const [token, setToken] = useState<string>('')
+  const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
+  const [activePlaylistTracks, setActivePlaylistTracks] = useState<PagingObject>()
+
   const params = useParams<any>()
   const history = useHistory<any>()
 
   useEffect(() => {
     joinSocketRoom(params.id)
+
+    const authInfo = getData('spotifyAuthInfo') as SpotifyAuthInfo
+    setToken(authInfo.access_token)
+    getPlaylists(authInfo.access_token).then((res) => setUserPlaylists(res))
+
     socket.on('error-event', () => {
       removeData('spotifyAuthInfo')
       history.push('/')
@@ -39,11 +54,20 @@ export default function Room() {
     }
   }
 
+  const loadTrackList = async (id: string) => {
+    // fetch all tracks of selected playlist
+    const tracks = await getPlaylistTracks(token, id)
+    console.log(tracks)
+    setActivePlaylistTracks(tracks)
+  }
+
   return (
     <div className={styles.container}>
       <input value={newMsg} onChange={handleChange} />
       <button type="button" onClick={handleClick}>Send</button>
-      <WebPlayer />
+      {userPlaylists && <Playlists userPlaylists={userPlaylists} loadTrackList={loadTrackList} />}
+      {activePlaylistTracks && <TrackList activePlaylistTracks={activePlaylistTracks} />}
+      <WebPlayer token={token} />
       <div>
         {messages.map((msg) => (
           <p>{msg}</p>

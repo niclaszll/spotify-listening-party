@@ -3,22 +3,24 @@ import React, { useEffect, useState } from 'react'
 import { getData } from '../../../../util/auth'
 import { SpotifyAuthInfo } from '../../../../util/getHash'
 import {
-  getPlaylists, getPlaylistTracks, loadScript, pausePlayback, play,
+  loadScript, pausePlayback, play,
 } from '../../../../util/spotify'
 import {
-  PagingObject, SpotifyPlayerCallback, SpotifyPlaylist, WebPlaybackPlayer, SpotifyPlaylistTrackObject,
+  PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer,
 } from '../../../../util/types/spotify'
-import { socket, Response, sendPlayUri } from '../../../../util/websocket'
+import { socket, Response } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 
-export default function WebPlayer() {
-  const [token, setToken] = useState<string>('')
+type WebPlayerProps = {
+  token: string,
+}
+
+export default function WebPlayer(props: WebPlayerProps) {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
-  const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
-  const [activePlaylist, setActivePlaylist] = useState<SpotifyPlaylist>()
-  const [activePlaylistTracks, setActivePlaylistTracks] = useState<PagingObject>()
   const [isPaused, setIsPaused] = useState<Boolean>(false)
+
+  const { token } = props
 
   let player: WebPlaybackPlayer
 
@@ -59,8 +61,6 @@ export default function WebPlayer() {
   }
 
   useEffect(() => {
-    const authInfo = getData('spotifyAuthInfo') as SpotifyAuthInfo
-    setToken(authInfo.access_token)
     // @ts-ignore
     window.onSpotifyWebPlaybackSDKReady = initializePlayer
     async function loadSpotify() {
@@ -71,32 +71,19 @@ export default function WebPlayer() {
       })
     }
     loadSpotify()
-    getPlaylists(authInfo.access_token).then((res) => setUserPlaylists(res))
   }, [])
 
   useEffect(() => {
     if (deviceId) {
       socket.on('play-song', (data: Response<string>) => {
         play(token, { uris: [data.message.payload], deviceId })
+        setIsPaused(false)
       })
     }
     return () => {
       socket.off('play-song')
     }
   }, [deviceId])
-
-  const playSong = async (uri: string) => {
-    sendPlayUri(uri)
-    // await play(token, { context_uri: uri, deviceId })
-  }
-
-  const handleSelectPlaylist = async (playlist: SpotifyPlaylist) => {
-    setActivePlaylist(playlist)
-    // fetch all tracks of selected playlist
-    const tracks = await getPlaylistTracks(token, playlist.id)
-    console.log(tracks)
-    setActivePlaylistTracks(tracks)
-  }
 
   const pause = () => {
     pausePlayback(token)
@@ -111,29 +98,6 @@ export default function WebPlayer() {
   return (
     <div className={styles.container}>
       {isPaused ? <button type="button" onClick={resume}>Resume</button> : <button type="button" onClick={pause}>Pause</button>}
-      <div className={styles.playlists}>
-        {userPlaylists && (
-          (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
-            <button type="button" onClick={() => handleSelectPlaylist(playlist)} title={playlist.name}>
-              <div className={styles.imgContainer}>
-                <img src={playlist.images[0].url} alt={playlist.name} />
-              </div>
-            </button>
-          ))
-        )}
-      </div>
-      <div className={styles.playlistTracks}>
-        {activePlaylistTracks && (
-          // eslint-disable-next-line max-len
-          (activePlaylistTracks.items as SpotifyPlaylistTrackObject[]).map((trackObject: SpotifyPlaylistTrackObject) => (
-            <div>
-              <span>{trackObject.track.name}</span>
-              {/* <button type="button" onClick={() => play(token, { uris: [trackObject.track.uri], deviceId })}>Play</button> */}
-              <button type="button" onClick={() => playSong(trackObject.track.uri)}>Play</button>
-            </div>
-          ))
-        )}
-      </div>
     </div>
   )
 }
