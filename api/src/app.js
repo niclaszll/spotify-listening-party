@@ -7,7 +7,7 @@ import http from 'http'
 import dotenv from 'dotenv'
 import debug from 'debug'
 import roomRouter from './routes/room.js'
-import {normalizePort} from './util/common.js'
+import {normalizePort, id} from './util/common.js'
 import {createDir, writeFile, dataPath, dataDir} from './util/files.js'
 
 /**
@@ -28,8 +28,16 @@ const rr = roomRouter(io)
 
 createDir(dataDir)
 
+const boilerPlateRooms = {}
+
+Array.from({length: 5}, (x, i) => {
+  const boilerPlateRoomId = `room${id()}`
+  boilerPlateRooms[boilerPlateRoomId] = {id: boilerPlateRoomId, name: `Raum ${i}`}
+  return i
+})
+
 writeFile(
-  JSON.stringify({}, null, 2),
+  JSON.stringify(boilerPlateRooms, null, 2),
   () => {
     console.log('reset rooms.json')
   },

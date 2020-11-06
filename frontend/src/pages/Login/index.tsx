@@ -22,9 +22,10 @@ export default function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.spotifyLogo}>
-        <div className={styles.imgWrapperDiv}>
+        <div className={styles.imgWrapper}>
           <img src={SpotifyLogo} alt="Spotify Logo" />
         </div>
+        <h3>Listening Party</h3>
       </div>
 
       <a

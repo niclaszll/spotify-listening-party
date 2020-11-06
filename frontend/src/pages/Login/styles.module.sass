@@ -1,14 +1,27 @@
+@import '../../styles/colors'
+
 .container
   .spotifyLogo
     display: flex
     justify-content: space-around
-    margin: 150px 0 30px 0
-    .imgWrapperDiv
-      width: 250px
+    flex-wrap: wrap
+    margin: 150px 0 60px 0
+    .imgWrapper
+      width: 350px
       img
         max-width: 100%
+    h3
+      margin: 0
+      font-size: 24px
+      font-weight: 900
+      width: 100%
+      transform: translate(20px,-20px)
   a
     color: white
-    background-color: #1DB954
-    padding: 10px 20px
-    border-radius: 20px
+    background-color: $spotifyGreen
+    padding: 15px 30px
+    border-radius: 30px
+    font-weight: bold
+    text-transform: uppercase
+    &:hover
+      background-color: $spotifyGreenLight
