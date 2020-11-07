@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { getData, removeData } from '../../util/auth'
-import { SpotifyAuthInfo } from '../../util/getHash'
+import { clearSpotifyState, selectSpotifyState } from '../../store/modules/spotify'
 import { getPlaylists, getPlaylistTracks } from '../../util/spotify'
 import { PagingObject, SpotifyPlaylist } from '../../util/types/spotify'
 import {
@@ -16,9 +16,11 @@ export default function Room() {
   const [messages, setMessages] = useState<string[]>([])
   const [newMsg, setNewMsg] = useState<string>()
 
-  const [token, setToken] = useState<string>('')
   const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
   const [activePlaylistId, setActivePlaylistId] = useState<string>()
+
+  const dispatch = useDispatch()
+  const { token } = useSelector(selectSpotifyState)
 
   const params = useParams<any>()
   const history = useHistory<any>()
@@ -26,12 +28,12 @@ export default function Room() {
   useEffect(() => {
     joinSocketRoom(params.id)
 
-    const authInfo = getData('spotifyAuthInfo') as SpotifyAuthInfo
-    setToken(authInfo.access_token)
-    getPlaylists(authInfo.access_token).then((res) => setUserPlaylists(res))
+    if (token !== null) {
+      getPlaylists(token).then((res) => setUserPlaylists(res))
+    }
 
     socket.on('error-event', () => {
-      removeData('spotifyAuthInfo')
+      dispatch(clearSpotifyState())
       history.push('/')
     })
     socket.on('room', (data: Response<string>) => {
@@ -64,7 +66,7 @@ export default function Room() {
       <button type="button" onClick={handleClick}>Send</button>
       {userPlaylists && <Playlists userPlaylists={userPlaylists} selectPlaylist={selectPlaylist} />}
       {activePlaylistId && <TrackList id={activePlaylistId} />}
-      <WebPlayer token={token} />
+      <WebPlayer />
       <div>
         {messages.map((msg) => (
           <p>{msg}</p>

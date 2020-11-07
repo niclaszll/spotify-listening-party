@@ -1,13 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { Redirect, Route } from 'react-router-dom'
-import { getData } from '../../util/auth'
-import { SpotifyAuthInfo } from '../../util/getHash'
+import { selectSpotifyState } from '../../store/modules/spotify'
 
 export default function PrivateRoute({ component, ...rest }: any) {
-  const spotifyAuth: SpotifyAuthInfo = getData(
-    'spotifyAuthInfo',
-  ) as SpotifyAuthInfo
-  const routeComponent = (props: any) => (spotifyAuth.access_token ? (
+  const { token } = useSelector(selectSpotifyState)
+  const routeComponent = (props: any) => (token ? (
     React.createElement(component, props)
   ) : (
     <Redirect to={{ pathname: '/' }} />

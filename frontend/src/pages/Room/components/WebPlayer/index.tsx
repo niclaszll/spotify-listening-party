@@ -1,7 +1,6 @@
-/* eslint-disable max-len */
 import React, { useEffect, useState } from 'react'
-import { getData } from '../../../../util/auth'
-import { SpotifyAuthInfo } from '../../../../util/getHash'
+import { useSelector } from 'react-redux'
+import { selectSpotifyState } from '../../../../store/modules/spotify'
 import {
   loadScript, pausePlayback, play,
 } from '../../../../util/spotify'
@@ -11,27 +10,24 @@ import {
 import { socket, Response } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 
-type WebPlayerProps = {
-  token: string,
-}
-
-export default function WebPlayer(props: WebPlayerProps) {
+export default function WebPlayer() {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
   const [isPaused, setIsPaused] = useState<Boolean>(false)
 
-  const { token } = props
+  const { token } = useSelector(selectSpotifyState)
 
   let player: WebPlaybackPlayer
 
   const initializePlayer = () => {
+    if (token === null) return
+
     setIsInitializing(true)
 
-    const authInfo = getData('spotifyAuthInfo') as SpotifyAuthInfo
     // @ts-ignore
     player = new window.Spotify.Player({
       getOAuthToken: (cb: SpotifyPlayerCallback) => {
-        cb(authInfo.access_token)
+        cb(token)
       },
       name: 'Spotify Web Player SCC',
     }) as WebPlaybackPlayer

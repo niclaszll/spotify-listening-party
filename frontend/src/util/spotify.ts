@@ -43,11 +43,12 @@ export function loadScript(attributes: ScriptAttributes): Promise<any> {
 }
 
 export async function play(
-  token: string,
+  token: string | null,
   {
     context_uri, deviceId, offset = 0, uris,
   }: SpotifyPlayOptions,
 ) {
+  if (token === null) return false
   let body
 
   if (context_uri) {
@@ -73,7 +74,8 @@ export async function play(
   })
 }
 
-export function pausePlayback(token: string) {
+export function pausePlayback(token: string | null) {
+  if (token === null) return false
   return fetch('https://api.spotify.com/v1/me/player/pause', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -82,7 +84,8 @@ export function pausePlayback(token: string) {
   })
 }
 
-export async function getPlaylists(token: string) {
+export async function getPlaylists(token: string | null) {
+  if (token === null) return false
   return fetch('https://api.spotify.com/v1/me/playlists', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -93,7 +96,8 @@ export async function getPlaylists(token: string) {
   }).then((res) => res.json())
 }
 
-export async function getPlaylistTracks(token: string, id: string) {
+export async function getPlaylistTracks(token: string | null, id: string) {
+  if (token === null) return false
   return fetch(`https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`, {
     headers: {
       Authorization: `Bearer ${token}`,
