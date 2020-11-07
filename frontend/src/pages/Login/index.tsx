@@ -27,12 +27,13 @@ export default function Login() {
         </div>
         <h3>Listening Party</h3>
       </div>
-
-      <a
-        href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`}
-      >
-        Connect with Spotify
-      </a>
+      <div className={styles.loginContainer}>
+        <a
+          href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`}
+        >
+          Connect with Spotify
+        </a>
+      </div>
     </div>
   )
 }

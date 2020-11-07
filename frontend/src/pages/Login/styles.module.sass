@@ -1,6 +1,9 @@
 @import '../../styles/colors'
 
 .container
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
   .spotifyLogo
     display: flex
     justify-content: space-around
@@ -16,12 +19,17 @@
       font-weight: 900
       width: 100%
       transform: translate(20px,-20px)
-  a
-    color: white
-    background-color: $spotifyGreen
-    padding: 15px 30px
-    border-radius: 30px
-    font-weight: bold
-    text-transform: uppercase
-    &:hover
-      background-color: $spotifyGreenLight
+      text-align: center
+  .loginContainer
+    width: 100%
+    display: flex
+    justify-content: center
+    a
+      color: white
+      background-color: $spotifyGreen
+      padding: 15px 30px
+      border-radius: 30px
+      font-weight: bold
+      text-transform: uppercase
+      &:hover
+        background-color: $spotifyGreenLight
