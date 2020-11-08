@@ -17,12 +17,10 @@ import * as styles from './style.module.sass'
 export default function WebPlayer() {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
-  const [isPaused, setIsPaused] = useState<Boolean>(false)
+  const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
 
   const { token } = useSelector(selectSpotifyState)
-
-  // let player: WebPlaybackPlayer
 
   const initializePlayer = () => {
     if (token === null) return
@@ -30,12 +28,6 @@ export default function WebPlayer() {
     setIsInitializing(true)
 
     // @ts-ignore
-    // player = new window.Spotify.Player({
-    //   getOAuthToken: (cb: SpotifyPlayerCallback) => {
-    //     cb(token)
-    //   },
-    //   name: 'Spotify Web Player SCC',
-    // }) as WebPlaybackPlayer
     setPlayer(new window.Spotify.Player({
       getOAuthToken: (cb: SpotifyPlayerCallback) => {
         cb(token)
@@ -96,25 +88,15 @@ export default function WebPlayer() {
     }
   }, [deviceId])
 
-  const pause = () => {
-    if (player !== undefined) {
-      player.pause()
-      // pausePlayback(token)
-      setIsPaused(true)
-    }
-  }
-
-  const resume = () => {
+  const togglePlay = () => {
     if (player !== undefined) {
       player.togglePlay()
-      // play(token, { deviceId })
-      setIsPaused(false)
+      setIsPaused((previousState) => !previousState)
     }
   }
 
   const skipForward = () => {
     if (player !== undefined) {
-      // skipPlayback(token, deviceId)
       player.nextTrack()
       setIsPaused(false)
     }
@@ -124,15 +106,15 @@ export default function WebPlayer() {
     if (player !== undefined) {
       player.previousTrack()
     }
-
-    // TODO
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.controls}>
         <button type="button" onClick={skipBack}><SkipBackward /></button>
-        {isPaused ? <button id={styles.playPause} type="button" onClick={resume}><Play /></button> : <button id={styles.playPause} type="button" onClick={pause}><Pause /></button>}
+        <button id={styles.playPause} type="button" onClick={togglePlay}>
+          { isPaused ? <Play /> : <Pause /> }
+        </button>
         <button type="button" onClick={skipForward}><SkipForward /></button>
       </div>
     </div>
