@@ -28,6 +28,7 @@ module.exports = {
     camelcase: 'off',
     'no-console': 'off',
     'no-unused-vars': 'off',
+    'jsx-a11y/control-has-associated-label': 'off',
   },
   settings: {
     'import/resolver': {

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import {
+  PlayCircle, PauseCircle, SkipBack, SkipForward,
+} from 'react-feather'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import {
   loadScript, pausePlayback, play,
@@ -91,9 +94,21 @@ export default function WebPlayer() {
     setIsPaused(false)
   }
 
+  const skipForward = () => {
+    // TODO
+  }
+
+  const skipBack = () => {
+    // TODO
+  }
+
   return (
     <div className={styles.container}>
-      {isPaused ? <button type="button" onClick={resume}>Resume</button> : <button type="button" onClick={pause}>Pause</button>}
+      <div className={styles.controls}>
+        <button type="button"><SkipBack /></button>
+        {isPaused ? <button id={styles.playPause} type="button" onClick={resume}><PlayCircle /></button> : <button id={styles.playPause} type="button" onClick={pause}><PlayCircle /></button>}
+        <button type="button"><SkipForward /></button>
+      </div>
     </div>
   )
 }

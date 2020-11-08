@@ -1,4 +1,3 @@
 export const container: string
-export const playlists: string
-export const playlistTracks: string
-export const imgContainer: string
+export const controls: string
+export const playPause: string
