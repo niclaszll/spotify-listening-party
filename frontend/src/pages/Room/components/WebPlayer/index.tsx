@@ -17,10 +17,11 @@ export default function WebPlayer() {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
   const [isPaused, setIsPaused] = useState<Boolean>(false)
+  const [player, setPlayer] = useState<WebPlaybackPlayer>()
 
   const { token } = useSelector(selectSpotifyState)
 
-  let player: WebPlaybackPlayer
+  // let player: WebPlaybackPlayer
 
   const initializePlayer = () => {
     if (token === null) return
@@ -28,35 +29,18 @@ export default function WebPlayer() {
     setIsInitializing(true)
 
     // @ts-ignore
-    player = new window.Spotify.Player({
+    // player = new window.Spotify.Player({
+    //   getOAuthToken: (cb: SpotifyPlayerCallback) => {
+    //     cb(token)
+    //   },
+    //   name: 'Spotify Web Player SCC',
+    // }) as WebPlaybackPlayer
+    setPlayer(new window.Spotify.Player({
       getOAuthToken: (cb: SpotifyPlayerCallback) => {
         cb(token)
       },
       name: 'Spotify Web Player SCC',
-    }) as WebPlaybackPlayer
-
-    // Error handling
-    player.addListener('initialization_error', ({ message }) => { console.error(message) })
-    player.addListener('authentication_error', ({ message }) => { console.error(message) })
-    player.addListener('account_error', ({ message }) => { console.error(message) })
-    player.addListener('playback_error', ({ message }) => { console.error(message) })
-
-    // Playback status updates
-    player.addListener('player_state_changed', (state) => { console.log(state) })
-
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-      setDeviceId(device_id)
-      console.log('Ready with Device ID', device_id)
-    })
-
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-      console.log('Device ID has gone offline', device_id)
-    })
-
-    // Connect to the player!
-    player.connect()
+    }))
   }
 
   useEffect(() => {
@@ -73,6 +57,33 @@ export default function WebPlayer() {
   }, [])
 
   useEffect(() => {
+    if (player !== undefined) {
+      // Error handling
+      player.addListener('initialization_error', ({ message }) => { console.error(message) })
+      player.addListener('authentication_error', ({ message }) => { console.error(message) })
+      player.addListener('account_error', ({ message }) => { console.error(message) })
+      player.addListener('playback_error', ({ message }) => { console.error(message) })
+
+      // Playback status updates
+      player.addListener('player_state_changed', (state) => { console.log(state) })
+
+      // Ready
+      player.addListener('ready', ({ device_id }) => {
+        setDeviceId(device_id)
+        console.log('Ready with Device ID', device_id)
+      })
+
+      // Not Ready
+      player.addListener('not_ready', ({ device_id }) => {
+        console.log('Device ID has gone offline', device_id)
+      })
+
+      // Connect to the player!
+      player.connect()
+    }
+  }, [player])
+
+  useEffect(() => {
     if (deviceId) {
       socket.on('play-song', (data: Response<string>) => {
         play(token, { uris: [data.message.payload], deviceId })
@@ -85,21 +96,34 @@ export default function WebPlayer() {
   }, [deviceId])
 
   const pause = () => {
-    pausePlayback(token)
-    setIsPaused(true)
+    if (player !== undefined) {
+      player.pause()
+      // pausePlayback(token)
+      setIsPaused(true)
+    }
   }
 
   const resume = () => {
-    play(token, { deviceId })
-    setIsPaused(false)
+    if (player !== undefined) {
+      player.togglePlay()
+      // play(token, { deviceId })
+      setIsPaused(false)
+    }
   }
 
   const skipForward = () => {
-    skipPlayback(token, deviceId)
-    setIsPaused(false)
+    if (player !== undefined) {
+      // skipPlayback(token, deviceId)
+      player.nextTrack()
+      setIsPaused(false)
+    }
   }
 
   const skipBack = () => {
+    if (player !== undefined) {
+      player.previousTrack()
+    }
+
     // TODO
   }
 

@@ -79,6 +79,7 @@ export function pausePlayback(token: string | null) {
   return fetch('https://api.spotify.com/v1/me/player/pause', {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
     method: 'PUT',
   })
@@ -89,6 +90,7 @@ export function skipPlayback(token: string | null, deviceId: string) {
   return fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
     method: 'POST',
   })
