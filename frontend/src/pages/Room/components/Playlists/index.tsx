@@ -21,6 +21,7 @@ export default function Playlists() {
       {userPlaylists && (
         (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
           <button
+            key={playlist.id}
             type="button"
             onClick={() => dispatch(setActivePlaylist(playlist))}
             title={playlist.name}

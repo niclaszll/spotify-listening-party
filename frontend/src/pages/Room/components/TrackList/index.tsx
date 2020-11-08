@@ -29,7 +29,7 @@ export default function TrackList() {
       {tracklist && (
         (tracklist.items as SpotifyPlaylistTrackObject[]).map(
           (trackObject: SpotifyPlaylistTrackObject) => (
-            <Track track={trackObject.track} />
+            <Track key={trackObject.track.id} track={trackObject.track} />
           ),
         )
       )}
