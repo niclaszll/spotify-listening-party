@@ -1,4 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
+import { SpotifyPlaylist } from '../../../util/types/spotify'
 import initialState, { SpotifyState } from './state'
 
 export default {
@@ -7,5 +8,8 @@ export default {
   },
   clearSpotifyState() {
     return { ...initialState }
+  },
+  setActivePlaylist(state: SpotifyState, action: PayloadAction<SpotifyPlaylist>) {
+    return { ...state, activePlaylist: action.payload }
   },
 }

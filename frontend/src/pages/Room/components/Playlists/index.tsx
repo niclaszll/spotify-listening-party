@@ -1,21 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectSpotifyState, setActivePlaylist } from '../../../../store/modules/spotify'
+import { getPlaylists } from '../../../../util/spotify'
 import { PagingObject, SpotifyPlaylist } from '../../../../util/types/spotify'
 import * as styles from './style.module.sass'
 
-type PlaylistProps = {
-  userPlaylists: PagingObject,
-  selectPlaylist: (id: string) => void
-}
+export default function Playlists() {
+  const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
+  const { token } = useSelector(selectSpotifyState)
+  const dispatch = useDispatch()
 
-export default function Playlists(props: PlaylistProps) {
-  const { userPlaylists, selectPlaylist } = props
+  useEffect(() => {
+    if (token !== null) {
+      getPlaylists(token).then((res) => setUserPlaylists(res))
+    }
+  }, [])
+
   return (
     <div className={styles.playlists}>
       {userPlaylists && (
         (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
           <button
             type="button"
-            onClick={() => selectPlaylist(playlist.id)}
+            onClick={() => dispatch(setActivePlaylist(playlist))}
             title={playlist.name}
           >
             <div className={styles.imgContainer}>

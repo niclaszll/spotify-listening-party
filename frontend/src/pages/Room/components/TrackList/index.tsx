@@ -7,21 +7,16 @@ import { sendPlayUri } from '../../../../util/websocket'
 import Track from '../Track'
 import * as styles from './style.module.sass'
 
-type TrackListProps = {
-  id: string,
-}
-
-export default function TrackList(props: TrackListProps) {
+export default function TrackList() {
   const [tracklist, setTracklist] = useState<PagingObject>()
-  const { id } = props
 
-  const { token } = useSelector(selectSpotifyState)
+  const { token, activePlaylist } = useSelector(selectSpotifyState)
 
   /**
     * Fetch all tracks of selected playlist
     */
   const loadTrackList = async () => {
-    const tracks = await getPlaylistTracks(token, id)
+    const tracks = await getPlaylistTracks(token, activePlaylist!.id)
     setTracklist(tracks)
   }
 
