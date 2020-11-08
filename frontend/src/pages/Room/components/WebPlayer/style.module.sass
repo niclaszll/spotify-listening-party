@@ -1,3 +1,5 @@
+@import '../../../../styles/colors'
+
 .container
   position: fixed
   bottom: 0
@@ -6,18 +8,46 @@
   width: 100%
   display: flex
   justify-content: space-around
+  align-items: center
+  background-color: $spotifyLightGrey
 
   .controls
     display: flex
     align-items: center
+    margin: 15px 0
     #playPause
+      position: relative
+      padding:
+      display: flex
+      align-items: center
+      justify-content: center
+      padding: 7px
       > svg
-        height: 40px
-        width: 40px
+        height: 30px
+        width: 30px
+        fill: #FFFFFF
+      &:hover
+        &:after
+          border-color: #ffffff
+          transform: scale(1.05)
+      &:after
+        content: ""
+        position: absolute
+        top: 0
+        right: 0
+        bottom: 0
+        left: 0
+        border-radius: 500px
+        border: 1px solid hsla(0,0%,100%,.6)
 
     button
-      margin: 0 10px 20px 10px
+      margin: 0 10px
       background: transparent
       border: none
-      color: white
+      color: #B3B3B3
       cursor: pointer
+      > svg
+        fill: #B3B3B3
+      &:hover
+        > svg
+          fill: #ffffff

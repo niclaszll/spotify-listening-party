@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  SkipBack, SkipForward, Play, Pause,
-} from 'react-feather'
+import { ReactComponent as Play } from '../../../../img/icons/play.svg'
+import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
+import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
+import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import {
   loadScript, pausePlayback, play, skipPlayback,
@@ -106,7 +107,7 @@ export default function WebPlayer() {
   return (
     <div className={styles.container}>
       <div className={styles.controls}>
-        <button type="button" onClick={skipBack}><SkipBack /></button>
+        <button type="button" onClick={skipBack}><SkipBackward /></button>
         {isPaused ? <button id={styles.playPause} type="button" onClick={resume}><Play /></button> : <button id={styles.playPause} type="button" onClick={pause}><Pause /></button>}
         <button type="button" onClick={skipForward}><SkipForward /></button>
       </div>
