@@ -84,6 +84,16 @@ export function pausePlayback(token: string | null) {
   })
 }
 
+export function skipPlayback(token: string | null, deviceId: string) {
+  if (token === null) return false
+  return fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: 'POST',
+  })
+}
+
 export async function getPlaylists(token: string | null) {
   if (token === null) return false
   return fetch('https://api.spotify.com/v1/me/playlists', {

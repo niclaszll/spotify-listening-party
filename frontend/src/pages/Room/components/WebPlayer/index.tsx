@@ -5,7 +5,7 @@ import {
 } from 'react-feather'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import {
-  loadScript, pausePlayback, play,
+  loadScript, pausePlayback, play, skipPlayback,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer,
@@ -95,7 +95,8 @@ export default function WebPlayer() {
   }
 
   const skipForward = () => {
-    // TODO
+    skipPlayback(token, deviceId)
+    setIsPaused(false)
   }
 
   const skipBack = () => {
@@ -105,9 +106,9 @@ export default function WebPlayer() {
   return (
     <div className={styles.container}>
       <div className={styles.controls}>
-        <button type="button"><SkipBack /></button>
+        <button type="button" onClick={skipBack}><SkipBack /></button>
         {isPaused ? <button id={styles.playPause} type="button" onClick={resume}><Play /></button> : <button id={styles.playPause} type="button" onClick={pause}><Pause /></button>}
-        <button type="button"><SkipForward /></button>
+        <button type="button" onClick={skipForward}><SkipForward /></button>
       </div>
     </div>
   )
