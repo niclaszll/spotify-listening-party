@@ -1,4 +1,6 @@
 export type Room = {
-  id: string,
+  id?: string,
   name: string
+  roomPublic: Boolean,
+  listeners: number
 }

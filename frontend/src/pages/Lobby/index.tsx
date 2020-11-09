@@ -5,11 +5,16 @@ import {
   getAvailableRooms,
   newSocketRoom, Response, socket,
 } from '../../util/websocket'
+import { ReactComponent as Lock } from '../../img/icons/lock.svg'
+import { ReactComponent as LockOpen } from '../../img/icons/lock_open.svg'
+import { ReactComponent as People } from '../../img/icons/people.svg'
 import * as styles from './styles.module.sass'
 
 export default function Session() {
   const [response, setResponse] = useState<Response<string>>({ source: '', message: { payload: '' } })
   const [roomName, setRoomName] = useState<string>('')
+  const [roomPublic, setRoomPublic] = useState<Boolean>(true)
+
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
   const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
   const history = useHistory()
@@ -30,8 +35,13 @@ export default function Session() {
   }, [])
 
   const createRoom = () => {
+    const newRoom = {
+      name: roomName,
+      roomPublic,
+      listeners: 0,
+    }
     if (roomName) {
-      newSocketRoom(roomName)
+      newSocketRoom(newRoom)
     }
   }
 
@@ -74,7 +84,21 @@ export default function Session() {
       </div>
       <h4>Available rooms</h4>
       <div className={styles.availableRoomsContainer}>
-        {visibleRooms.map((room) => <button key={room.id} type="button" className={styles.room} onClick={() => joinRoomViaList(room.id)}>{room.name}</button>)}
+        {visibleRooms.map(
+          (room) => (
+            <button key={room.id} type="button" className={styles.room} onClick={() => room.id && joinRoomViaList(room.id)}>
+              <div className={styles.info}>
+                <div className={styles.public}>{room.roomPublic ? <LockOpen /> : <Lock />}</div>
+                <div className={styles.listeners}>
+                  <People />
+                  {' '}
+                  {room.listeners}
+                </div>
+              </div>
+              <div>{room.name}</div>
+            </button>
+          ),
+        )}
       </div>
     </div>
   )

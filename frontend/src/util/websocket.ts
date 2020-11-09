@@ -1,4 +1,5 @@
 import socketIOClient from 'socket.io-client'
+import { Room } from './types/rooms'
 
 const ENDPOINT = process.env.REACT_APP_API_URL || 'http://localhost:9000'
 
@@ -11,10 +12,10 @@ export type Response<T> = {
   }
 }
 
-export function newSocketRoom(name: string) {
+export function newSocketRoom(room: Room) {
   socket.emit('create', {
     source: 'client',
-    message: { name },
+    message: room,
   })
 }
 

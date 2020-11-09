@@ -4,6 +4,8 @@
   display: flex
   justify-content: center
   flex-wrap: wrap
+  max-width: 1100px
+  margin: 0 auto
 
   .roomName
     input
@@ -48,7 +50,6 @@
     text-align: center
 
   .availableRoomsContainer
-    width: 30%
     display: flex
     flex-wrap: wrap
     justify-content: center
@@ -57,11 +58,40 @@
       background: #ffffff
       color: $spotifyDarkGrey
       font-weight: bold
-      font-size: 14px
-      padding: 10px 25px
-      border-radius: 20px
+      font-size: 18px
+      padding: 10px
+      border-radius: 1px
+      min-height: 80px
       border: none
       cursor: pointer
       margin: 0 15px 15px 0
+      display: flex
+      align-items: center
+      justify-content: center
+      flex-wrap: wrap
+      width: 150px
+      max-width: 150px
+      overflow: hidden
+      > div
+        width: 100%
+      .info
+        display: flex
+        justify-content: space-between
+        margin-bottom: 20px
+        font-size: 14px
+        > div
+          display: flex
+          align-items: center
+          color: #b5b5b5
+          svg
+            fill: #b5b5b5
+        .public
+          svg
+            height: 20px
+        .listeners
+          svg
+            margin-right: 4px
       &:hover
         color: $spotifyGreenLight
+        svg
+          fill: $spotifyGreenLight

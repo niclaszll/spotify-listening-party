@@ -47,7 +47,12 @@ export function initDB() {
 
   Array.from({length: 5}, (x, i) => {
     const boilerPlateRoomId = `room${id()}`
-    boilerPlateRooms[boilerPlateRoomId] = {id: boilerPlateRoomId, name: `Raum ${i}`}
+    boilerPlateRooms[boilerPlateRoomId] = {
+      id: boilerPlateRoomId,
+      name: `Raum ${i}`,
+      roomPublic: true,
+      listeners: 0,
+    }
     return i
   })
 
