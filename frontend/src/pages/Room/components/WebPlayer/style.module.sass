@@ -7,14 +7,16 @@
   z-index: 10
   width: 100%
   display: flex
-  justify-content: space-around
+  justify-content: space-between
   align-items: center
   background-color: $spotifyLightGrey
 
   .controls
     display: flex
     align-items: center
+    justify-content: center
     margin: 15px 0
+    width: 50%
     #playPause
       position: relative
       padding:
@@ -51,3 +53,18 @@
       &:hover
         > svg
           fill: #ffffff
+
+  .songInfo
+    margin-left: 25px
+    width: 25%
+    >div
+      &:first-child
+        font-weight: 500
+      &:nth-child(2)
+        font-size: 13px
+
+  .additionalControls
+    width: 25%
+    margin-right: 25px
+    display: flex
+    justify-content: flex-end

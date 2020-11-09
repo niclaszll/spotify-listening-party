@@ -8,6 +8,7 @@ import {
   socket, Response, sendMessage, joinSocketRoom,
 } from '../../util/websocket'
 import Playlists from './components/Playlists'
+import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
 import WebPlayer from './components/WebPlayer'
 import * as styles from './styles.module.sass'
@@ -51,10 +52,15 @@ export default function Room() {
 
   return (
     <div className={styles.container}>
-      <input value={newMsg} onChange={handleChange} />
-      <button type="button" onClick={handleClick}>Send</button>
-      <Playlists />
-      {activePlaylist && <TrackList />}
+      <div>
+        <input value={newMsg} onChange={handleChange} />
+        <button type="button" onClick={handleClick}>Send</button>
+        <Playlists />
+        {activePlaylist && <TrackList />}
+      </div>
+      <div>
+        <QueueList />
+      </div>
       <WebPlayer />
       <div>
         {messages.map((msg) => (

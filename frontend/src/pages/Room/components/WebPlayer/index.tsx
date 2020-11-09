@@ -9,7 +9,7 @@ import {
   loadScript, pausePlayback, play, skipPlayback,
 } from '../../../../util/spotify'
 import {
-  PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer,
+  PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
 } from '../../../../util/types/spotify'
 import { socket, Response } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
@@ -19,6 +19,7 @@ export default function WebPlayer() {
   const [deviceId, setDeviceId] = useState<string>('')
   const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
+  const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
 
   const { token } = useSelector(selectSpotifyState)
 
@@ -58,7 +59,12 @@ export default function WebPlayer() {
       player.addListener('playback_error', ({ message }) => { console.error(message) })
 
       // Playback status updates
-      player.addListener('player_state_changed', (state) => { console.log(state) })
+      player.addListener('player_state_changed', (state) => {
+        if (state) {
+          setPlaybackState(state)
+        }
+        console.log(state)
+      })
 
       // Ready
       player.addListener('ready', ({ device_id }) => {
@@ -105,17 +111,32 @@ export default function WebPlayer() {
   const skipBack = () => {
     if (player !== undefined) {
       player.previousTrack()
+      setIsPaused(false)
     }
   }
 
   return (
     <div className={styles.container}>
+      <div className={styles.songInfo}>
+        {/* <div>
+          <img src="" alt="Picture" />
+        </div> */}
+        <div>{playbackState?.track_window.current_track.name}</div>
+        <div>
+          {playbackState?.track_window.current_track.artists.map(
+            (artist) => artist.name,
+          ).join(', ')}
+        </div>
+      </div>
       <div className={styles.controls}>
         <button type="button" onClick={skipBack}><SkipBackward /></button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>
           { isPaused ? <Play /> : <Pause /> }
         </button>
         <button type="button" onClick={skipForward}><SkipForward /></button>
+      </div>
+      <div className={styles.additionalControls}>
+        <span>Volume Control</span>
       </div>
     </div>
   )
