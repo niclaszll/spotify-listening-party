@@ -8,7 +8,7 @@ This project uses the package manager yarn. Make sure to install it on your syst
 
 ### Docker
 
-In order to generate reliable, fast, reproducible and deterministic deployments, we use [Docker](https://www.docker.com/) Make sure you have it installed on your system.
+In order to generate reliable, fast, reproducible and deterministic deployments, we use [Docker](https://www.docker.com/). Make sure you have it installed on your system.
 
 ### Development Browser
 
