@@ -100,9 +100,9 @@ export default function roomRouter(io) {
     })
   }
 
-  const playSong = (socket, msg) => {
+  const sendNewQueue = (socket, msg) => {
     const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-    io.sockets.in(room).emit('play-song', {
+    io.sockets.in(room).emit('new-queue', {
       source: 'server',
       message: {payload: msg},
     })
@@ -123,8 +123,8 @@ export default function roomRouter(io) {
       distributeMessage(socket, data.message.msg)
     })
 
-    socket.on('play', (data) => {
-      playSong(socket, data.message.msg)
+    socket.on('new-queue', (data) => {
+      sendNewQueue(socket, data.message.msg)
     })
 
     socket.on('get-available-rooms', () => {

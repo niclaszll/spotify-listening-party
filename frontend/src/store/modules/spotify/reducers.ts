@@ -1,5 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { SpotifyPlaylist } from '../../../util/types/spotify'
+import { SpotifyPlaylist, WebPlaybackTrack } from '../../../util/types/spotify'
 import initialState, { SpotifyState } from './state'
 
 export default {
@@ -11,5 +11,8 @@ export default {
   },
   setActivePlaylist(state: SpotifyState, action: PayloadAction<SpotifyPlaylist>) {
     return { ...state, activePlaylist: action.payload }
+  },
+  setQueue(state: SpotifyState, action: PayloadAction<WebPlaybackTrack[]>) {
+    return { ...state, queue: action.payload }
   },
 }

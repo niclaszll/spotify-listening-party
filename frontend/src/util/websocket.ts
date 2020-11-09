@@ -1,5 +1,6 @@
 import socketIOClient from 'socket.io-client'
 import { Room } from './types/rooms'
+import { WebPlaybackTrack } from './types/spotify'
 
 const ENDPOINT = process.env.REACT_APP_API_URL || 'http://localhost:9000'
 
@@ -33,8 +34,8 @@ export function sendMessage(msg: string) {
   })
 }
 
-export function sendPlayUri(msg: string) {
-  socket.emit('play', {
+export function sendQueue(msg: WebPlaybackTrack[]) {
+  socket.emit('new-queue', {
     source: 'client',
     message: { msg },
   })

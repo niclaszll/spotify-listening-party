@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { clearSpotifyState, selectSpotifyState } from '../../store/modules/spotify'
-import { getPlaylists } from '../../util/spotify'
-import { PagingObject } from '../../util/types/spotify'
 import {
   socket, Response, sendMessage, joinSocketRoom,
 } from '../../util/websocket'
