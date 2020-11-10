@@ -38,7 +38,7 @@ export default function Session() {
     const newRoom = {
       name: roomName,
       roomPublic,
-      listeners: 0,
+      active_listeners: 0,
     }
     if (roomName) {
       newSocketRoom(newRoom)
@@ -92,7 +92,7 @@ export default function Session() {
                 <div className={styles.listeners}>
                   <People />
                   {' '}
-                  {room.listeners}
+                  {room.active_listeners}
                 </div>
               </div>
               <div>{room.name}</div>

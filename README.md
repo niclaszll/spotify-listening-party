@@ -18,6 +18,8 @@ For developing the application it is recommended to use Firefox, since [Chrome d
 
 Copy the `env.example` files in both /frontend and /api and rename them to `.env`. These already contain all necessary keys, however, some of the values have to be replaced.
 
+To enable the database connection, add your MongoDB-URI to the api-`.env` file (e.g. from MongoDB-Atlas).
+
 For the local development of the app it is necessary to create a Spotify-Developer-App. Head to [https://developer.spotify.com/dashboard/](https://developer.spotify.com/dashboard/) and login with your Spotify-Account. 
 
 Then click on `"Create An App"`, give it a name and description and click on `"Create"`. Now on the left side you should see your `Client ID`. Copy this id and replace the default value for `REACT_APP_CLIENT_ID` in your frontend-`.env` file.

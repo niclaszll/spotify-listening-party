@@ -1,6 +1,6 @@
 import express from 'express'
 import {id} from '../util/common.js'
-import {readFile, writeFile, dataPath} from '../util/files.js'
+import RoomModel from '../models/room.js'
 
 export default function roomRouter(io) {
   const router = express.Router()
@@ -14,81 +14,58 @@ export default function roomRouter(io) {
   }
 
   const createRoom = (socket, message) => {
-    const {name, roomPublic, listeners} = message
+    const {name, roomPublic, active_listeners} = message
     const roomId = `room${id()}`
+    const roomName = name !== '' ? name : roomId
+    const newRoom = {id: roomId, name: roomName, roomPublic, active_listeners}
 
-    readFile(
-      (data) => {
-        // add the new room
-        const roomName = name !== '' ? name : roomId
-        data[roomId] = {id: roomId, name: roomName, roomPublic, listeners}
+    const room = new RoomModel(newRoom)
 
-        writeFile(
-          JSON.stringify(data, null, 2),
-          () => {
-            socket.emit('room', {
-              source: 'server',
-              message: {payload: roomId},
-            })
-            console.log(`Created room ${roomName} with id ${roomId}`)
-          },
-          dataPath
-        )
-      },
-      true,
-      dataPath
-    )
+    try {
+      room.save().then(
+        socket.emit('room', {
+          source: 'server',
+          message: {payload: roomId},
+        })
+      )
+      console.log(`Created room ${roomName} with id ${roomId}`)
+    } catch (err) {
+      console.log('Error creating a new room')
+    }
   }
 
-  const updateAvailableRooms = (socket, distributeAll) => {
-    readFile(
-      (data) => {
-        const rooms = Object.values(data)
-        if (distributeAll) {
-          io.sockets.emit('available-rooms', {
-            source: 'server',
-            message: {payload: rooms},
-          })
-        } else {
-          socket.emit('available-rooms', {
-            source: 'server',
-            message: {payload: rooms},
-          })
-        }
-      },
-      true,
-      dataPath
-    )
+  const updateAvailableRooms = async (socket, distributeAll) => {
+    const rooms = await RoomModel.find({})
+    if (distributeAll) {
+      io.sockets.emit('available-rooms', {
+        source: 'server',
+        message: {payload: rooms},
+      })
+    } else {
+      socket.emit('available-rooms', {
+        source: 'server',
+        message: {payload: rooms},
+      })
+    }
   }
 
-  const joinRoom = (socket, roomId) => {
-    readFile(
-      (data) => {
-        // try to find room (if it exists -> else catch and send error)
-        try {
-          const room = data[roomId]
-          leaveActiveRoom(socket)
-          socket.join(roomId)
-          const listenersCount = data[roomId].listeners + 1
-          data[roomId].listeners = listenersCount
-          console.log(`Joined room ${room.name} with id ${roomId}`)
+  const joinRoom = async (socket, roomId) => {
+    leaveActiveRoom(socket)
+    socket.join(roomId)
 
-          // update DB with new listener count
-          writeFile(
-            JSON.stringify(data, null, 2),
-            () => {
-              updateAvailableRooms(socket, true)
-              console.log(`Room ${room.name} has now ${listenersCount} listener(s)`)
-            },
-            dataPath
-          )
-        } catch (e) {
-          socket.emit('error-event')
-        }
-      },
-      true,
-      dataPath
-    )
+    const room = await RoomModel.findOne({id: roomId})
+    console.log(`Joined room ${room.name} with id ${roomId}`)
+
+    const listenersCount = io.sockets.adapter.rooms[room.id].length
+
+    try {
+      await RoomModel.findByIdAndUpdate(room._id, {active_listeners: listenersCount})
+      updateAvailableRooms(socket, true)
+      console.log(`Room ${room.name} has now ${listenersCount} listener(s)`)
+    } catch (err) {
+      console.log(`Error joining the room ${err}`)
+      socket.emit('error-event')
+    }
   }
 
   const distributeMessage = (socket, msg) => {

@@ -6,26 +6,37 @@ import logger from 'morgan'
 import http from 'http'
 import dotenv from 'dotenv'
 import debug from 'debug'
+import mongoose from 'mongoose'
 import roomRouter from './routes/room.js'
 import {normalizePort} from './util/common.js'
-import {initDB} from './util/files.js'
+
+/**
+ * Setup dotenv
+ */
+dotenv.config()
+
+/**
+ * Setup MongoDB
+ */
+const connectionString = process.env.DB_CONNECTION_URI || ''
+
+mongoose.connect(connectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+})
 
 /**
  * Setup stuff
  */
 
-dotenv.config()
 debug('api:server')
 
 const app = express()
 const server = http.createServer(app)
 const io = socket(server, {pingTimeout: 60000})
 const rr = roomRouter(io)
-
-/**
- * Reset "DB" on startup
- */
-initDB()
 
 /**
  * Get port from environment and store in Express.
