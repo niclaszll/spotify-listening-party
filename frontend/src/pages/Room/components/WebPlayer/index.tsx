@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
-import { selectSpotifyState } from '../../../../store/modules/spotify'
+import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
 import {
   loadScript, pausePlayback, play, skipPlayback,
 } from '../../../../util/spotify'
@@ -20,8 +20,10 @@ export default function WebPlayer() {
   const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
+  const [lastSkip, setLastSkip] = useState<number>(0)
 
-  const { token } = useSelector(selectSpotifyState)
+  const { token, queue } = useSelector(selectSpotifyState)
+  const dispatch = useDispatch()
 
   const initializePlayer = () => {
     if (token === null) return
@@ -50,6 +52,23 @@ export default function WebPlayer() {
     loadSpotify()
   }, [])
 
+  const skipForward = () => {
+    if (queue.length > 0 && player !== undefined) {
+      const nextTrack = queue[0].uri
+      play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
+        if (res.status === 204) {
+          if (queue.length === 1) {
+            dispatch(setQueue([]))
+          } else {
+            const newQueue = queue.slice(1, queue.length)
+            dispatch(setQueue(newQueue))
+          }
+          setIsPaused(false)
+        }
+      })
+    }
+  }
+
   useEffect(() => {
     if (player !== undefined) {
       // Error handling
@@ -62,6 +81,14 @@ export default function WebPlayer() {
       player.addListener('player_state_changed', (state) => {
         if (state) {
           setPlaybackState(state)
+          if (state.position === 0 && state.paused === true) {
+            const timeDiff = state.timestamp - lastSkip
+            if (timeDiff > 1000) {
+              setLastSkip(state.timestamp)
+              console.log(lastSkip)
+              skipForward()
+            }
+          }
         }
         console.log(state)
       })
@@ -94,6 +121,12 @@ export default function WebPlayer() {
     }
   }, [deviceId])
 
+  useEffect(() => {
+    if (queue.length > 0 && playbackState === undefined) {
+      skipForward()
+    }
+  }, [queue])
+
   const togglePlay = () => {
     if (player !== undefined) {
       player.togglePlay()
@@ -101,11 +134,12 @@ export default function WebPlayer() {
     }
   }
 
-  const skipForward = () => {
-    if (player !== undefined) {
-      player.nextTrack()
-      setIsPaused(false)
+  const handleSkipForwardClick = () => {
+    if (playbackState === undefined) {
+      return false
     }
+    skipForward()
+    return true
   }
 
   const skipBack = () => {
@@ -133,7 +167,7 @@ export default function WebPlayer() {
         <button id={styles.playPause} type="button" onClick={togglePlay}>
           { isPaused ? <Play /> : <Pause /> }
         </button>
-        <button type="button" onClick={skipForward}><SkipForward /></button>
+        <button type="button" onClick={handleSkipForwardClick}><SkipForward /></button>
       </div>
       <div className={styles.additionalControls}>
         <span>Volume Control</span>
