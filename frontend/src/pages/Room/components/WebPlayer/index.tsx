@@ -53,6 +53,7 @@ export default function WebPlayer() {
   }, [])
 
   const skipForward = () => {
+    console.log(queue)
     if (queue.length > 0 && player !== undefined) {
       const nextTrack = queue[0].uri
       play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
@@ -85,8 +86,6 @@ export default function WebPlayer() {
             const timeDiff = state.timestamp - lastSkip
             if (timeDiff > 1000) {
               setLastSkip(state.timestamp)
-              console.log(lastSkip)
-              skipForward()
             }
           }
         }
@@ -108,6 +107,10 @@ export default function WebPlayer() {
       player.connect()
     }
   }, [player])
+
+  useEffect(() => {
+    skipForward()
+  }, [lastSkip])
 
   useEffect(() => {
     if (deviceId) {
