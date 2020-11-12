@@ -85,6 +85,21 @@ export default function roomRouter(io) {
     })
   }
 
+  const sendTogglePlay = (socket, msg) => {
+    const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+    io.sockets.in(room).emit('toggle-play', {
+      source: 'server',
+      message: {payload: msg},
+    })
+  }
+
+  const sendSkipForward = (socket) => {
+    const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+    io.sockets.in(room).emit('skip-forward', {
+      source: 'server',
+    })
+  }
+
   io.on('connection', (socket) => {
     console.log('New client connected')
 
@@ -102,6 +117,14 @@ export default function roomRouter(io) {
 
     socket.on('new-queue', (data) => {
       sendNewQueue(socket, data.message.msg)
+    })
+
+    socket.on('toggle-play', (data) => {
+      sendTogglePlay(socket, data.message.msg)
+    })
+
+    socket.on('skip-forward', () => {
+      sendSkipForward(socket)
     })
 
     socket.on('get-available-rooms', () => {

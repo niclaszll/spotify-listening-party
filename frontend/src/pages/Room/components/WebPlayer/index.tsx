@@ -11,7 +11,9 @@ import {
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
 } from '../../../../util/types/spotify'
-import { socket, Response } from '../../../../util/websocket'
+import {
+  socket, Response, sendSkipTrack, sendTogglePlay,
+} from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 
 export default function WebPlayer() {
@@ -53,7 +55,6 @@ export default function WebPlayer() {
   }, [])
 
   const skipForward = () => {
-    console.log(queue)
     if (queue.length > 0 && player !== undefined) {
       const nextTrack = queue[0].uri
       play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
@@ -118,9 +119,17 @@ export default function WebPlayer() {
         play(token, { uris: [data.message.payload], deviceId })
         setIsPaused(false)
       })
+      socket.on('skip-forward', () => {
+        setEndOfTrack(true)
+      })
+      socket.on('toggle-play', (data: Response<Boolean>) => {
+        setIsPaused(data.message.payload)
+      })
     }
     return () => {
       socket.off('play-song')
+      socket.off('skip-forward')
+      socket.off('toggle-play')
     }
   }, [deviceId])
 
@@ -130,10 +139,19 @@ export default function WebPlayer() {
     }
   }, [queue])
 
+  useEffect(() => {
+    if (player !== undefined) {
+      if (isPaused) {
+        player.pause()
+      } else {
+        player.resume()
+      }
+    }
+  }, [isPaused])
+
   const togglePlay = () => {
     if (player !== undefined) {
-      player.togglePlay()
-      setIsPaused((previousState) => !previousState)
+      sendTogglePlay(!isPaused)
     }
   }
 
@@ -141,14 +159,14 @@ export default function WebPlayer() {
     if (playbackState === undefined) {
       return false
     }
-    skipForward()
+    // send skip command to backend
+    sendSkipTrack()
     return true
   }
 
   const skipBack = () => {
     if (player !== undefined) {
       player.previousTrack()
-      setIsPaused(false)
     }
   }
 
