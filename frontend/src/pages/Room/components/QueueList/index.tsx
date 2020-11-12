@@ -19,6 +19,6 @@ export default function QueueList() {
   }, [])
 
   return (
-    <div>{queue.map((t) => <Track track={t} />)}</div>
+    <div>{queue.map((t) => <Track key={t.uri} track={t} />)}</div>
   )
 }
