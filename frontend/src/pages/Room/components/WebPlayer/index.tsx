@@ -20,7 +20,7 @@ export default function WebPlayer() {
   const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
-  const [lastSkip, setLastSkip] = useState<number>(0)
+  const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
 
   const { token, queue } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
@@ -64,6 +64,7 @@ export default function WebPlayer() {
             const newQueue = queue.slice(1, queue.length)
             dispatch(setQueue(newQueue))
           }
+          setEndOfTrack(false)
           setIsPaused(false)
         }
       })
@@ -83,10 +84,7 @@ export default function WebPlayer() {
         if (state) {
           setPlaybackState(state)
           if (state.position === 0 && state.paused === true) {
-            const timeDiff = state.timestamp - lastSkip
-            if (timeDiff > 1000) {
-              setLastSkip(state.timestamp)
-            }
+            setEndOfTrack(true)
           }
         }
         console.log(state)
@@ -109,8 +107,10 @@ export default function WebPlayer() {
   }, [player])
 
   useEffect(() => {
-    skipForward()
-  }, [lastSkip])
+    if (endOfTrack) {
+      skipForward()
+    }
+  }, [endOfTrack])
 
   useEffect(() => {
     if (deviceId) {

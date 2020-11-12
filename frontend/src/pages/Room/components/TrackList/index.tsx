@@ -22,7 +22,7 @@ export default function TrackList() {
 
   useEffect(() => {
     loadTrackList()
-  }, [])
+  }, [activePlaylist])
 
   const handleAdd = (track: WebPlaybackTrack) => {
     // get queue
