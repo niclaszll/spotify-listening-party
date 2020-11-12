@@ -56,7 +56,8 @@ export default function roomRouter(io) {
     const room = await RoomModel.findOne({id: roomId})
     console.log(`Joined room ${room.name} with id ${roomId}`)
 
-    const listenersCount = io.sockets.adapter.rooms[room.id].length
+    const listenersCount =
+      io.sockets.adapter.rooms[room.id] !== undefined ? io.sockets.adapter.rooms[room.id].length : 0
 
     try {
       await RoomModel.findByIdAndUpdate(room._id, {active_listeners: listenersCount})
