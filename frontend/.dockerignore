@@ -1,0 +1,7 @@
+.git
+.yarnclean
+*Dockerfile*
+*docker-compose*
+node_modules
+build
+README.md
