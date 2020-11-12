@@ -20,11 +20,11 @@ Copy the `env.example` files in both /frontend and /api and rename them to `.env
 
 To enable the database connection, add your MongoDB-URI to the api-`.env` file (e.g. from MongoDB-Atlas).
 
-For the local development of the app it is necessary to create a Spotify-Developer-App. Head to [https://developer.spotify.com/dashboard/](https://developer.spotify.com/dashboard/) and login with your Spotify-Account. 
+For the local development of the app it is necessary to create a Spotify-Developer-App. Head to [https://developer.spotify.com/dashboard/](https://developer.spotify.com/dashboard/) and login with your Spotify-Account.
 
 Then click on `"Create An App"`, give it a name and description and click on `"Create"`. Now on the left side you should see your `Client ID`. Copy this id and replace the default value for `REACT_APP_CLIENT_ID` in your frontend-`.env` file.
 
-Go back to the Spotify dashboard and click on `"Edit Settings"` inside your newly created app. 
+Go back to the Spotify dashboard and click on `"Edit Settings"` inside your newly created app.
 
 Inside the opening pop-up add `http://localhost:3000/auth` to your Redirect URIs and hit `"Save"`.
 
@@ -36,7 +36,7 @@ Building the application:
 docker-compose build
 ```
 
-Afterwards head to the `api` and the `frontend` folder and run the following command in each case 
+Afterwards head to the `api` and the `frontend` folder and run the following command in each case
 
 ```bash
 yarn
@@ -53,4 +53,3 @@ Stop the application using
 ```bash
 docker-compose down
 ```
-
