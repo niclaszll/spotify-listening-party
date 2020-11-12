@@ -50,21 +50,31 @@ export default function Room() {
 
   return (
     <div className={styles.container}>
-      <div>
-        <input value={newMsg} onChange={handleChange} />
-        <button type="button" onClick={handleClick}>Send</button>
+      <div className={styles.playlistContainer}>
+        <h2>Playlists</h2>
         <Playlists />
+      </div>
+      <div className={styles.tracklistContainer}>
+        <h2>Tracklist</h2>
         {activePlaylist && <TrackList />}
       </div>
-      <div>
-        <QueueList />
+      <div className={styles.queueChatContainer}>
+        <div>
+          <h2>Queue</h2>
+          <QueueList />
+        </div>
+        <div>
+          <h2>Chat</h2>
+          <input value={newMsg} onChange={handleChange} />
+          <button type="button" onClick={handleClick}>Send</button>
+          <div>
+            {messages.map((msg) => (
+              <p>{msg}</p>
+            ))}
+          </div>
+        </div>
       </div>
       <WebPlayer />
-      <div>
-        {messages.map((msg) => (
-          <p>{msg}</p>
-        ))}
-      </div>
     </div>
   )
 }

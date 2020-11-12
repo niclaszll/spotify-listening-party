@@ -35,10 +35,10 @@ export default function TrackList() {
       {tracklist && (
         (tracklist.items as SpotifyPlaylistTrackObject[]).map(
           (trackObject: SpotifyPlaylistTrackObject) => (
-            <Fragment key={trackObject.track.id}>
+            <div className={styles.track} key={trackObject.track.id}>
               <Track key={trackObject.track.id} track={trackObject.track} />
               <button type="button" onClick={() => handleAdd(trackObject.track)}>Add</button>
-            </Fragment>
+            </div>
           ),
         )
       )}

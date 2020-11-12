@@ -1,23 +1,39 @@
+@import '../../../../styles/colors'
+
 .playlists
   display: flex
   flex-wrap: wrap
 
-  >button
-    height: 100px
-    width: 100px
+  .playlist
+    width: 100%
     overflow: hidden
     padding: 0
     border: none
-    margin: 10px 10px
+    padding: 10px 10px
     cursor: pointer
-    transition: transform 0.1s ease-in-out
+    display: flex
+    align-items: center
+    outline: none
+
+    &.active
+      background: lighten($spotifyDarkGrey, 3)
 
     &:hover
-      transform: scale(1.05)
-  
-  .imgContainer
-    height: 100%
-    width: 100%
-    img
-      width: 100%
-      height: 100%
+      background: lighten($spotifyDarkGrey, 3)
+      p
+        color: #ffffff
+
+    .imgContainer
+      height: 50px
+      width: 50px
+      overflow: hidden
+      margin-right: 15px
+      img
+        transition: transform 0.1s ease-in-out
+        width: 100%
+        height: 100%
+
+    p
+      margin: 0
+      font-weight: 500
+      color: $spotifyTextLightGrey

@@ -7,7 +7,7 @@ import * as styles from './style.module.sass'
 
 export default function Playlists() {
   const [userPlaylists, setUserPlaylists] = useState<PagingObject>()
-  const { token } = useSelector(selectSpotifyState)
+  const { token, activePlaylist } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -19,17 +19,22 @@ export default function Playlists() {
   return (
     <div className={styles.playlists}>
       {userPlaylists && (
-        (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist) => (
-          <button
+        (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist, index) => (
+          <div
             key={playlist.id}
-            type="button"
             onClick={() => dispatch(setActivePlaylist(playlist))}
+            // for accessibility
+            onKeyDown={() => dispatch(setActivePlaylist(playlist))}
             title={playlist.name}
+            className={`${styles.playlist} ${activePlaylist?.id === playlist.id && styles.active}`}
+            role="button"
+            tabIndex={index}
           >
             <div className={styles.imgContainer}>
               <img src={playlist.images[0].url} alt={playlist.name} />
             </div>
-          </button>
+            <p>{playlist.name}</p>
+          </div>
         ))
       )}
     </div>
