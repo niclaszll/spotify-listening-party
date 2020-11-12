@@ -46,3 +46,16 @@ export function getAvailableRooms() {
     source: 'client',
   })
 }
+
+export function sendSkipTrack() {
+  socket.emit('skip-forward', {
+    source: 'client',
+  })
+}
+
+export function sendTogglePlay(msg: Boolean) {
+  socket.emit('toggle-play', {
+    source: 'client',
+    message: { msg },
+  })
+}
