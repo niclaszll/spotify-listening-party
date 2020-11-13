@@ -9,16 +9,17 @@
     overflow: hidden
     padding: 0
     border: none
-    padding: 10px 10px
+    padding: 10px 20px
     cursor: pointer
     display: flex
     align-items: center
     outline: none
 
-    &.active
-      background: lighten($spotifyDarkGrey, 3)
-
     &:hover
+      p
+        color: #ffffff
+
+    &.active
       background: lighten($spotifyDarkGrey, 3)
       p
         color: #ffffff
@@ -26,6 +27,7 @@
     .imgContainer
       height: 50px
       width: 50px
+      min-width: 50px
       overflow: hidden
       margin-right: 15px
       img
@@ -37,3 +39,6 @@
       margin: 0
       font-weight: 500
       color: $spotifyTextLightGrey
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis

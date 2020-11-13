@@ -1,4 +1,15 @@
-.playlistTracks
-  >span
+@import '../../../../styles/colors'
+
+.tracks
+  .track
     display: block
     color: white
+    padding: 10px 20px
+    cursor: pointer
+    border-bottom: 1px solid $spotifyLightGrey
+    outline: none
+
+    &:hover
+      background: lighten(#282828, 3)
+      p
+        color: #ffffff

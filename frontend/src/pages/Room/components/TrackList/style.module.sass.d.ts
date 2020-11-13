@@ -1,3 +1,3 @@
 export const container: string
-export const playlistTracks: string
+export const tracks: string
 export const track: string
