@@ -31,13 +31,19 @@ export default function TrackList() {
   }
 
   return (
-    <div className={styles.playlistTracks}>
+    <div className={styles.tracks}>
       {tracklist && (
         (tracklist.items as SpotifyPlaylistTrackObject[]).map(
-          (trackObject: SpotifyPlaylistTrackObject) => (
-            <div className={styles.track} key={trackObject.track.id}>
+          (trackObject: SpotifyPlaylistTrackObject, index) => (
+            <div
+              className={styles.track}
+              key={index}
+              onClick={() => handleAdd(trackObject.track)}
+              onKeyDown={() => {}}
+              role="button"
+              tabIndex={index}
+            >
               <Track key={trackObject.track.id} track={trackObject.track} />
-              <button type="button" onClick={() => handleAdd(trackObject.track)}>Add</button>
             </div>
           ),
         )

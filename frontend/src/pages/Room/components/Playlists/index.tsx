@@ -24,7 +24,7 @@ export default function Playlists() {
             key={playlist.id}
             onClick={() => dispatch(setActivePlaylist(playlist))}
             // for accessibility
-            onKeyDown={() => dispatch(setActivePlaylist(playlist))}
+            onKeyDown={() => {}}
             title={playlist.name}
             className={`${styles.playlist} ${activePlaylist?.id === playlist.id && styles.active}`}
             role="button"
