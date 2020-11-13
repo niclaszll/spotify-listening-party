@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { clearSpotifyState, selectSpotifyState } from '../../store/modules/spotify'
+import { clearSpotifyState, selectSpotifyState, setQueue } from '../../store/modules/spotify'
+import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
   socket, Response, sendMessage, joinSocketRoom,
 } from '../../util/websocket'
@@ -28,8 +29,12 @@ export default function Room() {
       dispatch(clearSpotifyState())
       history.push('/')
     })
-    socket.on('room', (data: Response<string>) => {
+    socket.on('chat', (data: Response<string>) => {
       setMessages((oldMessages) => [...oldMessages, data.message.payload])
+    })
+    socket.on('room-info', (data: Response<WebPlaybackTrack[]>) => {
+      console.log(data.message.payload)
+      dispatch(setQueue(data.message.payload))
     })
     return () => {
       socket.off('error-event')

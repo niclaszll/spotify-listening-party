@@ -11,7 +11,6 @@ import { ReactComponent as People } from '../../img/icons/people.svg'
 import * as styles from './styles.module.sass'
 
 export default function Lobby() {
-  const [response, setResponse] = useState<Response<string>>({ source: '', message: { payload: '' } })
   const [roomName, setRoomName] = useState<string>('')
   const [roomPublic, setRoomPublic] = useState<Boolean>(true)
 
@@ -22,7 +21,6 @@ export default function Lobby() {
   useEffect(() => {
     getAvailableRooms()
     socket.on('room', (data: Response<string>) => {
-      setResponse(data)
       history.push(`/room/${data.message.payload}`)
     })
     socket.on('available-rooms', (data: Response<Room[]>) => {

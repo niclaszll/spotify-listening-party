@@ -21,6 +21,11 @@ const RoomSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  queue: {
+    type: Array,
+    required: true,
+    default: [],
+  },
 })
 
 const Room = mongoose.model('Room', RoomSchema)
