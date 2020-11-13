@@ -87,7 +87,6 @@ export default function roomRouter(io) {
 
   const sendNewQueue = (socket, msg) => {
     const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-    // RoomModel.updateOne({id: room}, {queue: msg})
     RoomModel.updateOne({id: room}, {queue: msg}, function (err, res) {
       if (err) {
         console.log(err)

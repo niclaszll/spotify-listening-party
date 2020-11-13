@@ -4,12 +4,13 @@ import { useHistory, useParams } from 'react-router-dom'
 import { clearSpotifyState, selectSpotifyState, setQueue } from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
-  socket, Response, sendMessage, joinSocketRoom,
+  socket, Response, sendMessage, joinSocketRoom, sendQueue,
 } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
 import WebPlayer from './components/WebPlayer'
+import { ReactComponent as DeleteAll } from '../../img/icons/delete-white-18dp.svg'
 import * as styles from './styles.module.sass'
 
 export default function Room() {
@@ -69,7 +70,10 @@ export default function Room() {
       </div>
       <div className={styles.queueChatContainer}>
         <div>
-          <h2 className={styles.title}>Queue</h2>
+          <h2 className={styles.title}>
+            Queue
+            <button type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
+          </h2>
           <div>
             <QueueList />
           </div>

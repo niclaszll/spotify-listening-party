@@ -12,7 +12,7 @@ import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
 } from '../../../../util/types/spotify'
 import {
-  socket, Response, sendSkipTrack, sendTogglePlay,
+  socket, Response, sendSkipTrack, sendTogglePlay, sendQueue,
 } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 
@@ -60,10 +60,10 @@ export default function WebPlayer() {
       play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
         if (res.status === 204) {
           if (queue.length === 1) {
-            dispatch(setQueue([]))
+            sendQueue([])
           } else {
             const newQueue = queue.slice(1, queue.length)
-            dispatch(setQueue(newQueue))
+            sendQueue(newQueue)
           }
           setEndOfTrack(false)
           setIsPaused(false)
