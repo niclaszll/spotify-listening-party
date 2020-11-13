@@ -5,6 +5,8 @@ import { WebPlaybackTrack } from '../../../../util/types/spotify'
 import { Response, socket } from '../../../../util/websocket'
 import Track from '../Track'
 
+import * as styles from './styles.module.sass'
+
 export default function QueueList() {
   const dispatch = useDispatch()
   const { queue } = useSelector(selectSpotifyState)
@@ -19,6 +21,12 @@ export default function QueueList() {
   }, [])
 
   return (
-    <div>{queue.map((track, index) => <Track key={index} track={track} />)}</div>
+    <div>
+      {queue.map((track, index) => (
+        <div className={styles.track} key={index}>
+          <Track track={track} />
+        </div>
+      ))}
+    </div>
   )
 }
