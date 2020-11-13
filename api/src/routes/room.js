@@ -69,10 +69,17 @@ export default function roomRouter(io) {
     }
   }
 
+  const sendRoomInformation = async (socket, roomId) => {
+    const roomInfo = await RoomModel.findOne({id: roomId})
+    socket.emit('room-info', {
+      source: 'server',
+      message: {payload: roomInfo.queue},
+    })
+  }
+
   const distributeMessage = (socket, msg) => {
     const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-    console.log(room)
-    io.sockets.in(room).emit('room', {
+    io.sockets.in(room).emit('chat', {
       source: 'server',
       message: {payload: msg},
     })
@@ -80,6 +87,12 @@ export default function roomRouter(io) {
 
   const sendNewQueue = (socket, msg) => {
     const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+    // RoomModel.updateOne({id: room}, {queue: msg})
+    RoomModel.updateOne({id: room}, {queue: msg}, function (err, res) {
+      if (err) {
+        console.log(err)
+      }
+    })
     io.sockets.in(room).emit('new-queue', {
       source: 'server',
       message: {payload: msg},
@@ -110,6 +123,7 @@ export default function roomRouter(io) {
 
     socket.on('join', (data) => {
       joinRoom(socket, data.message.roomId)
+      sendRoomInformation(socket, data.message.roomId)
     })
 
     socket.on('new-message', (data) => {
