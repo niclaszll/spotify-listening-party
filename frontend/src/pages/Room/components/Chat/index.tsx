@@ -15,7 +15,13 @@ export default function Chat() {
     socket.on('chat', (data: Response<Message>) => {
       setMessages((oldMessages) => [...oldMessages, data.message.payload])
     })
+    const timer = setTimeout(() => {
+      setMessages((oldMessages) => [...oldMessages,
+        { user: 'SpotifyBot', msg: 'Hey, hope you have fun with our app! :)' },
+      ])
+    }, 5000)
     return () => {
+      clearTimeout(timer)
       socket.off('chat')
     }
   }, [])
