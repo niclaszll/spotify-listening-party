@@ -69,7 +69,6 @@ export default function Room() {
           </div>
         </div>
         <div>
-          <h2 className={styles.title}>Chat</h2>
           <div>
             <Chat />
           </div>

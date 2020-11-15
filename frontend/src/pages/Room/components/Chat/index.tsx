@@ -48,7 +48,13 @@ export default function Chat() {
       <div className={styles.chat}>
         {messages.map((message, index) => (
           <div key={index} className={`${message.user === user?.display_name ? styles.mine : styles.yours} ${styles.messages}`}>
-            <div className={`${styles.message} ${messages.length - 1 === index && styles.last}`}>{message.msg}</div>
+            <div className={`${styles.message} ${messages.length - 1 === index && styles.last}`}>
+              {message.user !== user?.display_name && (
+              <div className={styles.username}>{message.user}</div>
+              )}
+              {message.msg}
+
+            </div>
           </div>
         ))}
         <div ref={messagesEndRef} />

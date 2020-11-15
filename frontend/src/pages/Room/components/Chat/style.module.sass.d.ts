@@ -6,3 +6,4 @@ export const message: string
 export const yours: string
 export const mine: string
 export const last: string
+export const username: string
