@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import { Message } from '../../../../util/types/rooms'
@@ -19,6 +19,16 @@ export default function Chat() {
       socket.off('chat')
     }
   }, [])
+
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current !== null) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
+  useEffect(scrollToBottom, [messages])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = e
@@ -41,6 +51,7 @@ export default function Chat() {
             <div className={`${styles.message} ${messages.length - 1 === index && styles.last}`}>{message.msg}</div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <div className={styles.controls}>
         <input value={newMsg} onChange={handleChange} />
