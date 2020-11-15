@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { clearSpotifyState, selectSpotifyState, setQueue } from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
-  socket, Response, sendMessage, joinSocketRoom, sendQueue,
+  socket, Response, joinSocketRoom, sendQueue,
 } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
@@ -12,11 +12,9 @@ import TrackList from './components/TrackList'
 import WebPlayer from './components/WebPlayer'
 import { ReactComponent as DeleteAll } from '../../img/icons/delete-white-18dp.svg'
 import * as styles from './styles.module.sass'
+import Chat from './components/Chat'
 
 export default function Room() {
-  const [messages, setMessages] = useState<string[]>([])
-  const [newMsg, setNewMsg] = useState<string>()
-
   const dispatch = useDispatch()
   const { activePlaylist } = useSelector(selectSpotifyState)
 
@@ -30,29 +28,15 @@ export default function Room() {
       dispatch(clearSpotifyState())
       history.push('/')
     })
-    socket.on('chat', (data: Response<string>) => {
-      setMessages((oldMessages) => [...oldMessages, data.message.payload])
-    })
     socket.on('room-info', (data: Response<WebPlaybackTrack[]>) => {
       console.log(data.message.payload)
       dispatch(setQueue(data.message.payload))
     })
     return () => {
       socket.off('error-event')
-      socket.off('room')
+      socket.off('room-info')
     }
   }, [])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = e
-    setNewMsg(target.value)
-  }
-
-  const handleClick = () => {
-    if (newMsg) {
-      sendMessage(newMsg)
-    }
-  }
 
   return (
     <div className={styles.container}>
@@ -80,14 +64,8 @@ export default function Room() {
         </div>
         <div>
           <h2 className={styles.title}>Chat</h2>
-          <div className={styles.controls}>
-            <input value={newMsg} onChange={handleChange} />
-            <button type="button" onClick={handleClick}>Send</button>
-          </div>
           <div>
-            {messages.map((msg) => (
-              <p>{msg}</p>
-            ))}
+            <Chat />
           </div>
         </div>
       </div>
