@@ -41,12 +41,13 @@ export default function Chat() {
     setNewMsg(target.value)
   }
 
-  const handleClick = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLButtonElement | HTMLFormElement>) => {
     if (newMsg) {
       const msg_user = user !== null ? user.display_name : 'anonymous'
       sendMessage({ user: msg_user, msg: newMsg })
       setNewMsg('')
     }
+    e.preventDefault()
   }
 
   return (
@@ -59,15 +60,16 @@ export default function Chat() {
               <div className={styles.username}>{message.user}</div>
               )}
               {message.msg}
-
             </div>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
       <div className={styles.controls}>
-        <input value={newMsg} onChange={handleChange} />
-        <button type="button" onClick={handleClick}><Send /></button>
+        <form onSubmit={handleSubmit}>
+          <input value={newMsg} onChange={handleChange} />
+          <button type="submit" onClick={handleSubmit}><Send /></button>
+        </form>
       </div>
     </div>
   )
