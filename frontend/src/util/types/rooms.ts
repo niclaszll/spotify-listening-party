@@ -4,3 +4,8 @@ export type Room = {
   roomPublic: Boolean,
   active_listeners: number
 }
+
+export type Message = {
+  msg: string,
+  user: string
+}

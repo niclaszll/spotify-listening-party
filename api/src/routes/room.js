@@ -126,7 +126,7 @@ export default function roomRouter(io) {
     })
 
     socket.on('new-message', (data) => {
-      distributeMessage(socket, data.message.msg)
+      distributeMessage(socket, data.message)
     })
 
     socket.on('new-queue', (data) => {

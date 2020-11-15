@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { clearSpotifyState, selectSpotifyState, setQueue } from '../../store/modules/spotify'
+import {
+  clearSpotifyState, selectSpotifyState, setQueue, setUser,
+} from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
   socket, Response, joinSocketRoom, sendQueue,
@@ -13,16 +15,20 @@ import WebPlayer from './components/WebPlayer'
 import { ReactComponent as DeleteAll } from '../../img/icons/delete-white-18dp.svg'
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
+import { getCurrentUserInfo } from '../../util/spotify'
 
 export default function Room() {
   const dispatch = useDispatch()
-  const { activePlaylist } = useSelector(selectSpotifyState)
+  const { activePlaylist, token } = useSelector(selectSpotifyState)
 
   const params = useParams<any>()
   const history = useHistory<any>()
 
   useEffect(() => {
     joinSocketRoom(params.id)
+    getCurrentUserInfo(token).then((res) => {
+      dispatch(setUser(res))
+    })
 
     socket.on('error-event', () => {
       dispatch(clearSpotifyState())

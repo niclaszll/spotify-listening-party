@@ -12,7 +12,7 @@ export const spotifySlice = createSlice({
 })
 
 export const {
-  setUserToken, clearSpotifyState, setActivePlaylist, setQueue,
+  setUserToken, clearSpotifyState, setActivePlaylist, setQueue, setUser,
 } = spotifySlice.actions
 
 export const selectSpotifyState: (state: AppState) =>

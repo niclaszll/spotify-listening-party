@@ -1,5 +1,5 @@
 import socketIOClient from 'socket.io-client'
-import { Room } from './types/rooms'
+import { Message, Room } from './types/rooms'
 import { WebPlaybackTrack } from './types/spotify'
 
 const ENDPOINT = process.env.REACT_APP_API_URL || 'http://localhost:9000'
@@ -27,10 +27,10 @@ export function joinSocketRoom(roomId: string) {
   })
 }
 
-export function sendMessage(msg: string) {
+export function sendMessage(msg: Message) {
   socket.emit('new-message', {
     source: 'client',
-    message: { msg },
+    message: msg,
   })
 }
 
