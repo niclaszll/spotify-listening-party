@@ -1,12 +1,21 @@
 @import '../../../../../styles/colors'
 
 .container
-  width: 100px
+  width: 110px
+  display: flex
+  align-items: center
+  > svg
+    margin-right: 7px
+    height: 27px
+    width: 27px
+    fill: #B3B3B3
   .thumb
     opacity: 0
   .track
     filter: grayscale(100%)
   &:hover, &:focus, &:active
+    > svg
+      fill: #ffffff
     .thumb
       opacity: 1
     .track
