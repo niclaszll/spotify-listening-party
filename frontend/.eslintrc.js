@@ -29,7 +29,8 @@ module.exports = {
     'no-console': 'off',
     'no-unused-vars': 'off',
     'jsx-a11y/control-has-associated-label': 'off',
-    'react/no-array-index-key': 'off'
+    'react/no-array-index-key': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
   settings: {
     'import/resolver': {

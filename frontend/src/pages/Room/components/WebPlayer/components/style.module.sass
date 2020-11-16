@@ -1,0 +1,13 @@
+@import '../../../../../styles/colors'
+
+.container
+  width: 100px
+  .thumb
+    opacity: 0
+  .track
+    filter: grayscale(100%)
+  &:hover, &:focus, &:active
+    .thumb
+      opacity: 1
+    .track
+      filter: grayscale(0%)

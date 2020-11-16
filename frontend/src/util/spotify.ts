@@ -131,3 +131,14 @@ export async function getCurrentUserInfo(token: string | null) {
     method: 'GET',
   }).then((res) => res.json())
 }
+
+export async function setVolume(token: string | null, volume: number) {
+  if (token === null) return false
+  return fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volume}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    method: 'PUT',
+  })
+}

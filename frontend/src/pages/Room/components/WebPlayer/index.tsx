@@ -15,6 +15,7 @@ import {
   socket, Response, sendSkipTrack, sendTogglePlay, sendQueue,
 } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
+import VolumeControl from './components'
 
 export default function WebPlayer() {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
@@ -191,7 +192,7 @@ export default function WebPlayer() {
         <button type="button" onClick={handleSkipForwardClick}><SkipForward /></button>
       </div>
       <div className={styles.additionalControls}>
-        <span>Volume Control</span>
+        <VolumeControl />
       </div>
     </div>
   )
