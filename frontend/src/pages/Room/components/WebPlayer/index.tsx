@@ -148,6 +148,7 @@ export default function WebPlayer() {
         player.resume()
       }
     }
+    console.log(playbackState?.track_window.current_track.album)
   }, [isPaused])
 
   const togglePlay = () => {
@@ -173,15 +174,17 @@ export default function WebPlayer() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.songInfo}>
-        {/* <div>
-          <img src="" alt="Picture" />
-        </div> */}
-        <div>{playbackState?.track_window.current_track.name}</div>
-        <div>
-          {playbackState?.track_window.current_track.artists.map(
-            (artist) => artist.name,
-          ).join(', ')}
+      <div className={styles.song}>
+        <div className={styles.thumbnail}>
+          <img src={playbackState?.track_window.current_track.album.images[0].url} alt="Thumbnail" />
+        </div>
+        <div className={styles.songInfo}>
+          <div className={styles.name}>{playbackState?.track_window.current_track.name}</div>
+          <div className={styles.artists}>
+            {playbackState?.track_window.current_track.artists.map(
+              (artist) => artist.name,
+            ).join(', ')}
+          </div>
         </div>
       </div>
       <div className={styles.controls}>
