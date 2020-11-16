@@ -176,7 +176,7 @@ export default function WebPlayer() {
     <div className={styles.container}>
       <div className={styles.song}>
         <div className={styles.thumbnail}>
-          <img src={playbackState?.track_window.current_track.album.images[0].url} alt="Thumbnail" />
+          <img src={playbackState?.track_window.current_track.album.images[0].url} alt="" />
         </div>
         <div className={styles.songInfo}>
           <div className={styles.name}>{playbackState?.track_window.current_track.name}</div>
