@@ -17,12 +17,15 @@
       display: flex
       flex-direction: column
     .message
-      border-radius: 10px
+      border-radius: 4px
       padding: 8px 12px
       margin-top: 5px
       display: inline-block
       font-size: 12px
       font-weight: 500
+      max-width: 60%
+      line-break: normal
+      word-break: break-all
     .yours
       align-items: flex-start
     .yours .message
@@ -31,7 +34,7 @@
       color: #000000
       margin-left: 10px
       .username
-        color: blue
+        color: darken($spotifyGreen, 4)
         font-weight: bold
       &.last:before
         content: ""
