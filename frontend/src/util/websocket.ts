@@ -59,3 +59,10 @@ export function sendTogglePlay(msg: Boolean) {
     message: { msg },
   })
 }
+
+export function sendCurrentTrack(msg: {paused: Boolean, position: number, uri: string}) {
+  socket.emit('current-track', {
+    source: 'client',
+    message: { msg },
+  })
+}

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  clearSpotifyState, selectSpotifyState, setQueue, setUser,
+  clearSpotifyState, selectSpotifyState, setCurrentTrack, setQueue, setUser,
 } from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
@@ -16,6 +16,7 @@ import { ReactComponent as DeleteAll } from '../../img/icons/delete-white-18dp.s
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
 import { getCurrentUserInfo } from '../../util/spotify'
+import { RoomInfoResponse } from '../../util/types/rooms'
 
 export default function Room() {
   const dispatch = useDispatch()
@@ -34,9 +35,9 @@ export default function Room() {
       dispatch(clearSpotifyState())
       history.push('/')
     })
-    socket.on('room-info', (data: Response<WebPlaybackTrack[]>) => {
-      console.log(data.message.payload)
-      dispatch(setQueue(data.message.payload))
+    socket.on('room-info', (data: RoomInfoResponse) => {
+      dispatch(setQueue(data.message.payload.queue))
+      dispatch(setCurrentTrack(data.message.payload.currentTrack))
     })
     return () => {
       socket.off('error-event')

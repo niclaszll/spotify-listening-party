@@ -1,3 +1,4 @@
+import { CurrentTrackResponse } from '../../../util/types/rooms'
 import { SpotifyPlaylist, WebPlaybackTrack, SpotifyUser } from '../../../util/types/spotify'
 
 export type SpotifyState = {
@@ -5,6 +6,7 @@ export type SpotifyState = {
   activePlaylist: SpotifyPlaylist | null
   queue: WebPlaybackTrack[]
   user: SpotifyUser | null
+  currentTrack: CurrentTrackResponse | null
 }
 
 const initialState: SpotifyState = {
@@ -12,6 +14,7 @@ const initialState: SpotifyState = {
   activePlaylist: null,
   queue: [],
   user: null,
+  currentTrack: null,
 }
 
 export default initialState

@@ -1,4 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
+import { CurrentTrackResponse } from '../../../util/types/rooms'
 import { SpotifyPlaylist, SpotifyUser, WebPlaybackTrack } from '../../../util/types/spotify'
 import initialState, { SpotifyState } from './state'
 
@@ -17,5 +18,8 @@ export default {
   },
   setUser(state: SpotifyState, action: PayloadAction<SpotifyUser>) {
     return { ...state, user: action.payload }
+  },
+  setCurrentTrack(state: SpotifyState, action: PayloadAction<CurrentTrackResponse>) {
+    return { ...state, currentTrack: action.payload }
   },
 }

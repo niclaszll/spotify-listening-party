@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { current } from '@reduxjs/toolkit'
+import { off } from 'process'
 import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
@@ -9,10 +11,10 @@ import {
   loadScript, pausePlayback, play, skipPlayback,
 } from '../../../../util/spotify'
 import {
-  PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
+  PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
 } from '../../../../util/types/spotify'
 import {
-  socket, Response, sendSkipTrack, sendTogglePlay, sendQueue,
+  socket, Response, sendSkipTrack, sendTogglePlay, sendQueue, sendCurrentTrack,
 } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 
@@ -24,7 +26,7 @@ export default function WebPlayer() {
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
 
-  const { token, queue } = useSelector(selectSpotifyState)
+  const { token, queue, currentTrack } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   const initializePlayer = () => {
@@ -134,7 +136,20 @@ export default function WebPlayer() {
   }, [deviceId])
 
   useEffect(() => {
+    if (deviceId && currentTrack) {
+      const offset = new Date().getMilliseconds()
+      - new Date(currentTrack.timestamp).getMilliseconds()
+      console.log(currentTrack)
+      play(token, { deviceId, uris: [currentTrack.uri] })
+      if (currentTrack.paused) {
+        player!.pause()
+      }
+    }
+  }, [deviceId, currentTrack])
+
+  useEffect(() => {
     if (queue.length > 0 && playbackState === undefined) {
+      sendCurrentTrack({ paused: false, position: 0, uri: queue[0].uri })
       skipForward()
     }
   }, [queue])
@@ -150,8 +165,10 @@ export default function WebPlayer() {
   }, [isPaused])
 
   const togglePlay = () => {
-    if (player !== undefined) {
+    if (player !== undefined && playbackState !== undefined) {
+      const { uri } = playbackState.track_window.current_track
       sendTogglePlay(!isPaused)
+      sendCurrentTrack({ paused: !isPaused, position: playbackState.position, uri })
     }
   }
 
@@ -160,7 +177,9 @@ export default function WebPlayer() {
       return false
     }
     // send skip command to backend
+    const { uri } = queue[0]
     sendSkipTrack()
+    sendCurrentTrack({ paused: false, position: 0, uri })
     return true
   }
 

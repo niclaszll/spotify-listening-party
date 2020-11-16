@@ -26,6 +26,15 @@ const RoomSchema = new mongoose.Schema({
     required: true,
     default: [],
   },
+  creatorId: {
+    type: String,
+    required: true,
+  },
+  currentTrack: {
+    type: Object,
+    required: false,
+    default: {},
+  },
 })
 
 const Room = mongoose.model('Room', RoomSchema)

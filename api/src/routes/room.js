@@ -17,7 +17,8 @@ export default function roomRouter(io) {
     const {name, roomPublic, active_listeners} = message
     const roomId = `room${id()}`
     const roomName = name !== '' ? name : roomId
-    const newRoom = {id: roomId, name: roomName, roomPublic, active_listeners}
+    const creatorId = socket.id
+    const newRoom = {id: roomId, name: roomName, roomPublic, active_listeners, creatorId}
 
     const room = new RoomModel(newRoom)
 
@@ -73,7 +74,7 @@ export default function roomRouter(io) {
     const roomInfo = await RoomModel.findOne({id: roomId})
     socket.emit('room-info', {
       source: 'server',
-      message: {payload: roomInfo.queue},
+      message: {payload: {queue: roomInfo.queue, currentTrack: roomInfo.currentTrack}},
     })
   }
 
@@ -113,6 +114,21 @@ export default function roomRouter(io) {
     })
   }
 
+  const setCurrentTrack = (socket, msg) => {
+    const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+    const currentTrack = {
+      position: msg.duration_ms,
+      paused: msg.paused ? msg.paused : false,
+      uri: msg.uri,
+      timestamp: new Date(),
+    }
+    RoomModel.updateOne({id: room}, {currentTrack}, function (err, res) {
+      if (err) {
+        console.log(err)
+      }
+    })
+  }
+
   io.on('connection', (socket) => {
     console.log('New client connected')
 
@@ -139,6 +155,10 @@ export default function roomRouter(io) {
 
     socket.on('skip-forward', () => {
       sendSkipForward(socket)
+    })
+
+    socket.on('current-track', (data) => {
+      setCurrentTrack(socket, data.message.msg)
     })
 
     socket.on('get-available-rooms', () => {
