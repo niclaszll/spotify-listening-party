@@ -1,4 +1,4 @@
-import { WebPlaybackTrack } from "./spotify"
+import { WebPlaybackTrack } from './spotify'
 
 export type Room = {
   id?: string,
@@ -13,7 +13,7 @@ export type Message = {
 }
 
 export type CurrentTrackResponse = {
-  duration_ms: number,
+  position_ms: number,
   paused: Boolean,
   uri: string,
   timestamp: Date,

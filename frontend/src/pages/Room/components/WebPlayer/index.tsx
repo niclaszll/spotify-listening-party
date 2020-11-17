@@ -8,7 +8,7 @@ import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.s
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
 import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
 import {
-  loadScript, pausePlayback, play, skipPlayback,
+  loadScript, pausePlayback, play, seekPosition, skipPlayback,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
@@ -137,13 +137,15 @@ export default function WebPlayer() {
 
   useEffect(() => {
     if (deviceId && currentTrack) {
-      const offset = new Date().getMilliseconds()
+      const position = new Date().getMilliseconds() + currentTrack.position_ms
       - new Date(currentTrack.timestamp).getMilliseconds()
       console.log(currentTrack)
-      play(token, { deviceId, uris: [currentTrack.uri] })
-      if (currentTrack.paused) {
-        player!.pause()
-      }
+      play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
+        if (currentTrack.paused) {
+          player!.pause()
+        }
+        seekPosition(token, position, deviceId)
+      })
     }
   }, [deviceId, currentTrack])
 
