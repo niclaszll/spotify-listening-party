@@ -4,6 +4,7 @@ import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
+import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outline.svg'
 import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
 import {
   loadScript, pausePlayback, play, skipPlayback,
@@ -170,6 +171,10 @@ export default function WebPlayer() {
     }
   }
 
+  const likeSong = () => {
+
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.songInfo}>
@@ -183,6 +188,9 @@ export default function WebPlayer() {
           ).join(', ')}
         </div>
       </div>
+      <h4>
+        <button className={styles.likeSong} type="button" onClick={likeSong}><Heart /></button>
+      </h4>
       <div className={styles.controls}>
         <button type="button" onClick={skipBack}><SkipBackward /></button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>
