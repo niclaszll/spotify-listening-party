@@ -5,7 +5,7 @@
   padding: 50px 0 72px 0
   height: 100vh
 
-  .playlistContainer, .tracklistContainer, .queueChatContainer
+  .playlistContainer, .tracklistContainer, .queueContainer
     .title
       font-size: 16px
       margin: 0
@@ -17,7 +17,7 @@
       width: 100%
       height: 60px
 
-  .playlistContainer, .tracklistContainer
+  .playlistContainer, .tracklistContainer, .queueContainer
     position: relative
     > div
       height: calc(100vh - 72px - 50px - 70px)
@@ -32,17 +32,41 @@
   .tracklistContainer
     width: 40%
 
-  .queueChatContainer
+  .queueContainer
     width: 40%
-    > div
-      position: relative
-      height: 50%
-      overflow: hidden
-      > div
-        height: 100%
-        padding: 0 30px
-        overflow-y: scroll
-      &:first-child > div
-        height: calc(100% - 70px)
-        margin-top: 60px
-        margin-bottom: 10px
+
+  .chatContainer
+    position: fixed
+    bottom: 170px
+    right: 20px
+    width: 350px
+    height: 400px
+    visibility: hidden
+    opacity: 0
+    box-shadow: 0px 12px 17px rgba(0, 0, 0, 0.14), 0px 5px 22px rgba(0, 0, 0, 0.12), 0px 7px 8px rgba(0, 0, 0, 0.2)
+    transition: transform 0.5s
+    transform: scale(0)
+    transform-origin: bottom right
+    &.visible
+      visibility: visible
+      opacity: 1
+      transform: scale(1)
+
+  .toggleChat
+    position: fixed
+    bottom: 100px
+    right: 20px
+    height: 55px
+    width: 55px
+    border-radius: 50px
+    outline: none
+    border: none
+    display: flex
+    justify-content: center
+    align-items: center
+    background: $spotifyGreen
+    > svg
+      fill: #ffffff
+    &:hover
+      > svg
+        transform: scale(1.05)

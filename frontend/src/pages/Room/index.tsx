@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -12,7 +12,8 @@ import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
 import WebPlayer from './components/WebPlayer'
-import { ReactComponent as DeleteAll } from '../../img/icons/delete-white-18dp.svg'
+import { ReactComponent as DeleteAll } from '../../img/icons/delete.svg'
+import { ReactComponent as ChatIcon } from '../../img/icons/chat.svg'
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
 import { getCurrentUserInfo } from '../../util/spotify'
@@ -20,6 +21,7 @@ import { getCurrentUserInfo } from '../../util/spotify'
 export default function Room() {
   const dispatch = useDispatch()
   const { activePlaylist, token } = useSelector(selectSpotifyState)
+  const [chatVisible, setChatVisible] = useState<Boolean>(false)
 
   const params = useParams<any>()
   const history = useHistory<any>()
@@ -58,22 +60,21 @@ export default function Room() {
           {activePlaylist && <TrackList />}
         </div>
       </div>
-      <div className={styles.queueChatContainer}>
+      <div className={styles.queueContainer}>
+        <h2 className={styles.title}>
+          Queue
+          <button type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
+        </h2>
         <div>
-          <h2 className={styles.title}>
-            Queue
-            <button type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
-          </h2>
-          <div>
-            <QueueList />
-          </div>
-        </div>
-        <div>
-          <div>
-            <Chat />
-          </div>
+          <QueueList />
         </div>
       </div>
+      <div className={`${styles.chatContainer} ${chatVisible ? styles.visible : ''}`}>
+        <Chat />
+      </div>
+      <button type="button" className={styles.toggleChat} onClick={() => setChatVisible((prevState) => !prevState)}>
+        <ChatIcon />
+      </button>
       <WebPlayer />
     </div>
   )
