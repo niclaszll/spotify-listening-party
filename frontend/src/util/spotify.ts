@@ -131,3 +131,15 @@ export async function getCurrentUserInfo(token: string | null) {
     method: 'GET',
   }).then((res) => res.json())
 }
+
+export async function addToLibrary(token: string | null, id: string | undefined) {
+  if (token === null) return false
+  return fetch('https://api.spotify.com/v1/me/tracks', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: id,
+    method: 'PUT',
+  })
+}

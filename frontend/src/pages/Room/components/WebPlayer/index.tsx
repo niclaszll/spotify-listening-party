@@ -5,9 +5,10 @@ import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
 import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outline.svg'
+import { ReactComponent as FilledHeart } from '../../../../img/icons/heart-shape-filled.svg'
 import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
 import {
-  loadScript, pausePlayback, play, skipPlayback,
+  loadScript, pausePlayback, play, skipPlayback, addToLibrary,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
@@ -24,6 +25,7 @@ export default function WebPlayer() {
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
+  const [isLiked, setIsLiked] = useState<Boolean>(true)
 
   const { token, queue } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
@@ -172,7 +174,8 @@ export default function WebPlayer() {
   }
 
   const likeSong = () => {
-
+    addToLibrary(token, playbackState?.track_window.current_track.id)
+    console.log(playbackState?.track_window.current_track.id)
   }
 
   return (
@@ -189,7 +192,9 @@ export default function WebPlayer() {
         </div>
       </div>
       <h4>
-        <button className={styles.likeSong} type="button" onClick={likeSong}><Heart /></button>
+        <button className={styles.likeSong} type="button" onClick={likeSong}>
+          { isLiked ? <FilledHeart /> : <Heart /> }
+        </button>
       </h4>
       <div className={styles.controls}>
         <button type="button" onClick={skipBack}><SkipBackward /></button>
