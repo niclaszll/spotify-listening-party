@@ -134,12 +134,14 @@ export async function getCurrentUserInfo(token: string | null) {
 
 export async function addToLibrary(token: string | null, id: string | undefined) {
   if (token === null) return false
-  return fetch('https://api.spotify.com/v1/me/tracks', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: id,
-    method: 'PUT',
-  })
+  if (id !== undefined) {
+    return fetch('https://api.spotify.com/v1/me/tracks', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.parse(`{ids:[{${id}}]}`),
+      method: 'PUT',
+    })
+  } return null
 }

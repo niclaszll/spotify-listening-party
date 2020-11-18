@@ -174,8 +174,8 @@ export default function WebPlayer() {
   }
 
   const likeSong = () => {
-    addToLibrary(token, playbackState?.track_window.current_track.id)
     console.log(playbackState?.track_window.current_track.id)
+    addToLibrary(token, playbackState?.track_window.current_track.id)
   }
 
   return (
@@ -193,7 +193,7 @@ export default function WebPlayer() {
       </div>
       <h4>
         <button className={styles.likeSong} type="button" onClick={likeSong}>
-          { isLiked ? <FilledHeart /> : <Heart /> }
+          { isLiked ? <Heart /> : <FilledHeart /> }
         </button>
       </h4>
       <div className={styles.controls}>
