@@ -16,6 +16,7 @@ const scopes = [
   'user-modify-playback-state',
   'playlist-read-private',
   'playlist-read-collaborative',
+  'user-library-modify',
 ]
 
 export default function Login() {

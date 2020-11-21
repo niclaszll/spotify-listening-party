@@ -1,4 +1,4 @@
-import { SpotifyPlayOptions } from './types/spotify'
+import { CurrentSongId, SpotifyPlayOptions } from './types/spotify'
 
 interface ScriptAttributes {
   async?: boolean;
@@ -132,16 +132,16 @@ export async function getCurrentUserInfo(token: string | null) {
   }).then((res) => res.json())
 }
 
-export async function addToLibrary(token: string | null, id: string | undefined) {
+export async function addToLibrary(token: string | null, ids: Array<String>) {
   if (token === null) return false
-  if (id !== undefined) {
-    return fetch('https://api.spotify.com/v1/me/tracks', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.parse(`{ids:[{${id}}]}`),
-      method: 'PUT',
-    })
-  } return null
+  const body = JSON.stringify({ ids })
+  console.log(body)
+  return fetch('https://api.spotify.com/v1/me/tracks', {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body,
+  })
 }

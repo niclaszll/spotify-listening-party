@@ -38,6 +38,10 @@ export interface SpotifyPlayOptions {
   uris?: string[];
 }
 
+export interface CurrentSongId {
+  songId?: string[];
+}
+
 export interface SpotifyPlayerStatus {
   actions: {
     disallows: {
