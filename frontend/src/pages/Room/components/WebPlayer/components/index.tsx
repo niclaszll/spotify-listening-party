@@ -16,7 +16,6 @@ export default function VolumeControl() {
   const { token, queue } = useSelector(selectSpotifyState)
 
   const setPlayerVolume = (volume: number) => {
-    console.log('Set')
     setVolume(token, Math.round(volume))
   }
 
@@ -45,6 +44,11 @@ export default function VolumeControl() {
         onFinalChange={(vals) => setPlayerVolume(vals[0])}
         renderTrack={({ props, children }) => (
           <div
+            onMouseDown={props.onMouseDown}
+            onTouchStart={props.onTouchStart}
+            role="slider"
+            aria-valuenow={values[0]}
+            tabIndex={0}
             style={{
               ...props.style,
               height: '4px',
