@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getTrackBackground, Range } from 'react-range'
-import { NONAME } from 'dns'
-import { selectSpotifyState } from '../../../../../store/modules/spotify'
+import { selectSpotifyState } from '../../../../../../store/modules/spotify'
 import * as styles from './style.module.sass'
-import { setVolume } from '../../../../../util/spotify'
-import useDebouncedEffect from '../../../../../util/useDebouncedEffect'
+import { setVolume } from '../../../../../../util/spotify'
+import useDebouncedEffect from '../../../../../../util/useDebouncedEffect'
 
-import { ReactComponent as VolumeOff } from '../../../../../img/icons/volume_off.svg'
-import { ReactComponent as VolumeDown } from '../../../../../img/icons/volume_down.svg'
-import { ReactComponent as VolumeUp } from '../../../../../img/icons/volume_up.svg'
+import { ReactComponent as VolumeOff } from '../../../../../../img/icons/volume_off.svg'
+import { ReactComponent as VolumeDown } from '../../../../../../img/icons/volume_down.svg'
+import { ReactComponent as VolumeUp } from '../../../../../../img/icons/volume_up.svg'
 
 export default function VolumeControl() {
   const [values, setValues] = useState<number[]>([50])

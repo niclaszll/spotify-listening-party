@@ -15,7 +15,7 @@ import {
   socket, Response, sendSkipTrack, sendTogglePlay, sendQueue,
 } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
-import VolumeControl from './components'
+import VolumeControl from './components/VolumeControl'
 
 export default function WebPlayer() {
   const [isInitializing, setIsInitializing] = useState<Boolean>(false)
