@@ -4,8 +4,9 @@ import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
-import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
+import { selectSpotifyState, setPlaybackInfo, setQueue } from '../../../../store/modules/spotify'
 import {
+  getPlaybackInfo,
   loadScript, pausePlayback, play, skipPlayback,
 } from '../../../../util/spotify'
 import {
@@ -18,20 +19,17 @@ import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
 
 export default function WebPlayer() {
-  const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
   const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
 
-  const { token, queue } = useSelector(selectSpotifyState)
+  const { token, queue, playbackInfo } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   const initializePlayer = () => {
     if (token === null) return
-
-    setIsInitializing(true)
 
     // @ts-ignore
     setPlayer(new window.Spotify.Player({
@@ -84,6 +82,11 @@ export default function WebPlayer() {
       // Playback status updates
       player.addListener('player_state_changed', (state) => {
         if (state) {
+          getPlaybackInfo(token).then(
+            (res) => (
+              dispatch(setPlaybackInfo(res))
+            ),
+          )
           setPlaybackState(state)
           if (state.position === 0 && state.paused === true) {
             setEndOfTrack(true)
@@ -179,7 +182,14 @@ export default function WebPlayer() {
           <img src={playbackState?.track_window.current_track.album.images[0].url} alt="" />
         </div>
         <div className={styles.songInfo}>
-          <div className={styles.name}>{playbackState?.track_window.current_track.name}</div>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={playbackInfo?.item.album.external_urls.spotify}
+            className={styles.name}
+          >
+            {playbackState?.track_window.current_track.name}
+          </a>
           <div className={styles.artists}>
             {playbackState?.track_window.current_track.artists.map(
               (artist) => artist.name,
