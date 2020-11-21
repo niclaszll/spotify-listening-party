@@ -8,7 +8,7 @@ import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outli
 import { ReactComponent as FilledHeart } from '../../../../img/icons/heart-shape-filled.svg'
 import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
 import {
-  loadScript, pausePlayback, play, skipPlayback, addToLibrary,
+  loadScript, pausePlayback, play, skipPlayback, addToLibrary, isInLibrary, removeFromLibrary,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
@@ -25,7 +25,7 @@ export default function WebPlayer() {
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
-  const [isLiked, setIsLiked] = useState<Boolean>(true)
+  const [isLiked, setIsLiked] = useState<Boolean>()
 
   const { token, queue } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
@@ -164,6 +164,8 @@ export default function WebPlayer() {
     }
     // send skip command to backend
     sendSkipTrack()
+    isInLibrary(token, playbackState?.track_window.current_track.id)
+      .then((res) => { setIsLiked((res)[0]) })
     return true
   }
 
@@ -178,8 +180,14 @@ export default function WebPlayer() {
       return false
     }
     const ids: string[] = [playbackState?.track_window.current_track.id]
-    console.log(ids)
+    if (isLiked === true) {
+      removeFromLibrary(token, ids)
+      setIsLiked(false)
+      return true
+    }
     addToLibrary(token, ids)
+    setIsLiked(true)
+    console.log(isLiked)
     return true
   }
 
@@ -198,7 +206,7 @@ export default function WebPlayer() {
       </div>
       <h4>
         <button className={styles.likeSong} type="button" onClick={likeSong}>
-          <Heart />
+          { isLiked ? <FilledHeart /> : <Heart /> }
         </button>
       </h4>
       <div className={styles.controls}>
