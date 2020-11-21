@@ -6,3 +6,4 @@ export const chatContainer: string
 export const toggleChat: string
 export const visible: string
 export const title: string
+export const clearQueue: string

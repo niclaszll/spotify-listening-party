@@ -73,10 +73,12 @@ export default function Room() {
         </div>
       </div>
       <div className={styles.queueContainer}>
-        <h2 className={styles.title}>
-          Queue
-          <button type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
-        </h2>
+        <div className={styles.title}>
+          <h2>
+            Queue
+          </h2>
+          <button className={styles.clearQueue} type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
+        </div>
         <div>
           <QueueList />
         </div>
