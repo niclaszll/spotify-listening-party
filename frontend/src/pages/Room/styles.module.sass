@@ -20,7 +20,8 @@
   .playlistContainer, .tracklistContainer, .queueContainer
     position: relative
     > div
-      height: calc(100vh - 72px - 50px - 70px)
+      // 100vh - bottom bar - title - navbar
+      height: calc(100vh - 74px - 60px - 50px)
       overflow-y: scroll
       margin-top: 60px
       padding: 0 30px
@@ -54,14 +55,12 @@
     right: 20px
     width: 350px
     height: 400px
-    visibility: hidden
     opacity: 0
     box-shadow: 0px 12px 17px rgba(0, 0, 0, 0.14), 0px 5px 22px rgba(0, 0, 0, 0.12), 0px 7px 8px rgba(0, 0, 0, 0.2)
-    transition: transform 0.5s
+    transition: opacity 0.5s, transform 0.5s
     transform: scale(0)
     transform-origin: bottom right
     &.visible
-      visibility: visible
       opacity: 1
       transform: scale(1)
 
