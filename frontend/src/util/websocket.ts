@@ -27,6 +27,12 @@ export function joinSocketRoom(roomId: string) {
   })
 }
 
+export function leaveSocketRoom() {
+  socket.emit('leave', {
+    source: 'client',
+  })
+}
+
 export function sendMessage(msg: Message) {
   socket.emit('new-message', {
     source: 'client',

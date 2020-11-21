@@ -5,11 +5,35 @@ import RoomModel from '../models/room.js'
 export default function roomRouter(io) {
   const router = express.Router()
 
-  // TODO: handle DB update and inform other clients
+  const updateAvailableRooms = async (socket, distributeAll) => {
+    const rooms = await RoomModel.find({})
+    if (distributeAll) {
+      io.sockets.emit('available-rooms', {
+        source: 'server',
+        message: {payload: rooms},
+      })
+    } else {
+      socket.emit('available-rooms', {
+        source: 'server',
+        message: {payload: rooms},
+      })
+    }
+  }
+
   const leaveActiveRoom = (socket) => {
-    const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-    if (room) {
-      socket.leave(room)
+    const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+    if (roomId) {
+      socket.leave(roomId)
+      RoomModel.findOne({id: roomId})
+        .then((room) =>
+          RoomModel.updateOne({id: roomId}, {active_listeners: room.active_listeners - 1}, (err) => {
+            if (err) {
+              console.log(err)
+            }
+          })
+        )
+        .then(() => updateAvailableRooms(socket, true))
+        .catch((err) => console.log(err))
     }
   }
 
@@ -34,23 +58,7 @@ export default function roomRouter(io) {
     }
   }
 
-  const updateAvailableRooms = async (socket, distributeAll) => {
-    const rooms = await RoomModel.find({})
-    if (distributeAll) {
-      io.sockets.emit('available-rooms', {
-        source: 'server',
-        message: {payload: rooms},
-      })
-    } else {
-      socket.emit('available-rooms', {
-        source: 'server',
-        message: {payload: rooms},
-      })
-    }
-  }
-
   const joinRoom = async (socket, roomId) => {
-    leaveActiveRoom(socket)
     socket.join(roomId)
 
     const room = await RoomModel.findOne({id: roomId})
@@ -123,6 +131,10 @@ export default function roomRouter(io) {
     socket.on('join', (data) => {
       joinRoom(socket, data.message.roomId)
       sendRoomInformation(socket, data.message.roomId)
+    })
+
+    socket.on('leave', () => {
+      leaveActiveRoom(socket)
     })
 
     socket.on('new-message', (data) => {

@@ -6,7 +6,7 @@ import {
 } from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
-  socket, Response, joinSocketRoom, sendQueue,
+  socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom,
 } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
@@ -28,6 +28,13 @@ export default function Room() {
 
   useEffect(() => {
     joinSocketRoom(params.id)
+
+    // leave room if user closes browser/tab
+    window.addEventListener('beforeunload', () => {
+      leaveSocketRoom()
+      return undefined
+    })
+
     getCurrentUserInfo(token).then((res) => {
       dispatch(setUser(res))
     })
@@ -41,6 +48,11 @@ export default function Room() {
       dispatch(setQueue(data.message.payload))
     })
     return () => {
+      window.removeEventListener('beforeunload', () => {
+        leaveSocketRoom()
+        return undefined
+      })
+      leaveSocketRoom()
       socket.off('error-event')
       socket.off('room-info')
     }
