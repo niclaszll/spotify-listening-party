@@ -4,18 +4,12 @@ import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
-<<<<<<< HEAD
 import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outline.svg'
 import { ReactComponent as FilledHeart } from '../../../../img/icons/heart-shape-filled.svg'
-import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
-import {
-  loadScript, pausePlayback, play, skipPlayback, addToLibrary, isInLibrary, removeFromLibrary,
-=======
 import { selectSpotifyState, setPlaybackInfo, setQueue } from '../../../../store/modules/spotify'
 import {
   getPlaybackInfo,
-  loadScript, pausePlayback, play, skipPlayback,
->>>>>>> origin/master
+  loadScript, pausePlayback, play, skipPlayback, addToLibrary, isInLibrary, removeFromLibrary,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
