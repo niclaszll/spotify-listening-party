@@ -111,7 +111,7 @@ export function sendSkipForward(io, socket) {
 export function setCurrentTrack(socket, msg) {
   const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   const currentTrack = {
-    position: msg.duration_ms,
+    position_ms: msg.duration_ms || 0,
     paused: msg.paused ? msg.paused : false,
     uri: msg.uri,
     timestamp: new Date(),
