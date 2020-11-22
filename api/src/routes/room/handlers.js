@@ -32,7 +32,8 @@ export function createNewRoom(socket, message) {
   const {name, roomPublic, active_listeners} = message
   const roomId = `room${id()}`
   const roomName = name !== '' ? name : roomId
-  const newRoom = {id: roomId, name: roomName, roomPublic, active_listeners}
+  const creatorId = socket.id
+  const newRoom = {id: roomId, name: roomName, roomPublic, active_listeners, creatorId}
 
   createRoom(newRoom)
     .then(
@@ -69,7 +70,7 @@ export function sendRoomInformation(socket, roomId) {
   findRoomById(roomId).then((room) => {
     socket.emit('room-info', {
       source: 'server',
-      message: {payload: room.queue},
+      message: {payload: {queue: room.queue, currentTrack: room.currentTrack}},
     })
   })
 }
@@ -105,4 +106,15 @@ export function sendSkipForward(io, socket) {
   io.sockets.in(room).emit('skip-forward', {
     source: 'server',
   })
+}
+
+export function setCurrentTrack(socket, msg) {
+  const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+  const currentTrack = {
+    position: msg.duration_ms,
+    paused: msg.paused ? msg.paused : false,
+    uri: msg.uri,
+    timestamp: new Date(),
+  }
+  updateRoom(room, {currentTrack})
 }
