@@ -205,7 +205,7 @@ export default function WebPlayer() {
         <button type="button" onClick={handleSkipForwardClick}><SkipForward /></button>
       </div>
       <div className={styles.additionalControls}>
-        <VolumeControl player={player}/>
+        <VolumeControl player={player} />
       </div>
     </div>
   )
