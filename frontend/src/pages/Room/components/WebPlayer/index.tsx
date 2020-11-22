@@ -187,7 +187,6 @@ export default function WebPlayer() {
     }
     addToLibrary(token, ids)
     setIsLiked(true)
-    console.log(isLiked)
     return true
   }
 
