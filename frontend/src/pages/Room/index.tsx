@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -6,13 +6,14 @@ import {
 } from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
 import {
-  socket, Response, joinSocketRoom, sendQueue,
+  socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom,
 } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
 import WebPlayer from './components/WebPlayer'
-import { ReactComponent as DeleteAll } from '../../img/icons/delete-white-18dp.svg'
+import { ReactComponent as DeleteAll } from '../../img/icons/delete.svg'
+import { ReactComponent as ChatIcon } from '../../img/icons/chat.svg'
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
 import { getCurrentUserInfo } from '../../util/spotify'
@@ -20,12 +21,20 @@ import { getCurrentUserInfo } from '../../util/spotify'
 export default function Room() {
   const dispatch = useDispatch()
   const { activePlaylist, token } = useSelector(selectSpotifyState)
+  const [chatVisible, setChatVisible] = useState<Boolean>(false)
 
   const params = useParams<any>()
   const history = useHistory<any>()
 
   useEffect(() => {
     joinSocketRoom(params.id)
+
+    // leave room if user closes browser/tab
+    window.addEventListener('beforeunload', () => {
+      leaveSocketRoom()
+      return undefined
+    })
+
     getCurrentUserInfo(token).then((res) => {
       dispatch(setUser(res))
     })
@@ -39,6 +48,11 @@ export default function Room() {
       dispatch(setQueue(data.message.payload))
     })
     return () => {
+      window.removeEventListener('beforeunload', () => {
+        leaveSocketRoom()
+        return undefined
+      })
+      leaveSocketRoom()
       socket.off('error-event')
       socket.off('room-info')
     }
@@ -58,22 +72,23 @@ export default function Room() {
           {activePlaylist && <TrackList />}
         </div>
       </div>
-      <div className={styles.queueChatContainer}>
-        <div>
-          <h2 className={styles.title}>
+      <div className={styles.queueContainer}>
+        <div className={styles.title}>
+          <h2>
             Queue
-            <button type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
           </h2>
-          <div>
-            <QueueList />
-          </div>
+          <button className={styles.clearQueue} type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
         </div>
         <div>
-          <div>
-            <Chat />
-          </div>
+          <QueueList />
         </div>
       </div>
+      <div className={`${styles.chatContainer} ${chatVisible ? styles.visible : ''}`}>
+        <Chat />
+      </div>
+      <button type="button" className={styles.toggleChat} onClick={() => setChatVisible((prevState) => !prevState)}>
+        <ChatIcon />
+      </button>
       <WebPlayer />
     </div>
   )

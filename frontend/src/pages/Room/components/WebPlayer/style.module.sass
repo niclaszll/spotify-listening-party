@@ -16,7 +16,7 @@
     align-items: center
     justify-content: center
     margin: 15px 0
-    width: 50%
+    width: 60%
     #playPause
       position: relative
       padding:
@@ -54,16 +54,39 @@
         > svg
           fill: #ffffff
 
-  .songInfo
+  .song
     margin-left: 25px
     width: 15%
-    >div
-      &:first-child
-        font-weight: 500
-      &:nth-child(2)
-        font-size: 13px
-        
-  .likeSong
+    display: flex
+    align-items: center
+    .thumbnail
+      height: 40px
+      width: 40px
+      min-width: 40px
+      overflow: hidden
+      margin-right: 12px
+      img
+        max-width: 100%
+        height: auto
+    .songInfo
+      width: calc(100% - 40px - 12px)
+    .name, .artists
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+      max-width: 100%
+    .name
+      font-weight: 500
+      font-size: 14px
+      color: #ffffff
+      &:hover
+        text-decoration: underline
+    .artists
+      margin-top: 3px
+      font-size: 12px
+      color: #8E8E8E
+
+.likeSong
     position: relative
     background: transparent
     border: none
@@ -88,7 +111,7 @@
       border: 1px solid hsla(0,0%,100%,.6)
 
   .additionalControls
-    width: 25%
+    width: 20%
     margin-right: 25px
     display: flex
     justify-content: flex-end

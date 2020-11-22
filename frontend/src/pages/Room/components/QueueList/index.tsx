@@ -22,11 +22,13 @@ export default function QueueList() {
 
   return (
     <div>
-      {queue.map((track, index) => (
-        <div className={styles.track} key={index}>
-          <Track track={track} />
-        </div>
-      ))}
+      {queue.length > 0 ? (
+        queue.map((track, index) => (
+          <div className={styles.track} key={index}>
+            <Track track={track} />
+          </div>
+        ))
+      ) : <span className={styles.emptyQueue}>Queue is currently empty.</span>}
     </div>
   )
 }
