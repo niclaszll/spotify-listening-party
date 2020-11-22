@@ -7,7 +7,7 @@ import http from 'http'
 import dotenv from 'dotenv'
 import debug from 'debug'
 import mongoose from 'mongoose'
-import roomRouter from './routes/room.js'
+import roomRouter from './routes/room/room.js'
 import {normalizePort} from './util/common.js'
 
 /**
