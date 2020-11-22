@@ -142,3 +142,14 @@ export function seekPosition(token: string | null, position: number, deviceId: s
     method: 'PUT',
   })
 }
+export async function getPlaybackInfo(token: string | null) {
+  if (token === null) return false
+  return fetch('https://api.spotify.com/v1/me/player', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  }).then((res) => res.json())
+}

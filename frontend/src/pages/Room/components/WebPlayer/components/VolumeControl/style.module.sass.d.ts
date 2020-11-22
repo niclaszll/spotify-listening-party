@@ -1,3 +1,3 @@
 export const container: string
 export const track: string
-export const emptyQueue: string
+export const thumb: string

@@ -6,9 +6,10 @@ import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
-import { selectSpotifyState, setQueue } from '../../../../store/modules/spotify'
+import { selectSpotifyState, setPlaybackInfo, setQueue } from '../../../../store/modules/spotify'
 import {
-  loadScript, pausePlayback, play, seekPosition, skipPlayback,
+  getPlaybackInfo,
+  loadScript, pausePlayback, play, skipPlayback, seekPosition
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
@@ -17,22 +18,20 @@ import {
   socket, Response, sendSkipTrack, sendTogglePlay, sendQueue, sendCurrentTrack,
 } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
+import VolumeControl from './components/VolumeControl'
 
 export default function WebPlayer() {
-  const [isInitializing, setIsInitializing] = useState<Boolean>(false)
   const [deviceId, setDeviceId] = useState<string>('')
   const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
 
-  const { token, queue, currentTrack } = useSelector(selectSpotifyState)
+  const { token, queue, playbackInfo, currentTrack } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   const initializePlayer = () => {
     if (token === null) return
-
-    setIsInitializing(true)
 
     // @ts-ignore
     setPlayer(new window.Spotify.Player({
@@ -85,6 +84,11 @@ export default function WebPlayer() {
       // Playback status updates
       player.addListener('player_state_changed', (state) => {
         if (state) {
+          getPlaybackInfo(token).then(
+            (res) => (
+              dispatch(setPlaybackInfo(res))
+            ),
+          )
           setPlaybackState(state)
           if (state.position === 0 && state.paused === true) {
             setEndOfTrack(true)
@@ -164,6 +168,7 @@ export default function WebPlayer() {
         player.resume()
       }
     }
+    console.log(playbackState?.track_window.current_track.album)
   }, [isPaused])
 
   const togglePlay = () => {
@@ -193,15 +198,24 @@ export default function WebPlayer() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.songInfo}>
-        {/* <div>
-          <img src="" alt="Picture" />
-        </div> */}
-        <div>{playbackState?.track_window.current_track.name}</div>
-        <div>
-          {playbackState?.track_window.current_track.artists.map(
-            (artist) => artist.name,
-          ).join(', ')}
+      <div className={styles.song}>
+        <div className={styles.thumbnail}>
+          <img src={playbackState?.track_window.current_track.album.images[0].url} alt="" />
+        </div>
+        <div className={styles.songInfo}>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={playbackInfo?.item.album.external_urls.spotify}
+            className={styles.name}
+          >
+            {playbackState?.track_window.current_track.name}
+          </a>
+          <div className={styles.artists}>
+            {playbackState?.track_window.current_track.artists.map(
+              (artist) => artist.name,
+            ).join(', ')}
+          </div>
         </div>
       </div>
       <div className={styles.controls}>
@@ -212,7 +226,7 @@ export default function WebPlayer() {
         <button type="button" onClick={handleSkipForwardClick}><SkipForward /></button>
       </div>
       <div className={styles.additionalControls}>
-        <span>Volume Control</span>
+        <VolumeControl player={player} />
       </div>
     </div>
   )

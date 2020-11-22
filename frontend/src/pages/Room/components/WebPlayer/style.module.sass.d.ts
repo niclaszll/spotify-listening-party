@@ -2,4 +2,8 @@ export const container: string
 export const controls: string
 export const playPause: string
 export const songInfo: string
+export const song: string
 export const additionalControls: string
+export const thumbnail: string
+export const name: string
+export const artists: string
