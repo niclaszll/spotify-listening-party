@@ -9,7 +9,7 @@ import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previ
 import { selectSpotifyState, setPlaybackInfo, setQueue } from '../../../../store/modules/spotify'
 import {
   getPlaybackInfo,
-  loadScript, pausePlayback, play, skipPlayback, seekPosition
+  loadScript, pausePlayback, play, skipPlayback, seekPosition,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
@@ -27,7 +27,9 @@ export default function WebPlayer() {
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
 
-  const { token, queue, playbackInfo, currentTrack } = useSelector(selectSpotifyState)
+  const {
+    token, queue, playbackInfo, currentTrack,
+  } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   const initializePlayer = () => {
@@ -141,12 +143,13 @@ export default function WebPlayer() {
 
   useEffect(() => {
     if (deviceId && currentTrack) {
-      const position = new Date().getMilliseconds() + currentTrack.position_ms
-      - new Date(currentTrack.timestamp).getMilliseconds()
-      console.log(currentTrack)
+      const position = Date.now() + currentTrack.position_ms
+      - new Date(currentTrack.timestamp).getTime()
       play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
         if (currentTrack.paused) {
-          player!.pause()
+          setIsPaused(true)
+        } else {
+          setIsPaused(false)
         }
         seekPosition(token, position, deviceId)
       })

@@ -134,7 +134,7 @@ export async function getCurrentUserInfo(token: string | null) {
 
 export function seekPosition(token: string | null, position: number, deviceId: string) {
   if (token === null) return false
-  return fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${}&device_id=${deviceId}`, {
+  return fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${position}&device_id=${deviceId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
