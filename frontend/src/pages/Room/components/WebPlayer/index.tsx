@@ -4,10 +4,12 @@ import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
+import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outline.svg'
+import { ReactComponent as FilledHeart } from '../../../../img/icons/heart-shape-filled.svg'
 import { selectSpotifyState, setPlaybackInfo, setQueue } from '../../../../store/modules/spotify'
 import {
   getPlaybackInfo,
-  loadScript, pausePlayback, play, skipPlayback,
+  loadScript, pausePlayback, play, skipPlayback, addToLibrary, isInLibrary, removeFromLibrary,
 } from '../../../../util/spotify'
 import {
   PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack,
@@ -24,6 +26,7 @@ export default function WebPlayer() {
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
+  const [isLiked, setIsLiked] = useState<Boolean>()
 
   const { token, queue, playbackInfo } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
@@ -55,8 +58,8 @@ export default function WebPlayer() {
 
   const skipForward = () => {
     if (queue.length > 0 && player !== undefined) {
-      const nextTrack = queue[0].uri
-      play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
+      const { uri, id } = queue[0]
+      play(token, { uris: [uri], deviceId }).then((res: any) => {
         if (res.status === 204) {
           if (queue.length === 1) {
             sendQueue([])
@@ -67,6 +70,9 @@ export default function WebPlayer() {
           setEndOfTrack(false)
           setIsPaused(false)
         }
+      }).then(() => {
+        isInLibrary(token, id)
+          .then((res) => { setIsLiked((res)[0]) })
       })
     }
   }
@@ -175,6 +181,21 @@ export default function WebPlayer() {
     }
   }
 
+  const likeSong = () => {
+    if (playbackState?.track_window.current_track.id === undefined) {
+      return false
+    }
+    const ids: string[] = [playbackState?.track_window.current_track.id]
+    if (isLiked === true) {
+      removeFromLibrary(token, ids)
+      setIsLiked(false)
+      return true
+    }
+    addToLibrary(token, ids)
+    setIsLiked(true)
+    return true
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.song}>
@@ -182,14 +203,19 @@ export default function WebPlayer() {
           <img src={playbackState?.track_window.current_track.album.images[0].url} alt="" />
         </div>
         <div className={styles.songInfo}>
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href={playbackInfo?.item.album.external_urls.spotify}
-            className={styles.name}
-          >
-            {playbackState?.track_window.current_track.name}
-          </a>
+          <div className={styles.name}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={playbackInfo?.item?.album.external_urls.spotify}
+            >
+              {playbackState?.track_window.current_track.name}
+            </a>
+            <button className={styles.likeSong} type="button" onClick={likeSong}>
+              { playbackState?.track_window.current_track.id !== undefined
+                ? isLiked ? <FilledHeart /> : <Heart /> : null }
+            </button>
+          </div>
           <div className={styles.artists}>
             {playbackState?.track_window.current_track.artists.map(
               (artist) => artist.name,

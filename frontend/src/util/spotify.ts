@@ -132,6 +132,44 @@ export async function getCurrentUserInfo(token: string | null) {
   }).then((res) => res.json())
 }
 
+export async function addToLibrary(token: string | null, ids: Array<String>) {
+  if (token === null) return false
+  const body = JSON.stringify({ ids })
+  return fetch('https://api.spotify.com/v1/me/tracks', {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body,
+  })
+}
+
+export async function removeFromLibrary(token: string | null, ids: Array<string>) {
+  if (token === null) return false
+  const body = JSON.stringify(ids)
+  console.log(body)
+  return fetch('https://api.spotify.com/v1/me/tracks', {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body,
+  })
+}
+
+export async function isInLibrary(token: string | null, ids: string | undefined) {
+  if (token === null) return false
+  return fetch(`https://api.spotify.com/v1/me/tracks/contains?ids=${ids}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  }).then((res) => res.json())
+}
+
 export async function getPlaybackInfo(token: string | null) {
   if (token === null) return false
   return fetch('https://api.spotify.com/v1/me/player', {
