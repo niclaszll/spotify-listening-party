@@ -70,45 +70,39 @@
         height: auto
     .songInfo
       width: calc(100% - 40px - 12px)
-    .name, .artists
+    .name > a, .artists
       white-space: nowrap
       overflow: hidden
       text-overflow: ellipsis
       max-width: 100%
     .name
-      font-weight: 500
-      font-size: 14px
-      color: #ffffff
-      &:hover
-        text-decoration: underline
+      display: flex
+      align-items: center
+      a
+        font-weight: 500
+        font-size: 14px
+        color: #ffffff
+        &:hover
+          text-decoration: underline
+      .likeSong
+        position: relative
+        background: transparent
+        border: none
+        color: #B3B3B3
+        cursor: pointer
+        height: 16px
+        width: 16px
+        > svg
+          fill: #B3B3B3
+          height: 16px
+          width: 16px
+        &:hover
+          > svg
+            fill: #ffffff
     .artists
       margin-top: 3px
       font-size: 12px
       color: #8E8E8E
-
-  .likeSong
-      position: relative
-      background: transparent
-      border: none
-      color: #B3B3B3
-      cursor: pointer
-      display: flex
-      > svg
-        fill: #B3B3B3
-      &:hover
-        > svg
-          fill: #ffffff
-        &:after
-            border-color: #ffffff
-            transform: scale(1.05)
-      &:after
-        content: ""
-        top: 0
-        right: 0
-        bottom: 0
-        left: 0
-        border-radius: 500px
-        border: 1px solid hsla(0,0%,100%,.6)
 
   .additionalControls
     width: 20%

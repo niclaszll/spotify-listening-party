@@ -58,8 +58,8 @@ export default function WebPlayer() {
 
   const skipForward = () => {
     if (queue.length > 0 && player !== undefined) {
-      const nextTrack = queue[0].uri
-      play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
+      const { uri, id } = queue[0]
+      play(token, { uris: [uri], deviceId }).then((res: any) => {
         if (res.status === 204) {
           if (queue.length === 1) {
             sendQueue([])
@@ -70,6 +70,9 @@ export default function WebPlayer() {
           setEndOfTrack(false)
           setIsPaused(false)
         }
+      }).then(() => {
+        isInLibrary(token, id)
+          .then((res) => { setIsLiked((res)[0]) })
       })
     }
   }
@@ -169,8 +172,6 @@ export default function WebPlayer() {
     }
     // send skip command to backend
     sendSkipTrack()
-    isInLibrary(token, playbackState?.track_window.current_track.id)
-      .then((res) => { setIsLiked((res)[0]) })
     return true
   }
 
@@ -202,14 +203,19 @@ export default function WebPlayer() {
           <img src={playbackState?.track_window.current_track.album.images[0].url} alt="" />
         </div>
         <div className={styles.songInfo}>
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href={playbackInfo?.item.album.external_urls.spotify}
-            className={styles.name}
-          >
-            {playbackState?.track_window.current_track.name}
-          </a>
+          <div className={styles.name}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={playbackInfo?.item?.album.external_urls.spotify}
+            >
+              {playbackState?.track_window.current_track.name}
+            </a>
+            <button className={styles.likeSong} type="button" onClick={likeSong}>
+              { playbackState?.track_window.current_track.id !== undefined
+                ? isLiked ? <FilledHeart /> : <Heart /> : null }
+            </button>
+          </div>
           <div className={styles.artists}>
             {playbackState?.track_window.current_track.artists.map(
               (artist) => artist.name,
@@ -217,11 +223,6 @@ export default function WebPlayer() {
           </div>
         </div>
       </div>
-      <h4>
-        <button className={styles.likeSong} type="button" onClick={likeSong}>
-          { isLiked ? <FilledHeart /> : <Heart /> }
-        </button>
-      </h4>
       <div className={styles.controls}>
         <button type="button" onClick={skipBack}><SkipBackward /></button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>
