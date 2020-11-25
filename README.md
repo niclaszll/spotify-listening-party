@@ -10,6 +10,28 @@ This project uses the package manager yarn. Make sure to install it on your syst
 
 In order to generate reliable, fast, reproducible and deterministic deployments, we use [Docker](https://www.docker.com/). Make sure you have it installed on your system.
 
+### MongoDB Atlas
+
+During development, we use MongoDB-Atlas as a cloud database. Via the CRON trigger functionality all rooms without active listeners are deleted once an hour. Use the following code snippet to replicate this behaviour:
+
+```javascript
+exports = function () {
+  const collection = context.services
+    .get("SERVICE_NAME")
+    .db("DATABASE_NAME")
+    .collection("COLLECTION_NAME");
+  const query = { active_listeners: { $lt: 1 } };
+
+  collection
+    .deleteMany(query)
+    .then((result) => console.log(`Deleted ${result.deletedCount} item(s).`))
+    .catch((err) => console.error(`Delete failed with error: ${err}`));
+};
+```
+
+Replace `SERVICE_NAME`, `DATABASE_NAME` and `COLLECTION_NAME` with the corresponding values for your application.
+To use the `SERVICE_NAME` you need to _Link an Atlas Data Source_ in the _MongoDB Realm_ console of your Triggers_RealmApp and then use the chosen service name instead of `SERVICE_NAME`.
+
 ### Development Browser
 
 For developing the application it is recommended to use Firefox, since [Chrome does not allow EME in non-secure contexts](https://groups.google.com/a/chromium.org/g/blink-dev/c/tXmKPlXsnCQ/discussion?pli=1) (ie. over HTTP). Otherwise it is not possible to initialize the Spotify-Player in the browser.
