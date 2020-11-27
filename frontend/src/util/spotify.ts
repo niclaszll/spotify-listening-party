@@ -128,6 +128,18 @@ export async function getPlaylistTracks(token: string | null, id: string) {
   }).then((res) => res.json())
 }
 
+export async function getNextPagingObject(url: string, token: string | null, id: string) {
+  if (token === null) return false
+  return fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  }).then((res) => res.json())
+}
+
 export async function getCurrentUserInfo(token: string | null) {
   if (token === null) return false
   return fetch('https://api.spotify.com/v1/me', {

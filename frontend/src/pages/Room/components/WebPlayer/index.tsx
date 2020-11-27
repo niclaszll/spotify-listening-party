@@ -72,9 +72,6 @@ export default function WebPlayer() {
           setEndOfTrack(false)
           setIsPaused(false)
         }
-      }).then(() => {
-        isInLibrary(token, id)
-          .then((res) => { setIsLiked((res)[0]) })
       })
     }
   }
@@ -89,6 +86,8 @@ export default function WebPlayer() {
         dispatch(setPlaybackInfo(res))
       ),
     )
+    isInLibrary(token, state.track_window.current_track.id)
+      .then((res) => { setIsLiked((res)[0]) })
     setPlaybackState(state)
     if (state.position === 0 && state.paused === true) {
       setEndOfTrack(true)
