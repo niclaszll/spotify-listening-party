@@ -42,6 +42,14 @@ export function loadScript(attributes: ScriptAttributes): Promise<any> {
   })
 }
 
+export async function loadSpotify() {
+  await loadScript({
+    defer: true,
+    id: 'spotify-player',
+    source: 'https://sdk.scdn.co/spotify-player.js',
+  })
+}
+
 export async function play(
   token: string | null,
   {
