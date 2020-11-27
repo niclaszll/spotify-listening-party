@@ -146,12 +146,17 @@ export default function WebPlayer() {
       const position = Date.now() + currentTrack.position_ms
       - new Date(currentTrack.timestamp).getTime()
       play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
+        seekPosition(token, position, deviceId)
+        // TODO: move somewhere else/refactor? right now its buggy and not working as intended
+        // Problem: when fetching the current track of the room and sending the play request
+        // we need to set the isPaused state to true (if track in the room is currently paused)
+        // or false. but atm when it is paused, the player.pause() function gets called to soon
+        // and the track hasnt even started -> so it cant be paused and is played after
         if (currentTrack.paused) {
           setIsPaused(true)
         } else {
           setIsPaused(false)
         }
-        seekPosition(token, position, deviceId)
       })
     }
   }, [deviceId, currentTrack])
@@ -171,7 +176,6 @@ export default function WebPlayer() {
         player.resume()
       }
     }
-    console.log(playbackState?.track_window.current_track.album)
   }, [isPaused])
 
   const togglePlay = () => {
