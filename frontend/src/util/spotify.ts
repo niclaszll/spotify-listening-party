@@ -37,7 +37,7 @@ export function loadScript(attributes: ScriptAttributes): Promise<any> {
 
       document.head.appendChild(script)
     } else {
-      resolve()
+      resolve(undefined)
     }
   })
 }
