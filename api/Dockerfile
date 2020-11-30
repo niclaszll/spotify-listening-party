@@ -6,7 +6,6 @@ WORKDIR /home/node
 # switch to non-root user for security reasons
 USER node
 
-WORKDIR /api
 COPY package*.json /home/node/
 RUN yarn install
 COPY . /home/node/
