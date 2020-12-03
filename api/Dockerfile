@@ -9,8 +9,8 @@ USER node
 COPY package*.json /home/node/
 RUN yarn install
 COPY . /home/node/
-EXPOSE 80
+EXPOSE 9000
 CMD ["yarn", "start"]
 
 HEALTHCHECK --interval=30s \
-  CMD curl -f http://localhost:80/ || exit 1
+  CMD curl -f http://localhost:9000/ || exit 1

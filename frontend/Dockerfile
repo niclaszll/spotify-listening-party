@@ -13,4 +13,4 @@ EXPOSE 3000
 CMD ["yarn", "start"]
 
 HEALTHCHECK --interval=30s \
-  CMD curl -f http://localhost:80/ || exit 1
+  CMD curl -f http://localhost:3000/ || exit 1
