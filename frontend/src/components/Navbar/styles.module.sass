@@ -2,7 +2,7 @@
 
 .container
   display: flex
-  justify-content: flex-end
+  justify-content: space-between
   align-items: center
   position: fixed
   background: $spotifyDarkGrey
@@ -11,6 +11,17 @@
   height: 50px
   border-bottom: 1px solid $spotifyLightGrey
   z-index: 1000
+  .goBack
+    color: $spotifyTextLightGrey
+    display: flex
+    align-items: center
+    > svg
+      fill: $spotifyTextLightGrey
+      margin-right: 5px
+    &:hover
+      color: #ffffff
+      > svg
+        fill: #ffffff
   button
     outline: none
     border: none
