@@ -18,7 +18,7 @@ export default function Playlists() {
 
   return (
     <div className={styles.playlists}>
-      {userPlaylists && (
+      {(userPlaylists && userPlaylists.items) && (
         (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist, index) => (
           <div
             key={playlist.id}
@@ -31,7 +31,7 @@ export default function Playlists() {
             tabIndex={index}
           >
             <div className={styles.imgContainer}>
-              <img src={playlist.images[0].url} alt={playlist.name} />
+              <img src={playlist.images[0]?.url} alt={playlist.name} />
             </div>
             <p>{playlist.name}</p>
           </div>

@@ -126,6 +126,9 @@ export default function WebPlayer() {
       // Connect to the player!
       player.connect()
     }
+    return () => {
+      player?.disconnect()
+    }
   }, [player])
 
   /**
