@@ -6,7 +6,9 @@ import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
-import { selectSpotifyState, setPlaybackInfo, setQueue } from '../../../../store/modules/spotify'
+import {
+  selectSpotifyState, setActivePlaylist, setPlaybackInfo, setQueue,
+} from '../../../../store/modules/spotify'
 import {
   getPlaybackInfo,
   loadScript, pausePlayback, play, skipPlayback, seekPosition,
@@ -146,17 +148,14 @@ export default function WebPlayer() {
       const position = Date.now() + currentTrack.position_ms
       - new Date(currentTrack.timestamp).getTime()
       play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
-        seekPosition(token, position, deviceId)
-        // TODO: move somewhere else/refactor? right now its buggy and not working as intended
-        // Problem: when fetching the current track of the room and sending the play request
-        // we need to set the isPaused state to true (if track in the room is currently paused)
-        // or false. but atm when it is paused, the player.pause() function gets called to soon
-        // and the track hasnt even started -> so it cant be paused and is played after
-        if (currentTrack.paused) {
-          setIsPaused(true)
-        } else {
-          setIsPaused(false)
-        }
+        seekPosition(token, position, deviceId).then(() => {
+          if (currentTrack.paused) {
+            pausePlayback(token)
+            setIsPaused(true)
+          } else {
+            setIsPaused(false)
+          }
+        })
       })
     }
   }, [deviceId, currentTrack])
@@ -213,7 +212,7 @@ export default function WebPlayer() {
           <a
             target="_blank"
             rel="noreferrer"
-            href={playbackInfo?.item.album.external_urls.spotify}
+            href={playbackInfo?.item?.album.external_urls.spotify}
             className={styles.name}
           >
             {playbackState?.track_window.current_track.name}

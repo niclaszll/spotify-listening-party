@@ -132,7 +132,7 @@ export async function getCurrentUserInfo(token: string | null) {
   }).then((res) => res.json())
 }
 
-export function seekPosition(token: string | null, position: number, deviceId: string) {
+export async function seekPosition(token: string | null, position: number, deviceId: string) {
   if (token === null) return false
   return fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${position}&device_id=${deviceId}`, {
     headers: {
