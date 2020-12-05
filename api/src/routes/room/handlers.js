@@ -22,18 +22,18 @@ export function leaveActiveRoom(io, socket) {
   if (roomId) {
     socket.leave(roomId)
     findRoomById(roomId)
-      .then((room) => updateRoom(roomId, {active_listeners: room.active_listeners - 1}))
+      .then((room) => updateRoom(roomId, {activeListeners: room.activeListeners - 1}))
       .then(() => updateAvailableRooms(io, socket, true))
       .catch((err) => console.log(err))
   }
 }
 
 export function createNewRoom(socket, message) {
-  const {name, roomPublic, active_listeners} = message
+  const {name, roomPublic, activeListeners} = message
   const roomId = `room${id()}`
   const roomName = name !== '' ? name : roomId
   const creatorId = socket.id
-  const newRoom = {id: roomId, name: roomName, roomPublic, active_listeners, creatorId}
+  const newRoom = {id: roomId, name: roomName, roomPublic, activeListeners, creatorId}
 
   createRoom(newRoom)
     .then(
@@ -54,7 +54,7 @@ export function joinRoom(io, socket, roomId) {
     const listenersCount =
       io.sockets.adapter.rooms[room.id] !== undefined ? io.sockets.adapter.rooms[room.id].length : 0
 
-    updateRoom(roomId, {active_listeners: listenersCount})
+    updateRoom(roomId, {activeListeners: listenersCount})
       .then(() => {
         updateAvailableRooms(io, socket, true)
         console.log(`Room ${room.name} has now ${listenersCount} listener(s)`)

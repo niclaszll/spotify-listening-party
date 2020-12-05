@@ -37,7 +37,7 @@ export default function Lobby() {
     const newRoom = {
       name: roomName,
       roomPublic,
-      active_listeners: 0,
+      activeListeners: 0,
     }
     if (roomName) {
       newSocketRoom(newRoom)
@@ -91,7 +91,7 @@ export default function Lobby() {
                 <div className={styles.listeners}>
                   <People />
                   {' '}
-                  {room.active_listeners}
+                  {room.activeListeners}
                 </div>
               </div>
               <div>{room.name}</div>

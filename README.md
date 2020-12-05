@@ -20,7 +20,7 @@ exports = function () {
     .get("SERVICE_NAME")
     .db("DATABASE_NAME")
     .collection("COLLECTION_NAME");
-  const query = { active_listeners: { $lt: 1 } };
+  const query = { activeListeners: { $lt: 1 } };
 
   collection
     .deleteMany(query)
