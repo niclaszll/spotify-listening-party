@@ -22,16 +22,18 @@ export default function Navbar() {
 
   return (
     <div className={styles.container}>
-      { location.pathname.startsWith('/room') ? (
+      {location.pathname.startsWith('/room') ? (
         <Link className={styles.goBack} type="button" to="/lobby">
           <ArrowBack />
           <span>Back to lobby</span>
         </Link>
-      ) : <div />}
-      { token !== null && (
-      <button type="button" onClick={handleClick}>
-        End Session
-      </button>
+      ) : (
+        <div />
+      )}
+      {token !== null && (
+        <button type="button" onClick={handleClick}>
+          End Session
+        </button>
       )}
     </div>
   )

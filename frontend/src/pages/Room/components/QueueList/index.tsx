@@ -28,7 +28,9 @@ export default function QueueList() {
             <Track track={track} />
           </div>
         ))
-      ) : <span className={styles.emptyQueue}>Queue is currently empty.</span>}
+      ) : (
+        <span className={styles.emptyQueue}>Queue is currently empty.</span>
+      )}
     </div>
   )
 }

@@ -8,14 +8,27 @@ import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outli
 import { ReactComponent as FilledHeart } from '../../../../img/icons/heart-shape-filled.svg'
 import { selectSpotifyState, setPlaybackInfo } from '../../../../store/modules/spotify'
 import {
-  getPlaybackInfo, play, addToLibrary, isInLibrary, removeFromLibrary,
-  loadSpotify, pausePlayback, seekPosition,
+  getPlaybackInfo,
+  play,
+  addToLibrary,
+  isInLibrary,
+  removeFromLibrary,
+  loadSpotify,
+  pausePlayback,
+  seekPosition,
 } from '../../../../util/spotify'
 import {
-  SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
+  SpotifyPlayerCallback,
+  WebPlaybackPlayer,
+  WebPlaybackState,
 } from '../../../../util/types/spotify'
 import {
-  socket, Response, sendSkipTrack, sendTogglePlay, sendQueue, sendCurrentTrack,
+  socket,
+  Response,
+  sendSkipTrack,
+  sendTogglePlay,
+  sendQueue,
+  sendCurrentTrack,
 } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
@@ -28,9 +41,7 @@ export default function WebPlayer() {
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
   const [isLiked, setIsLiked] = useState<Boolean>()
 
-  const {
-    token, queue, playbackInfo, currentTrack,
-  } = useSelector(selectSpotifyState)
+  const { token, queue, playbackInfo, currentTrack } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   /**
@@ -39,13 +50,15 @@ export default function WebPlayer() {
   const initializePlayer = () => {
     if (token === null) return
 
-    // @ts-ignore
-    setPlayer(new window.Spotify.Player({
-      getOAuthToken: (cb: SpotifyPlayerCallback) => {
-        cb(token)
-      },
-      name: 'Spotify Web Player SCC',
-    }))
+    setPlayer(
+      // @ts-ignore
+      new window.Spotify.Player({
+        getOAuthToken: (cb: SpotifyPlayerCallback) => {
+          cb(token)
+        },
+        name: 'Spotify Web Player SCC',
+      })
+    )
   }
 
   /**
@@ -84,13 +97,10 @@ export default function WebPlayer() {
    * e.g. end of track
    */
   const handlePlayerStateChange = (state: WebPlaybackState) => {
-    getPlaybackInfo(token).then(
-      (res) => (
-        dispatch(setPlaybackInfo(res))
-      ),
-    )
-    isInLibrary(token, state.track_window.current_track.id)
-      .then((res) => { setIsLiked((res)[0]) })
+    getPlaybackInfo(token).then((res) => dispatch(setPlaybackInfo(res)))
+    isInLibrary(token, state.track_window.current_track.id).then((res) => {
+      setIsLiked(res[0])
+    })
     setPlaybackState(state)
     if (state.position === 0 && state.paused === true) {
       setEndOfTrack(true)
@@ -103,10 +113,18 @@ export default function WebPlayer() {
   useEffect(() => {
     if (player !== undefined) {
       // Error handling
-      player.addListener('initialization_error', ({ message }) => { console.error(message) })
-      player.addListener('authentication_error', ({ message }) => { console.error(message) })
-      player.addListener('account_error', ({ message }) => { console.error(message) })
-      player.addListener('playback_error', ({ message }) => { console.error(message) })
+      player.addListener('initialization_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('authentication_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('account_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('playback_error', ({ message }) => {
+        console.error(message)
+      })
 
       // Playback status updates
       player.addListener('player_state_changed', (state) => {
@@ -172,8 +190,8 @@ export default function WebPlayer() {
    */
   useEffect(() => {
     if (deviceId && currentTrack) {
-      const position = Date.now() + currentTrack.position_ms
-      - new Date(currentTrack.timestamp).getTime()
+      const position =
+        Date.now() + currentTrack.position_ms - new Date(currentTrack.timestamp).getTime()
       play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
         seekPosition(token, position, deviceId).then(() => {
           if (currentTrack.paused) {
@@ -267,23 +285,32 @@ export default function WebPlayer() {
               {playbackState?.track_window.current_track.name}
             </a>
             <button className={styles.likeSong} type="button" onClick={toggleLikeSong}>
-              { playbackState?.track_window.current_track.id !== undefined
-                ? isLiked ? <FilledHeart /> : <Heart /> : null }
+              {playbackState?.track_window.current_track.id !== undefined ? (
+                isLiked ? (
+                  <FilledHeart />
+                ) : (
+                  <Heart />
+                )
+              ) : null}
             </button>
           </div>
           <div className={styles.artists}>
-            {playbackState?.track_window.current_track.artists.map(
-              (artist) => artist.name,
-            ).join(', ')}
+            {playbackState?.track_window.current_track.artists
+              .map((artist) => artist.name)
+              .join(', ')}
           </div>
         </div>
       </div>
       <div className={styles.controls}>
-        <button type="button"><SkipBackward /></button>
-        <button id={styles.playPause} type="button" onClick={togglePlay}>
-          { isPaused ? <Play /> : <Pause /> }
+        <button type="button">
+          <SkipBackward />
         </button>
-        <button type="button" onClick={handleSkipForwardClick}><SkipForward /></button>
+        <button id={styles.playPause} type="button" onClick={togglePlay}>
+          {isPaused ? <Play /> : <Pause />}
+        </button>
+        <button type="button" onClick={handleSkipForwardClick}>
+          <SkipForward />
+        </button>
       </div>
       <div className={styles.additionalControls}>
         <VolumeControl player={player} />

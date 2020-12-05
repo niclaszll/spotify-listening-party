@@ -31,7 +31,9 @@ export default function Login() {
       </div>
       <div className={styles.loginContainer}>
         <a
-          href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`}
+          href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
+            '%20'
+          )}&response_type=token&show_dialog=true`}
         >
           Connect with Spotify
         </a>

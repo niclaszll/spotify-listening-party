@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  clearSpotifyState, selectSpotifyState, setCurrentTrack, setQueue, setUser,
+  clearSpotifyState,
+  selectSpotifyState,
+  setCurrentTrack,
+  setQueue,
+  setUser,
 } from '../../store/modules/spotify'
 import { WebPlaybackTrack } from '../../util/types/spotify'
-import {
-  socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom,
-} from '../../util/websocket'
+import { socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
@@ -69,16 +71,14 @@ export default function Room() {
       </div>
       <div className={styles.tracklistContainer}>
         <h2 className={styles.title}>Tracklist</h2>
-        <div>
-          {activePlaylist && <TrackList />}
-        </div>
+        <div>{activePlaylist && <TrackList />}</div>
       </div>
       <div className={styles.queueContainer}>
         <div className={styles.title}>
-          <h2>
-            Queue
-          </h2>
-          <button className={styles.clearQueue} type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
+          <h2>Queue</h2>
+          <button className={styles.clearQueue} type="button" onClick={() => sendQueue([])}>
+            <DeleteAll />
+          </button>
         </div>
         <div>
           <QueueList />
@@ -87,7 +87,11 @@ export default function Room() {
       <div className={`${styles.chatContainer} ${chatVisible ? styles.visible : ''}`}>
         <Chat />
       </div>
-      <button type="button" className={styles.toggleChat} onClick={() => setChatVisible((prevState) => !prevState)}>
+      <button
+        type="button"
+        className={styles.toggleChat}
+        onClick={() => setChatVisible((prevState) => !prevState)}
+      >
         <ChatIcon />
       </button>
       <WebPlayer />

@@ -5,11 +5,9 @@ import { selectSpotifyState } from '../../store/modules/spotify'
 
 export default function PrivateRoute({ component, ...rest }: any) {
   const { token } = useSelector(selectSpotifyState)
-  const routeComponent = (props: any) => (token ? (
-    React.createElement(component, props)
-  ) : (
-    <Redirect to={{ pathname: '/' }} />
-  ))
+  const routeComponent = (props: any) => {
+    return token ? React.createElement(component, props) : <Redirect to={{ pathname: '/' }} />
+  }
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <Route {...rest} render={routeComponent} />
 }

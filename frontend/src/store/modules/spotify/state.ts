@@ -1,6 +1,9 @@
 import { CurrentTrackResponse } from '../../../util/types/rooms'
 import {
-  SpotifyPlaylist, WebPlaybackTrack, SpotifyUser, SpotifyPlayerStatus,
+  SpotifyPlaylist,
+  WebPlaybackTrack,
+  SpotifyUser,
+  SpotifyPlayerStatus,
 } from '../../../util/types/spotify'
 
 export type SpotifyState = {

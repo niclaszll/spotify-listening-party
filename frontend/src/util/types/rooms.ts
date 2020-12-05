@@ -1,30 +1,30 @@
 import { WebPlaybackTrack } from './spotify'
 
 export type Room = {
-  id?: string,
+  id?: string
   name: string
-  roomPublic: Boolean,
+  roomPublic: Boolean
   activeListeners: number
 }
 
 export type Message = {
-  msg: string,
+  msg: string
   user: string
 }
 
 export type CurrentTrackResponse = {
-  position_ms: number,
-  paused: Boolean,
-  uri: string,
-  timestamp: Date,
+  position_ms: number
+  paused: Boolean
+  uri: string
+  timestamp: Date
 }
 
 export type RoomInfoResponse = {
   source: string
   message: {
     payload: {
-      queue: WebPlaybackTrack[],
-      currentTrack: CurrentTrackResponse,
+      queue: WebPlaybackTrack[]
+      currentTrack: CurrentTrackResponse
     }
   }
 }

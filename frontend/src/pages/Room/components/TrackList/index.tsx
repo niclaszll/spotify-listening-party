@@ -2,7 +2,11 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import { getNextPagingObject, getPlaylistTracks } from '../../../../util/spotify'
-import { PagingObject, SpotifyPlaylistTrackObject, WebPlaybackTrack } from '../../../../util/types/spotify'
+import {
+  PagingObject,
+  SpotifyPlaylistTrackObject,
+  WebPlaybackTrack,
+} from '../../../../util/types/spotify'
 import { sendQueue } from '../../../../util/websocket'
 import Track from '../Track'
 import * as styles from './style.module.sass'
@@ -24,10 +28,10 @@ export default function TrackList() {
   const { token, activePlaylist, queue } = useSelector(selectSpotifyState)
 
   /**
-    * Fetch all tracks of selected playlist
-    */
+   * Fetch all tracks of selected playlist
+   */
   const loadTrackList = async () => {
-    const tracks : PagingObject = await getPlaylistTracks(token, activePlaylist!.id)
+    const tracks: PagingObject = await getPlaylistTracks(token, activePlaylist!.id)
     setIsLoading(true)
     setTracklist(tracks)
   }
@@ -35,9 +39,11 @@ export default function TrackList() {
   useEffect(() => {
     if (tracklist?.next !== null) {
       getNextPagingObject(tracklist.next, token, activePlaylist!.id).then((tracks) => {
-        setTracklist((prevState) => (
-          { ...prevState, next: tracks.next, items: [...prevState.items, ...tracks.items] }
-        ))
+        setTracklist((prevState) => ({
+          ...prevState,
+          next: tracks.next,
+          items: [...prevState.items, ...tracks.items],
+        }))
       })
     } else {
       setIsLoading(false)
@@ -56,7 +62,7 @@ export default function TrackList() {
 
   return (
     <div className={styles.tracks}>
-      {(tracklist.items !== [] && !isLoading) ? (
+      {tracklist.items !== [] && !isLoading ? (
         (tracklist.items as SpotifyPlaylistTrackObject[]).map(
           (trackObject: SpotifyPlaylistTrackObject, index) => (
             <div
@@ -69,9 +75,11 @@ export default function TrackList() {
             >
               <Track key={trackObject.track.id} track={trackObject.track} />
             </div>
-          ),
+          )
         )
-      ) : <span className={styles.loadingIndicator} />}
+      ) : (
+        <span className={styles.loadingIndicator} />
+      )}
     </div>
   )
 }
