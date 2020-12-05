@@ -1,2 +1,2 @@
 export const container: string
-export const containerTwo: string
+export const goBack: string

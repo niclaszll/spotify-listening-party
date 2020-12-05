@@ -42,6 +42,14 @@ export function loadScript(attributes: ScriptAttributes): Promise<any> {
   })
 }
 
+export async function loadSpotify() {
+  await loadScript({
+    defer: true,
+    id: 'spotify-player',
+    source: 'https://sdk.scdn.co/spotify-player.js',
+  })
+}
+
 export async function play(
   token: string | null,
   {
@@ -120,6 +128,18 @@ export async function getPlaylistTracks(token: string | null, id: string) {
   }).then((res) => res.json())
 }
 
+export async function getNextPagingObject(url: string, token: string | null, id: string) {
+  if (token === null) return false
+  return fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  }).then((res) => res.json())
+}
+
 export async function getCurrentUserInfo(token: string | null) {
   if (token === null) return false
   return fetch('https://api.spotify.com/v1/me', {
@@ -142,6 +162,45 @@ export async function seekPosition(token: string | null, position: number, devic
     method: 'PUT',
   })
 }
+
+export async function addToLibrary(token: string | null, ids: Array<String>) {
+  if (token === null) return false
+  const body = JSON.stringify({ ids })
+  return fetch('https://api.spotify.com/v1/me/tracks', {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body,
+  })
+}
+
+export async function removeFromLibrary(token: string | null, ids: Array<string>) {
+  if (token === null) return false
+  const body = JSON.stringify(ids)
+  console.log(body)
+  return fetch('https://api.spotify.com/v1/me/tracks', {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body,
+  })
+}
+
+export async function isInLibrary(token: string | null, ids: string | undefined) {
+  if (token === null) return false
+  return fetch(`https://api.spotify.com/v1/me/tracks/contains?ids=${ids}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  }).then((res) => res.json())
+}
+
 export async function getPlaybackInfo(token: string | null) {
   if (token === null) return false
   return fetch('https://api.spotify.com/v1/me/player', {

@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Auth from './pages/Authentication'
-import Session from './pages/Lobby'
+import Lobby from './pages/Lobby'
 import Room from './pages/Room'
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Login} />
           <Route exact path="/auth" component={Auth} />
-          <PrivateRoute exact path="/session" component={Session} />
+          <PrivateRoute exact path="/lobby" component={Lobby} />
           <PrivateRoute exact path="/room/:id" component={Room} />
         </Switch>
       </Router>

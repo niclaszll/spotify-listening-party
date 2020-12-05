@@ -16,7 +16,7 @@ export default function Auth() {
     ) as SpotifyAuthInfo
     if (spotifyAuth.access_token) {
       dispatch(setUserToken(spotifyAuth.access_token))
-      history.push('/session')
+      history.push('/lobby')
     } else {
       history.push('/')
     }

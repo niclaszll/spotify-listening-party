@@ -1,14 +1,25 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
-import { getPlaylistTracks } from '../../../../util/spotify'
+import { getNextPagingObject, getPlaylistTracks } from '../../../../util/spotify'
 import { PagingObject, SpotifyPlaylistTrackObject, WebPlaybackTrack } from '../../../../util/types/spotify'
 import { sendQueue } from '../../../../util/websocket'
 import Track from '../Track'
 import * as styles from './style.module.sass'
 
+const samplePagingObject = {
+  href: '',
+  items: [],
+  limit: 0,
+  next: '',
+  offset: 0,
+  previous: '',
+  total: 0,
+}
+
 export default function TrackList() {
-  const [tracklist, setTracklist] = useState<PagingObject>()
+  const [tracklist, setTracklist] = useState<PagingObject>(samplePagingObject)
+  const [isLoading, setIsLoading] = useState<Boolean>(true)
 
   const { token, activePlaylist, queue } = useSelector(selectSpotifyState)
 
@@ -16,9 +27,22 @@ export default function TrackList() {
     * Fetch all tracks of selected playlist
     */
   const loadTrackList = async () => {
-    const tracks = await getPlaylistTracks(token, activePlaylist!.id)
+    const tracks : PagingObject = await getPlaylistTracks(token, activePlaylist!.id)
+    setIsLoading(true)
     setTracklist(tracks)
   }
+
+  useEffect(() => {
+    if (tracklist?.next !== null) {
+      getNextPagingObject(tracklist.next, token, activePlaylist!.id).then((tracks) => {
+        setTracklist((prevState) => (
+          { ...prevState, next: tracks.next, items: [...prevState.items, ...tracks.items] }
+        ))
+      })
+    } else {
+      setIsLoading(false)
+    }
+  }, [tracklist])
 
   useEffect(() => {
     loadTrackList()
@@ -32,7 +56,7 @@ export default function TrackList() {
 
   return (
     <div className={styles.tracks}>
-      {tracklist && (
+      {(tracklist.items !== [] && !isLoading) ? (
         (tracklist.items as SpotifyPlaylistTrackObject[]).map(
           (trackObject: SpotifyPlaylistTrackObject, index) => (
             <div
@@ -47,7 +71,7 @@ export default function TrackList() {
             </div>
           ),
         )
-      )}
+      ) : <span className={styles.loadingIndicator} />}
     </div>
   )
 }

@@ -8,8 +8,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/frontend
-      - /frontend/node_modules
+      - ./frontend:/home/node
+      - /home/node/node_modules
     links:
       - api
     networks:
@@ -23,8 +23,8 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./api:/api
-      - /api/node_modules
+      - ./api:/home/node
+      - /home/node/node_modules
     networks:
       - app-network
 

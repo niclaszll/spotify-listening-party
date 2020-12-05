@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { current } from '@reduxjs/toolkit'
-import { off } from 'process'
 import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
+import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outline.svg'
+import { ReactComponent as FilledHeart } from '../../../../img/icons/heart-shape-filled.svg'
+import { selectSpotifyState, setPlaybackInfo } from '../../../../store/modules/spotify'
 import {
-  selectSpotifyState, setActivePlaylist, setPlaybackInfo, setQueue,
-} from '../../../../store/modules/spotify'
-import {
-  getPlaybackInfo,
-  loadScript, pausePlayback, play, skipPlayback, seekPosition,
+  getPlaybackInfo, play, addToLibrary, isInLibrary, removeFromLibrary,
+  loadSpotify, pausePlayback, seekPosition,
 } from '../../../../util/spotify'
 import {
-  PagingObject, SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
+  SpotifyPlayerCallback, WebPlaybackPlayer, WebPlaybackState,
 } from '../../../../util/types/spotify'
 import {
   socket, Response, sendSkipTrack, sendTogglePlay, sendQueue, sendCurrentTrack,
@@ -28,12 +26,16 @@ export default function WebPlayer() {
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
+  const [isLiked, setIsLiked] = useState<Boolean>()
 
   const {
     token, queue, playbackInfo, currentTrack,
   } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
+  /**
+   * Initialize player state with token
+   */
   const initializePlayer = () => {
     if (token === null) return
 
@@ -46,23 +48,23 @@ export default function WebPlayer() {
     }))
   }
 
+  /**
+   * ComponentDidMount
+   * Load external spotify script and initialize player
+   */
   useEffect(() => {
     // @ts-ignore
     window.onSpotifyWebPlaybackSDKReady = initializePlayer
-    async function loadSpotify() {
-      await loadScript({
-        defer: true,
-        id: 'spotify-player',
-        source: 'https://sdk.scdn.co/spotify-player.js',
-      })
-    }
     loadSpotify()
   }, [])
 
+  /**
+   * Skip to the next track
+   */
   const skipForward = () => {
     if (queue.length > 0 && player !== undefined) {
-      const nextTrack = queue[0].uri
-      play(token, { uris: [nextTrack], deviceId }).then((res: any) => {
+      const { uri, id } = queue[0]
+      play(token, { uris: [uri], deviceId }).then((res: any) => {
         if (res.status === 204) {
           if (queue.length === 1) {
             sendQueue([])
@@ -77,6 +79,27 @@ export default function WebPlayer() {
     }
   }
 
+  /**
+   * Handle player state change
+   * e.g. end of track
+   */
+  const handlePlayerStateChange = (state: WebPlaybackState) => {
+    getPlaybackInfo(token).then(
+      (res) => (
+        dispatch(setPlaybackInfo(res))
+      ),
+    )
+    isInLibrary(token, state.track_window.current_track.id)
+      .then((res) => { setIsLiked((res)[0]) })
+    setPlaybackState(state)
+    if (state.position === 0 && state.paused === true) {
+      setEndOfTrack(true)
+    }
+  }
+
+  /**
+   * Add listeners when player is ready
+   */
   useEffect(() => {
     if (player !== undefined) {
       // Error handling
@@ -88,17 +111,8 @@ export default function WebPlayer() {
       // Playback status updates
       player.addListener('player_state_changed', (state) => {
         if (state) {
-          getPlaybackInfo(token).then(
-            (res) => (
-              dispatch(setPlaybackInfo(res))
-            ),
-          )
-          setPlaybackState(state)
-          if (state.position === 0 && state.paused === true) {
-            setEndOfTrack(true)
-          }
+          handlePlayerStateChange(state)
         }
-        console.log(state)
       })
 
       // Ready
@@ -115,14 +129,24 @@ export default function WebPlayer() {
       // Connect to the player!
       player.connect()
     }
+    return () => {
+      player?.disconnect()
+    }
   }, [player])
 
+  /**
+   * Skip to next track when end of track is reached
+   * skipForward() needs to be called in useEffect, else wrong queue is used
+   */
   useEffect(() => {
     if (endOfTrack) {
       skipForward()
     }
   }, [endOfTrack])
 
+  /**
+   * Setup socket connection and handler
+   */
   useEffect(() => {
     if (deviceId) {
       socket.on('play-song', (data: Response<string>) => {
@@ -143,6 +167,9 @@ export default function WebPlayer() {
     }
   }, [deviceId])
 
+  /**
+   * Auto-play song when no song is playing and song has been added to queue
+   */
   useEffect(() => {
     if (deviceId && currentTrack) {
       const position = Date.now() + currentTrack.position_ms
@@ -167,6 +194,9 @@ export default function WebPlayer() {
     }
   }, [queue])
 
+  /**
+   * Handle pause/resume
+   */
   useEffect(() => {
     if (player !== undefined) {
       if (isPaused) {
@@ -177,6 +207,9 @@ export default function WebPlayer() {
     }
   }, [isPaused])
 
+  /**
+   * Send toggle play command to backend
+   */
   const togglePlay = () => {
     if (player !== undefined && playbackState !== undefined) {
       const { uri } = playbackState.track_window.current_track
@@ -185,6 +218,9 @@ export default function WebPlayer() {
     }
   }
 
+  /**
+   * Handle click on skip forward button
+   */
   const handleSkipForwardClick = () => {
     if (playbackState === undefined) {
       return false
@@ -196,10 +232,23 @@ export default function WebPlayer() {
     return true
   }
 
-  const skipBack = () => {
-    if (player !== undefined) {
-      player.previousTrack()
+  /**
+   * Toggle song like
+   */
+  const toggleLikeSong = () => {
+    console.log(playbackState)
+    if (playbackState?.track_window.current_track.id === undefined) {
+      return false
     }
+    const ids: string[] = [playbackState?.track_window.current_track.id]
+    if (isLiked === true) {
+      removeFromLibrary(token, ids)
+      setIsLiked(false)
+      return true
+    }
+    addToLibrary(token, ids)
+    setIsLiked(true)
+    return true
   }
 
   return (
@@ -209,14 +258,19 @@ export default function WebPlayer() {
           <img src={playbackState?.track_window.current_track.album.images[0].url} alt="" />
         </div>
         <div className={styles.songInfo}>
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href={playbackInfo?.item?.album.external_urls.spotify}
-            className={styles.name}
-          >
-            {playbackState?.track_window.current_track.name}
-          </a>
+          <div className={styles.name}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={playbackInfo?.item?.album.external_urls.spotify}
+            >
+              {playbackState?.track_window.current_track.name}
+            </a>
+            <button className={styles.likeSong} type="button" onClick={toggleLikeSong}>
+              { playbackState?.track_window.current_track.id !== undefined
+                ? isLiked ? <FilledHeart /> : <Heart /> : null }
+            </button>
+          </div>
           <div className={styles.artists}>
             {playbackState?.track_window.current_track.artists.map(
               (artist) => artist.name,
@@ -225,7 +279,7 @@ export default function WebPlayer() {
         </div>
       </div>
       <div className={styles.controls}>
-        <button type="button" onClick={skipBack}><SkipBackward /></button>
+        <button type="button"><SkipBackward /></button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>
           { isPaused ? <Play /> : <Pause /> }
         </button>

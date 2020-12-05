@@ -31,6 +31,7 @@ module.exports = {
     'jsx-a11y/control-has-associated-label': 'off',
     'react/no-array-index-key': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'no-nested-ternary': 'off',
   },
   settings: {
     'import/resolver': {
