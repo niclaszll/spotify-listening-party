@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   clearCurrentRoom,
+  clearPlaybackInfo,
   clearSpotifyState,
   selectSpotifyState,
   setCurrentRoom,
-  setCurrentTrack,
   setQueue,
   setUser,
 } from '../../store/modules/spotify'
@@ -49,7 +49,6 @@ export default function Room() {
     })
     socket.on('room-info', (data: RoomInfoResponse) => {
       dispatch(setQueue(data.message.payload.queue))
-      dispatch(setCurrentTrack(data.message.payload.currentTrack))
     })
     socket.on('room-full-info', (data: Response<CurrentRoom>) => {
       dispatch(setCurrentRoom(data.message.payload))
@@ -57,10 +56,12 @@ export default function Room() {
     return () => {
       window.removeEventListener('beforeunload', () => {
         dispatch(clearCurrentRoom())
+        dispatch(clearPlaybackInfo())
         leaveSocketRoom()
         return undefined
       })
       dispatch(clearCurrentRoom())
+      dispatch(clearPlaybackInfo())
       leaveSocketRoom()
       socket.off('error-event')
       socket.off('room-info')

@@ -21,6 +21,7 @@ export const {
   setCurrentTrack,
   setCurrentRoom,
   clearCurrentRoom,
+  clearPlaybackInfo,
 } = spotifySlice.actions
 
 export const selectSpotifyState: (state: AppState) => SpotifyState = (state: AppState) =>

@@ -36,4 +36,7 @@ export default {
   clearCurrentRoom(state: SpotifyState) {
     return { ...state, currentRoom: initialCurrentRoom }
   },
+  clearPlaybackInfo(state: SpotifyState) {
+    return { ...state, playbackInfo: null }
+  },
 }

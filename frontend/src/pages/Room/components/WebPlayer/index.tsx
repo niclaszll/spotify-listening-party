@@ -41,7 +41,7 @@ export default function WebPlayer() {
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
   const [isLiked, setIsLiked] = useState<Boolean>()
 
-  const { token, playbackInfo, currentTrack, currentRoom } = useSelector(selectSpotifyState)
+  const { token, playbackInfo, currentRoom } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   /**
@@ -71,6 +71,35 @@ export default function WebPlayer() {
     loadSpotify()
   }, [])
 
+  useEffect(() => {
+    // little trick to use await in the useEffect hook
+    // async function handleAsyncPlay() {
+    //   await play(token, { uris: [currentRoom.currentTrack!.uri], deviceId })
+    // }
+    // check if there is an active track in the room
+    if (currentRoom.currentTrack && deviceId !== '') {
+      console.log(playbackInfo)
+      // if user joins room and gets first track or the new track is a different one
+      // play the new track (https request to spotify)
+      if (playbackInfo === null || playbackInfo.item.uri !== currentRoom.currentTrack.uri) {
+        console.log('2')
+        const position =
+          Date.now() +
+          currentRoom.currentTrack.position_ms -
+          new Date(currentRoom.currentTrack.timestamp).getTime()
+        play(token, { uris: [currentRoom.currentTrack.uri], deviceId }).then(() => {
+          console.log('3')
+          seekPosition(token, position, deviceId)
+        })
+      }
+      // check if current track should be paused or resumed
+      if (currentRoom.currentTrack.paused) {
+        pausePlayback(token)
+      } else {
+        player?.resume()
+      }
+    }
+  }, [currentRoom, deviceId])
   /**
    * Skip to the next track
    */
@@ -130,6 +159,7 @@ export default function WebPlayer() {
       player.addListener('player_state_changed', (state) => {
         if (state) {
           handlePlayerStateChange(state)
+          console.log(state)
         }
       })
 
@@ -188,22 +218,22 @@ export default function WebPlayer() {
   /**
    * Auto-play song when no song is playing and song has been added to queue
    */
-  useEffect(() => {
-    if (deviceId && currentTrack) {
-      const position =
-        Date.now() + currentTrack.position_ms - new Date(currentTrack.timestamp).getTime()
-      play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
-        seekPosition(token, position, deviceId).then(() => {
-          if (currentTrack.paused) {
-            pausePlayback(token)
-            setIsPaused(true)
-          } else {
-            setIsPaused(false)
-          }
-        })
-      })
-    }
-  }, [deviceId, currentTrack])
+  // useEffect(() => {
+  //   if (deviceId && currentTrack) {
+  //     const position =
+  //       Date.now() + currentTrack.position_ms - new Date(currentTrack.timestamp).getTime()
+  //     play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
+  //       seekPosition(token, position, deviceId).then(() => {
+  //         if (currentTrack.paused) {
+  //           pausePlayback(token)
+  //           setIsPaused(true)
+  //         } else {
+  //           setIsPaused(false)
+  //         }
+  //       })
+  //     })
+  //   }
+  // }, [deviceId, currentTrack])
 
   useEffect(() => {
     if (currentRoom.queue.length > 0 && playbackState === undefined) {
@@ -309,7 +339,7 @@ export default function WebPlayer() {
           <SkipBackward />
         </button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>
-          {isPaused ? <Play /> : <Pause />}
+          {currentRoom.currentTrack?.paused ? <Play /> : <Pause />}
         </button>
         <button type="button" onClick={handleSkipForwardClick}>
           <SkipForward />
