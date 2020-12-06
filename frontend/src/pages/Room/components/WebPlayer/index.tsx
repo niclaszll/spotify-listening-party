@@ -73,24 +73,21 @@ export default function WebPlayer() {
 
   useEffect(() => {
     // little trick to use await in the useEffect hook
-    // async function handleAsyncPlay() {
-    //   await play(token, { uris: [currentRoom.currentTrack!.uri], deviceId })
-    // }
+    async function handleAsyncPlay() {
+      const position =
+        Date.now() +
+        currentRoom.currentTrack!.position_ms -
+        new Date(currentRoom.currentTrack!.timestamp).getTime()
+      await play(token, { uris: [currentRoom.currentTrack!.uri], deviceId }).then(() => {
+        seekPosition(token, position, deviceId)
+      })
+    }
     // check if there is an active track in the room
     if (currentRoom.currentTrack && deviceId !== '') {
-      console.log(playbackInfo)
       // if user joins room and gets first track or the new track is a different one
       // play the new track (https request to spotify)
       if (playbackInfo === null || playbackInfo.item.uri !== currentRoom.currentTrack.uri) {
-        console.log('2')
-        const position =
-          Date.now() +
-          currentRoom.currentTrack.position_ms -
-          new Date(currentRoom.currentTrack.timestamp).getTime()
-        play(token, { uris: [currentRoom.currentTrack.uri], deviceId }).then(() => {
-          console.log('3')
-          seekPosition(token, position, deviceId)
-        })
+        handleAsyncPlay()
       }
       // check if current track should be paused or resumed
       if (currentRoom.currentTrack.paused) {
