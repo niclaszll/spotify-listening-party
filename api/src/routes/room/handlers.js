@@ -17,15 +17,17 @@ export function updateAvailableRooms(io, socket, distributeAll) {
   })
 }
 
-export function leaveActiveRoom(io, socket) {
+export async function leaveActiveRoom(io, socket) {
   const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   if (roomId) {
     socket.leave(roomId)
-    findRoomById(roomId)
+    return findRoomById(roomId)
       .then((room) => updateRoom(roomId, {activeListeners: room.activeListeners - 1}))
       .then(() => updateAvailableRooms(io, socket, true))
+      .then(() => roomId)
       .catch((err) => console.log(err))
   }
+  return ''
 }
 
 export async function createNewRoom(socket, message) {
@@ -124,11 +126,18 @@ export function setCurrentTrack(socket, msg) {
   updateRoom(room, {currentTrack})
 }
 
-export function sendFullRoomInformation(socket, roomId) {
+export function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
   findRoomById(roomId).then((room) => {
-    socket.emit('room-full-info', {
-      source: 'server',
-      message: {payload: room},
-    })
+    if (distributeToRoom) {
+      io.sockets.in(roomId).emit('room-full-info', {
+        source: 'server',
+        message: {payload: room},
+      })
+    } else {
+      socket.emit('room-full-info', {
+        source: 'server',
+        message: {payload: room},
+      })
+    }
   })
 }

@@ -22,19 +22,22 @@ export default function roomRouter(io) {
 
     socket.on('create', (data) => {
       createNewRoom(socket, data.message).then(() => {
-        sendFullRoomInformation(socket, data.message.roomId)
+        sendFullRoomInformation(io, socket, data.message.roomId, true)
       })
     })
 
     socket.on('join', (data) => {
       joinRoom(io, socket, data.message.roomId).then(() => {
-        sendFullRoomInformation(socket, data.message.roomId)
+        sendFullRoomInformation(io, socket, data.message.roomId, true)
       })
       sendRoomInformation(socket, data.message.roomId)
     })
 
     socket.on('leave', () => {
-      leaveActiveRoom(io, socket)
+      leaveActiveRoom(io, socket).then((roomId) => {
+        console.log(roomId)
+        sendFullRoomInformation(io, socket, roomId, true)
+      })
     })
 
     socket.on('new-message', (data) => {
@@ -46,7 +49,9 @@ export default function roomRouter(io) {
     })
 
     socket.on('toggle-play', (data) => {
-      sendTogglePlay(io, socket, data.message.msg)
+      sendTogglePlay(io, socket, data.message.msg).then(() => {
+        sendFullRoomInformation(socket, data.message.roomId)
+      })
     })
 
     socket.on('skip-forward', () => {
