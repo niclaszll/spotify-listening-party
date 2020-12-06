@@ -19,7 +19,7 @@ export default {
     return { ...state, activePlaylist: action.payload }
   },
   setQueue(state: SpotifyState, action: PayloadAction<WebPlaybackTrack[]>) {
-    return { ...state, queue: action.payload }
+    return { ...state, currentRoom: { ...state.currentRoom, queue: action.payload } }
   },
   setUser(state: SpotifyState, action: PayloadAction<SpotifyUser>) {
     return { ...state, user: action.payload }
@@ -31,9 +31,9 @@ export default {
     return { ...state, playbackInfo: action.payload }
   },
   setCurrentRoom(state: SpotifyState, action: PayloadAction<Room>) {
-    return { ...state, room: action.payload }
+    return { ...state, currentRoom: action.payload }
   },
   clearCurrentRoom(state: SpotifyState) {
-    return { ...state, room: initialCurrentRoom }
+    return { ...state, currentRoom: initialCurrentRoom }
   },
 }

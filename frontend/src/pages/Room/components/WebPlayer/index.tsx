@@ -41,7 +41,7 @@ export default function WebPlayer() {
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
   const [isLiked, setIsLiked] = useState<Boolean>()
 
-  const { token, queue, playbackInfo, currentTrack } = useSelector(selectSpotifyState)
+  const { token, playbackInfo, currentTrack, currentRoom } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
 
   /**
@@ -75,14 +75,14 @@ export default function WebPlayer() {
    * Skip to the next track
    */
   const skipForward = () => {
-    if (queue.length > 0 && player !== undefined) {
-      const { uri, id } = queue[0]
+    if (currentRoom.queue.length > 0 && player !== undefined) {
+      const { uri, id } = currentRoom.queue[0]
       play(token, { uris: [uri], deviceId }).then((res: any) => {
         if (res.status === 204) {
-          if (queue.length === 1) {
+          if (currentRoom.queue.length === 1) {
             sendQueue([])
           } else {
-            const newQueue = queue.slice(1, queue.length)
+            const newQueue = currentRoom.queue.slice(1, currentRoom.queue.length)
             sendQueue(newQueue)
           }
           setEndOfTrack(false)
@@ -206,11 +206,11 @@ export default function WebPlayer() {
   }, [deviceId, currentTrack])
 
   useEffect(() => {
-    if (queue.length > 0 && playbackState === undefined) {
-      sendCurrentTrack({ paused: false, position: 0, uri: queue[0].uri })
+    if (currentRoom.queue.length > 0 && playbackState === undefined) {
+      sendCurrentTrack({ paused: false, position: 0, uri: currentRoom.queue[0].uri })
       skipForward()
     }
-  }, [queue])
+  }, [currentRoom.queue])
 
   /**
    * Handle pause/resume
@@ -244,10 +244,13 @@ export default function WebPlayer() {
       return false
     }
     // send skip command to backend
-    const { uri } = queue[0]
-    sendSkipTrack()
-    sendCurrentTrack({ paused: false, position: 0, uri })
-    return true
+    if (currentRoom.queue.length > 0) {
+      const { uri } = currentRoom.queue[0]
+      sendSkipTrack()
+      sendCurrentTrack({ paused: false, position: 0, uri })
+      return true
+    }
+    return false
   }
 
   /**

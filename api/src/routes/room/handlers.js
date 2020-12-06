@@ -1,6 +1,22 @@
 import {id} from '../../util/common.js'
 import {getAllRooms, createRoom, findRoomById, updateRoom} from '../../persistence/queries.js'
 
+export function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
+  findRoomById(roomId).then((room) => {
+    if (distributeToRoom) {
+      io.sockets.in(roomId).emit('room-full-info', {
+        source: 'server',
+        message: {payload: room},
+      })
+    } else {
+      socket.emit('room-full-info', {
+        source: 'server',
+        message: {payload: room},
+      })
+    }
+  })
+}
+
 export function updateAvailableRooms(io, socket, distributeAll) {
   getAllRooms().then((rooms) => {
     if (distributeAll) {
@@ -114,30 +130,15 @@ export function sendSkipForward(io, socket) {
   })
 }
 
-// TODO: delete
-export function setCurrentTrack(socket, msg) {
-  const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
+export async function setCurrentTrack(io, socket, msg) {
+  const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   const currentTrack = {
     position_ms: msg.duration_ms || 0,
     paused: msg.paused ? msg.paused : false,
     uri: msg.uri,
     timestamp: new Date(),
   }
-  updateRoom(room, {currentTrack})
-}
-
-export function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
-  findRoomById(roomId).then((room) => {
-    if (distributeToRoom) {
-      io.sockets.in(roomId).emit('room-full-info', {
-        source: 'server',
-        message: {payload: room},
-      })
-    } else {
-      socket.emit('room-full-info', {
-        source: 'server',
-        message: {payload: room},
-      })
-    }
+  updateRoom(roomId, {currentTrack}).then(() => {
+    sendFullRoomInformation(io, socket, roomId, true)
   })
 }

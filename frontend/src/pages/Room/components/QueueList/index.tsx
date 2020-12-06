@@ -9,7 +9,7 @@ import * as styles from './styles.module.sass'
 
 export default function QueueList() {
   const dispatch = useDispatch()
-  const { queue } = useSelector(selectSpotifyState)
+  const { currentRoom } = useSelector(selectSpotifyState)
 
   useEffect(() => {
     socket.on('new-queue', (res: Response<WebPlaybackTrack[]>) => {
@@ -22,8 +22,8 @@ export default function QueueList() {
 
   return (
     <div>
-      {queue.length > 0 ? (
-        queue.map((track, index) => (
+      {currentRoom.queue.length > 0 ? (
+        currentRoom.queue.map((track, index) => (
           <div className={styles.track} key={index}>
             <Track track={track} />
           </div>

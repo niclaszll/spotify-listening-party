@@ -25,7 +25,7 @@ export default function TrackList() {
   const [tracklist, setTracklist] = useState<PagingObject>(samplePagingObject)
   const [isLoading, setIsLoading] = useState<Boolean>(true)
 
-  const { token, activePlaylist, queue } = useSelector(selectSpotifyState)
+  const { token, activePlaylist, currentRoom } = useSelector(selectSpotifyState)
 
   /**
    * Fetch all tracks of selected playlist
@@ -56,7 +56,7 @@ export default function TrackList() {
 
   const handleAdd = (track: WebPlaybackTrack) => {
     // get queue
-    const q = queue.concat([track])
+    const q = currentRoom.queue.concat([track])
     sendQueue(q)
   }
 

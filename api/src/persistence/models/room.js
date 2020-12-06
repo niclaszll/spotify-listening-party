@@ -29,6 +29,8 @@ const RoomSchema = new mongoose.Schema({
   creatorId: {
     type: String,
     required: true,
+    default: '',
+    immutable: (doc) => doc.creatorId !== '',
   },
   currentTrack: {
     type: Object,

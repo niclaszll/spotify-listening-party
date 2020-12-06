@@ -49,9 +49,8 @@ export default function roomRouter(io) {
     })
 
     socket.on('toggle-play', (data) => {
-      sendTogglePlay(io, socket, data.message.msg).then(() => {
-        sendFullRoomInformation(socket, data.message.roomId)
-      })
+      sendTogglePlay(io, socket, data.message.msg)
+      sendFullRoomInformation(io, socket, data.message.roomId, true)
     })
 
     socket.on('skip-forward', () => {
@@ -63,7 +62,7 @@ export default function roomRouter(io) {
     })
 
     socket.on('current-track', (data) => {
-      setCurrentTrack(socket, data.message.msg)
+      setCurrentTrack(io, socket, data.message.msg)
     })
 
     socket.on('disconnect', () => {

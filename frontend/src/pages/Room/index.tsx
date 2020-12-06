@@ -10,7 +10,6 @@ import {
   setQueue,
   setUser,
 } from '../../store/modules/spotify'
-import { WebPlaybackTrack } from '../../util/types/spotify'
 import { socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
