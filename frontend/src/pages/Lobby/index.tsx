@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { Room } from '../../util/types/rooms'
 import { getAvailableRooms, newSocketRoom, Response, socket } from '../../util/websocket'
 import { ReactComponent as Lock } from '../../img/icons/lock.svg'
 import { ReactComponent as LockOpen } from '../../img/icons/lock_open.svg'
 import { ReactComponent as People } from '../../img/icons/people.svg'
 import * as styles from './styles.module.sass'
+import { selectSpotifyState } from '../../store/modules/spotify'
 
 export default function Lobby() {
   const [roomName, setRoomName] = useState<string>('')
@@ -14,6 +16,7 @@ export default function Lobby() {
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
   const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
   const history = useHistory()
+  const { user } = useSelector(selectSpotifyState)
 
   useEffect(() => {
     getAvailableRooms()
@@ -35,6 +38,9 @@ export default function Lobby() {
       name: roomName,
       roomPublic,
       activeListeners: 0,
+      queue: [],
+      creatorId: user?.id || '',
+      currentTrack: null,
     }
     if (roomName) {
       newSocketRoom(newRoom)

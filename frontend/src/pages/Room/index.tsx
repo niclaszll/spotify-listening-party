@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
+  clearCurrentRoom,
   clearSpotifyState,
   selectSpotifyState,
+  setCurrentRoom,
   setCurrentTrack,
   setQueue,
   setUser,
@@ -19,7 +21,7 @@ import { ReactComponent as ChatIcon } from '../../img/icons/chat.svg'
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
 import { getCurrentUserInfo } from '../../util/spotify'
-import { RoomInfoResponse } from '../../util/types/rooms'
+import { RoomInfoResponse, Room as CurrentRoom } from '../../util/types/rooms'
 
 export default function Room() {
   const dispatch = useDispatch()
@@ -50,14 +52,20 @@ export default function Room() {
       dispatch(setQueue(data.message.payload.queue))
       dispatch(setCurrentTrack(data.message.payload.currentTrack))
     })
+    socket.on('room-full-info', (data: Response<CurrentRoom>) => {
+      dispatch(setCurrentRoom(data.message.payload))
+    })
     return () => {
       window.removeEventListener('beforeunload', () => {
+        dispatch(clearCurrentRoom())
         leaveSocketRoom()
         return undefined
       })
+      dispatch(clearCurrentRoom())
       leaveSocketRoom()
       socket.off('error-event')
       socket.off('room-info')
+      socket.off('room-full-info')
     }
   }, [])
 

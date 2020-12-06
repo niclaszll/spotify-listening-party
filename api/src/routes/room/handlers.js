@@ -28,14 +28,14 @@ export function leaveActiveRoom(io, socket) {
   }
 }
 
-export function createNewRoom(socket, message) {
+export async function createNewRoom(socket, message) {
   const {name, roomPublic, activeListeners} = message
   const roomId = `room${id()}`
   const roomName = name !== '' ? name : roomId
   const creatorId = socket.id
   const newRoom = {id: roomId, name: roomName, roomPublic, activeListeners, creatorId}
 
-  createRoom(newRoom)
+  return createRoom(newRoom)
     .then(
       socket.emit('room', {
         source: 'server',
@@ -45,16 +45,16 @@ export function createNewRoom(socket, message) {
     .catch((err) => console.log(err))
 }
 
-export function joinRoom(io, socket, roomId) {
+export async function joinRoom(io, socket, roomId) {
   socket.join(roomId)
 
-  findRoomById(roomId).then((room) => {
+  return findRoomById(roomId).then((room) => {
     console.log(`Joined room ${room.name} with id ${roomId}`)
 
     const listenersCount =
       io.sockets.adapter.rooms[room.id] !== undefined ? io.sockets.adapter.rooms[room.id].length : 0
 
-    updateRoom(roomId, {activeListeners: listenersCount})
+    return updateRoom(roomId, {activeListeners: listenersCount})
       .then(() => {
         updateAvailableRooms(io, socket, true)
         console.log(`Room ${room.name} has now ${listenersCount} listener(s)`)
@@ -66,6 +66,7 @@ export function joinRoom(io, socket, roomId) {
   })
 }
 
+// TODO: delete
 export function sendRoomInformation(socket, roomId) {
   findRoomById(roomId).then((room) => {
     socket.emit('room-info', {
@@ -83,6 +84,7 @@ export function distributeMessage(io, socket, msg) {
   })
 }
 
+// TODO: delete
 export function sendNewQueue(io, socket, msg) {
   const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   updateRoom(roomId, {queue: msg}).then(
@@ -93,6 +95,7 @@ export function sendNewQueue(io, socket, msg) {
   )
 }
 
+// TODO: delete
 export function sendTogglePlay(io, socket, msg) {
   const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   io.sockets.in(room).emit('toggle-play', {
@@ -101,6 +104,7 @@ export function sendTogglePlay(io, socket, msg) {
   })
 }
 
+// TODO: delete
 export function sendSkipForward(io, socket) {
   const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   io.sockets.in(room).emit('skip-forward', {
@@ -108,6 +112,7 @@ export function sendSkipForward(io, socket) {
   })
 }
 
+// TODO: delete
 export function setCurrentTrack(socket, msg) {
   const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   const currentTrack = {
@@ -117,4 +122,13 @@ export function setCurrentTrack(socket, msg) {
     timestamp: new Date(),
   }
   updateRoom(room, {currentTrack})
+}
+
+export function sendFullRoomInformation(socket, roomId) {
+  findRoomById(roomId).then((room) => {
+    socket.emit('room-full-info', {
+      source: 'server',
+      message: {payload: room},
+    })
+  })
 }

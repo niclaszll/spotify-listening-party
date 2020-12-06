@@ -5,6 +5,9 @@ export type Room = {
   name: string
   roomPublic: Boolean
   activeListeners: number
+  queue: WebPlaybackTrack[]
+  creatorId: string
+  currentTrack: CurrentTrackResponse | null
 }
 
 export type Message = {

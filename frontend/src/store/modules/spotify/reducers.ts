@@ -1,12 +1,12 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { CurrentTrackResponse } from '../../../util/types/rooms'
+import { CurrentTrackResponse, Room } from '../../../util/types/rooms'
 import {
   SpotifyPlaylist,
   SpotifyUser,
   WebPlaybackTrack,
   SpotifyPlayerStatus,
 } from '../../../util/types/spotify'
-import initialState, { SpotifyState } from './state'
+import initialState, { initialCurrentRoom, SpotifyState } from './state'
 
 export default {
   setUserToken(state: SpotifyState, action: PayloadAction<string>) {
@@ -29,5 +29,11 @@ export default {
   },
   setPlaybackInfo(state: SpotifyState, action: PayloadAction<SpotifyPlayerStatus>) {
     return { ...state, playbackInfo: action.payload }
+  },
+  setCurrentRoom(state: SpotifyState, action: PayloadAction<Room>) {
+    return { ...state, room: action.payload }
+  },
+  clearCurrentRoom(state: SpotifyState) {
+    return { ...state, room: initialCurrentRoom }
   },
 }

@@ -11,6 +11,7 @@ import {
   sendSkipForward,
   updateAvailableRooms,
   setCurrentTrack,
+  sendFullRoomInformation,
 } from './handlers.js'
 
 export default function roomRouter(io) {
@@ -20,11 +21,15 @@ export default function roomRouter(io) {
     console.log('New client connected')
 
     socket.on('create', (data) => {
-      createNewRoom(socket, data.message)
+      createNewRoom(socket, data.message).then(() => {
+        sendFullRoomInformation(socket, data.message.roomId)
+      })
     })
 
     socket.on('join', (data) => {
-      joinRoom(io, socket, data.message.roomId)
+      joinRoom(io, socket, data.message.roomId).then(() => {
+        sendFullRoomInformation(socket, data.message.roomId)
+      })
       sendRoomInformation(socket, data.message.roomId)
     })
 
