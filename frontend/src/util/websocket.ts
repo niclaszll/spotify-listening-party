@@ -59,10 +59,10 @@ export function sendSkipTrack() {
   })
 }
 
-export function sendTogglePlay(msg: Boolean) {
+export function sendTogglePlay(msg: Boolean, roomId: String) {
   socket.emit('toggle-play', {
     source: 'client',
-    message: { msg },
+    message: { msg, roomId },
   })
 }
 

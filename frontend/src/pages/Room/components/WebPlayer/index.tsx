@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { current } from '@reduxjs/toolkit'
 import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
@@ -87,11 +88,13 @@ export default function WebPlayer() {
       // if user joins room and gets first track or the new track is a different one
       // play the new track (https request to spotify)
       if (playbackInfo === null || playbackInfo.item.uri !== currentRoom.currentTrack.uri) {
+        if (currentRoom.currentTrack.paused) return
+        // console.log(currentRoom.currentTrack)
         handleAsyncPlay()
       }
       // check if current track should be paused or resumed
       if (currentRoom.currentTrack.paused) {
-        pausePlayback(token)
+        player?.pause()
       } else {
         player?.resume()
       }
@@ -156,7 +159,6 @@ export default function WebPlayer() {
       player.addListener('player_state_changed', (state) => {
         if (state) {
           handlePlayerStateChange(state)
-          console.log(state)
         }
       })
 
@@ -200,9 +202,6 @@ export default function WebPlayer() {
       })
       socket.on('skip-forward', () => {
         setEndOfTrack(true)
-      })
-      socket.on('toggle-play', (data: Response<Boolean>) => {
-        setIsPaused(data.message.payload)
       })
     }
     return () => {
@@ -257,9 +256,7 @@ export default function WebPlayer() {
    */
   const togglePlay = () => {
     if (player !== undefined && playbackState !== undefined) {
-      const { uri } = playbackState.track_window.current_track
-      sendTogglePlay(!isPaused)
-      sendCurrentTrack({ paused: !isPaused, position: playbackState.position, uri })
+      sendTogglePlay(!currentRoom.currentTrack?.paused, currentRoom.id!)
     }
   }
 
@@ -336,7 +333,7 @@ export default function WebPlayer() {
           <SkipBackward />
         </button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>
-          {currentRoom.currentTrack?.paused ? <Play /> : <Pause />}
+          {!currentRoom.currentTrack?.paused ? <Pause /> : <Play />}
         </button>
         <button type="button" onClick={handleSkipForwardClick}>
           <SkipForward />

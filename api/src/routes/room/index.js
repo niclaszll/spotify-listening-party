@@ -7,7 +7,7 @@ import {
   leaveActiveRoom,
   distributeMessage,
   sendNewQueue,
-  sendTogglePlay,
+  updateTrackState,
   sendSkipForward,
   updateAvailableRooms,
   setCurrentTrack,
@@ -49,8 +49,7 @@ export default function roomRouter(io) {
     })
 
     socket.on('toggle-play', (data) => {
-      sendTogglePlay(io, socket, data.message.msg)
-      sendFullRoomInformation(io, socket, data.message.roomId, true)
+      updateTrackState(io, socket, data.message.msg, data.message.roomId)
     })
 
     socket.on('skip-forward', () => {

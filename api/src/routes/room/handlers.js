@@ -113,13 +113,13 @@ export function sendNewQueue(io, socket, msg) {
   )
 }
 
-// TODO: delete
-export function sendTogglePlay(io, socket, msg) {
-  const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-  io.sockets.in(room).emit('toggle-play', {
-    source: 'server',
-    message: {payload: msg},
+export function updateTrackState(io, socket, msg, roomId) {
+  findRoomById(roomId).then(room => {
+    updateRoom(roomId, {currentTrack: {...room.currentTrack, paused: msg}}).then(() => {
+      sendFullRoomInformation(io, socket, roomId, true)
+    })
   })
+  
 }
 
 // TODO: delete

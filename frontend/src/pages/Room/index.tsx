@@ -53,6 +53,7 @@ export default function Room() {
       dispatch(setQueue(data.message.payload.queue))
     })
     socket.on('room-full-info', (data: Response<CurrentRoom>) => {
+      console.log(data.message.payload)
       dispatch(setCurrentRoom(data.message.payload))
     })
     return () => {
