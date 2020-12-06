@@ -35,6 +35,8 @@ export default function Room() {
 
     // leave room if user closes browser/tab
     window.addEventListener('beforeunload', () => {
+      dispatch(clearCurrentRoom())
+      dispatch(clearPlaybackInfo())
       leaveSocketRoom()
       return undefined
     })
