@@ -6,9 +6,9 @@ import {
   sendRoomInformation,
   leaveActiveRoom,
   distributeMessage,
-  sendNewQueue,
+  updateQueue,
+  clearQueue,
   updateTrackState,
-  sendSkipForward,
   updateAvailableRooms,
   setCurrentTrack,
   sendFullRoomInformation,
@@ -44,16 +44,16 @@ export default function roomRouter(io) {
       distributeMessage(io, socket, data.message)
     })
 
-    socket.on('new-queue', (data) => {
-      sendNewQueue(io, socket, data.message.msg)
+    socket.on('add-to-queue', (data) => {
+      updateQueue(io, socket, data.message)
+    })
+
+    socket.on('clear-queue', (data) => {
+      clearQueue(io, socket, data.message)
     })
 
     socket.on('toggle-play', (data) => {
-      updateTrackState(io, socket, data.message.msg, data.message.roomId)
-    })
-
-    socket.on('skip-forward', () => {
-      sendSkipForward(io, socket)
+      updateTrackState(io, socket, data.message)
     })
 
     socket.on('get-available-rooms', () => {

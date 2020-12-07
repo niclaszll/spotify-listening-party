@@ -1,8 +1,8 @@
 import {id} from '../../util/common.js'
 import {getAllRooms, createRoom, findRoomById, updateRoom} from '../../persistence/queries.js'
 
-export function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
-  findRoomById(roomId).then((room) => {
+export async function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
+  return findRoomById(roomId).then((room) => {
     if (distributeToRoom) {
       io.sockets.in(roomId).emit('room-full-info', {
         source: 'server',
@@ -102,32 +102,49 @@ export function distributeMessage(io, socket, msg) {
   })
 }
 
-// TODO: delete
-export function sendNewQueue(io, socket, msg) {
-  const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-  updateRoom(roomId, {queue: msg}).then(
-    io.sockets.in(roomId).emit('new-queue', {
-      source: 'server',
-      message: {payload: msg},
-    })
+export function updateQueue(io, socket, msg) {
+  findRoomById(msg.roomId).then(room => {
+    const newQueue = [...room.queue, msg.track]
+    updateRoom(msg.roomId, {queue: newQueue}).then(
+      sendFullRoomInformation(io, socket, msg.roomId, true).then(() => {
+        if (room.currentTrack === null && newQueue.length > 0) {
+          skipTrack(io, socket, msg.roomId)
+        }
+      })
+    )
+  })
+}
+
+export function clearQueue(io, socket, msg) {
+  updateRoom(msg.roomId, {queue: []}).then(
+    sendFullRoomInformation(io, socket, msg.roomId, true)
   )
 }
 
-export function updateTrackState(io, socket, msg, roomId) {
-  findRoomById(roomId).then(room => {
-    updateRoom(roomId, {currentTrack: {...room.currentTrack, paused: msg}}).then(() => {
-      sendFullRoomInformation(io, socket, roomId, true)
+export function updateTrackState(io, socket, msg) {
+  findRoomById(msg.roomId).then(room => {
+    updateRoom(msg.roomId, {currentTrack: {...room.currentTrack, paused: msg.paused}}).then(() => {
+      sendFullRoomInformation(io, socket, msg.roomId, true)
     })
   })
   
 }
 
-// TODO: delete
-export function sendSkipForward(io, socket) {
-  const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-  io.sockets.in(room).emit('skip-forward', {
-    source: 'server',
-  })
+export function skipTrack(io, socket, roomId) {
+  findRoomById(roomId).then(room => {
+    if (room.queue.length > 0) {
+      const nextTrack = {
+        position_ms: 0,
+        paused: false,
+        uri: room.queue[0].uri,
+        timestamp: new Date()
+      }
+      room.queue.shift()
+      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue}).then(() => {
+        sendFullRoomInformation(io, socket, roomId, true)
+      })
+    }
+  })  
 }
 
 export async function setCurrentTrack(io, socket, msg) {

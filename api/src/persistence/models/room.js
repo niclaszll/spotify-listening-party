@@ -35,7 +35,7 @@ const RoomSchema = new mongoose.Schema({
   currentTrack: {
     type: Object,
     required: false,
-    default: {},
+    default: null,
   },
 })
 

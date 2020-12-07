@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { current } from '@reduxjs/toolkit'
 import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
@@ -15,22 +14,13 @@ import {
   isInLibrary,
   removeFromLibrary,
   loadSpotify,
-  pausePlayback,
-  seekPosition,
 } from '../../../../util/spotify'
 import {
   SpotifyPlayerCallback,
   WebPlaybackPlayer,
   WebPlaybackState,
 } from '../../../../util/types/spotify'
-import {
-  socket,
-  Response,
-  sendSkipTrack,
-  sendTogglePlay,
-  sendQueue,
-  sendCurrentTrack,
-} from '../../../../util/websocket'
+import { sendSkipTrack, sendTogglePlay, sendCurrentTrack } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
 
@@ -74,12 +64,16 @@ export default function WebPlayer() {
 
   useEffect(() => {
     // check if there is an active track in the room
+    console.log('check if überhaupt called')
+    console.log(deviceId)
     if (currentRoom.currentTrack && deviceId !== '') {
       // if user joins room and gets first track or the new track is a different one
       // play the new track (https request to spotify)
+      console.log('pre-if')
       if (playbackInfo === null || playbackInfo.item?.uri !== currentRoom.currentTrack.uri) {
         if (currentRoom.currentTrack.paused) return
 
+        console.log('correct')
         const position_ms =
           Date.now() +
           currentRoom.currentTrack!.position_ms -
@@ -103,10 +97,10 @@ export default function WebPlayer() {
       play(token, { uris: [uri], deviceId }).then((res: any) => {
         if (res.status === 204) {
           if (currentRoom.queue.length === 1) {
-            sendQueue([])
+            // sendQueue([])
           } else {
             const newQueue = currentRoom.queue.slice(1, currentRoom.queue.length)
-            sendQueue(newQueue)
+            // sendQueue(newQueue)
           }
           setEndOfTrack(false)
           setIsPaused(false)
@@ -188,49 +182,28 @@ export default function WebPlayer() {
   /**
    * Setup socket connection and handler
    */
-  useEffect(() => {
-    if (deviceId) {
-      socket.on('play-song', (data: Response<string>) => {
-        play(token, { uris: [data.message.payload], deviceId })
-        setIsPaused(false)
-      })
-      socket.on('skip-forward', () => {
-        setEndOfTrack(true)
-      })
-    }
-    return () => {
-      socket.off('play-song')
-      socket.off('skip-forward')
-      socket.off('toggle-play')
-    }
-  }, [deviceId])
-
-  /**
-   * Auto-play song when no song is playing and song has been added to queue
-   */
   // useEffect(() => {
-  //   if (deviceId && currentTrack) {
-  //     const position =
-  //       Date.now() + currentTrack.position_ms - new Date(currentTrack.timestamp).getTime()
-  //     play(token, { deviceId, uris: [currentTrack.uri] }).then(() => {
-  //       seekPosition(token, position, deviceId).then(() => {
-  //         if (currentTrack.paused) {
-  //           pausePlayback(token)
-  //           setIsPaused(true)
-  //         } else {
-  //           setIsPaused(false)
-  //         }
-  //       })
+  //   if (deviceId) {
+  //     socket.on('play-song', (data: Response<string>) => {
+  //       play(token, { uris: [data.message.payload], deviceId })
+  //       setIsPaused(false)
+  //     })
+  //     socket.on('skip-forward', () => {
+  //       setEndOfTrack(true)
   //     })
   //   }
-  // }, [deviceId, currentTrack])
+  //   return () => {
+  //     socket.off('play-song')
+  //     socket.off('skip-forward')
+  //   }
+  // }, [deviceId])
 
-  useEffect(() => {
-    if (currentRoom.queue.length > 0 && playbackState === undefined) {
-      sendCurrentTrack({ paused: false, position: 0, uri: currentRoom.queue[0].uri })
-      skipForward()
-    }
-  }, [currentRoom.queue])
+  // useEffect(() => {
+  //   if (currentRoom.queue.length > 0 && playbackState === undefined) {
+  //     sendCurrentTrack({ paused: false, position: 0, uri: currentRoom.queue[0].uri })
+  //     skipForward()
+  //   }
+  // }, [currentRoom.queue])
 
   /**
    * Handle pause/resume

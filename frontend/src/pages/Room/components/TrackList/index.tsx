@@ -1,13 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import { getNextPagingObject, getPlaylistTracks } from '../../../../util/spotify'
-import {
-  PagingObject,
-  SpotifyPlaylistTrackObject,
-  WebPlaybackTrack,
-} from '../../../../util/types/spotify'
-import { sendQueue } from '../../../../util/websocket'
+import { PagingObject, SpotifyPlaylistTrackObject } from '../../../../util/types/spotify'
+import { addToQueue } from '../../../../util/websocket'
 import Track from '../Track'
 import * as styles from './style.module.sass'
 
@@ -54,12 +50,6 @@ export default function TrackList() {
     loadTrackList()
   }, [activePlaylist])
 
-  const handleAdd = (track: WebPlaybackTrack) => {
-    // get queue
-    const q = currentRoom.queue.concat([track])
-    sendQueue(q)
-  }
-
   return (
     <div className={styles.tracks}>
       {tracklist.items !== [] && !isLoading ? (
@@ -68,7 +58,7 @@ export default function TrackList() {
             <div
               className={styles.track}
               key={index}
-              onClick={() => handleAdd(trackObject.track)}
+              onClick={() => addToQueue(trackObject.track, currentRoom.id!)}
               onKeyDown={() => {}}
               role="button"
               tabIndex={index}

@@ -40,10 +40,17 @@ export function sendMessage(msg: Message) {
   })
 }
 
-export function sendQueue(msg: WebPlaybackTrack[]) {
-  socket.emit('new-queue', {
+export function addToQueue(track: WebPlaybackTrack, roomId: String) {
+  socket.emit('add-to-queue', {
     source: 'client',
-    message: { msg },
+    message: { track, roomId },
+  })
+}
+
+export function clearQueue(roomId: String) {
+  socket.emit('clear-queue', {
+    source: 'client',
+    message: { roomId },
   })
 }
 
@@ -59,10 +66,10 @@ export function sendSkipTrack() {
   })
 }
 
-export function sendTogglePlay(msg: Boolean, roomId: String) {
+export function sendTogglePlay(paused: Boolean, roomId: String) {
   socket.emit('toggle-play', {
     source: 'client',
-    message: { msg, roomId },
+    message: { paused, roomId },
   })
 }
 

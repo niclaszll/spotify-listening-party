@@ -10,7 +10,7 @@ import {
   setQueue,
   setUser,
 } from '../../store/modules/spotify'
-import { socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom } from '../../util/websocket'
+import { socket, Response, joinSocketRoom, leaveSocketRoom, clearQueue } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
@@ -24,7 +24,7 @@ import { RoomInfoResponse, Room as CurrentRoom } from '../../util/types/rooms'
 
 export default function Room() {
   const dispatch = useDispatch()
-  const { activePlaylist, token } = useSelector(selectSpotifyState)
+  const { activePlaylist, token, currentRoom } = useSelector(selectSpotifyState)
   const [chatVisible, setChatVisible] = useState<Boolean>(false)
 
   const params = useParams<any>()
@@ -87,7 +87,12 @@ export default function Room() {
       <div className={styles.queueContainer}>
         <div className={styles.title}>
           <h2>Queue</h2>
-          <button className={styles.clearQueue} type="button" onClick={() => sendQueue([])}>
+          {/* TODO add clear queue function */}
+          <button
+            className={styles.clearQueue}
+            type="button"
+            onClick={() => clearQueue(currentRoom.id!)}
+          >
             <DeleteAll />
           </button>
         </div>
