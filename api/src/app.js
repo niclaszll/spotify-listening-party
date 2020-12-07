@@ -35,7 +35,11 @@ debug('api:server')
 
 const app = express()
 const server = http.createServer(app)
-const io = socket(server, {pingTimeout: 60000})
+const io = socket(server, {
+  pingTimeout: 60000,
+  cors: true,
+  origins: ['http://185.128.119.245:80'],
+})
 const rr = roomRouter(io)
 
 /**
