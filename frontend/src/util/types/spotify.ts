@@ -36,6 +36,7 @@ export interface SpotifyPlayOptions {
   deviceId: string
   offset?: number
   uris?: string[]
+  position_ms?: number
 }
 
 export interface CurrentSongId {

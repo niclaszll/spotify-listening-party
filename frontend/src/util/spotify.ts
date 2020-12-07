@@ -50,7 +50,7 @@ export async function loadSpotify() {
 
 export async function play(
   token: string | null,
-  { context_uri, deviceId, offset = 0, uris }: SpotifyPlayOptions
+  { context_uri, deviceId, offset = 0, uris, position_ms = 0 }: SpotifyPlayOptions
 ) {
   if (token === null) return false
   let body
@@ -63,9 +63,9 @@ export async function play(
       position = { position: offset }
     }
 
-    body = JSON.stringify({ context_uri, offset: position })
+    body = JSON.stringify({ context_uri, offset: position, position_ms })
   } else if (Array.isArray(uris) && uris.length) {
-    body = JSON.stringify({ uris, offset: { position: offset } })
+    body = JSON.stringify({ uris, offset: { position: offset }, position_ms })
   }
 
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
