@@ -1,5 +1,8 @@
 FROM node:14-alpine
 
+# install curl for healthcheck
+RUN apk --no-cache add curl
+
 # Switch into correct workspace (needed for permissions)
 WORKDIR /home/node
 

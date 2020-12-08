@@ -37,8 +37,6 @@ const app = express()
 const server = http.createServer(app)
 const io = socket(server, {
   pingTimeout: 60000,
-  cors: true,
-  origins: ['http://185.128.119.245:80'],
 })
 const rr = roomRouter(io)
 
@@ -46,7 +44,7 @@ const rr = roomRouter(io)
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.API_PORT || '8000')
+const port = normalizePort(process.env.API_PORT || '9000')
 app.set('port', port)
 
 /**

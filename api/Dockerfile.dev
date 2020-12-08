@@ -1,5 +1,8 @@
 FROM node:alpine
 
+# install curl for healthcheck
+RUN apk --no-cache add curl
+
 # Switch into correct workspace (needed for permissions)
 WORKDIR /home/node
 
@@ -13,4 +16,4 @@ EXPOSE 9000
 CMD ["yarn", "start.dev"]
 
 HEALTHCHECK --interval=30s \
-  CMD curl -f http://localhost:9000/ || exit 1
+  CMD curl -f http://localhost:9000/room/health || exit 1
