@@ -23,13 +23,14 @@ import {
 import { sendSkipForward, sendTogglePlay } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
+import useDebouncedEffect from '../../../../util/useDebouncedEffect'
 
 export default function WebPlayer() {
   const [deviceId, setDeviceId] = useState<string>('')
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
-  const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
   const [isLiked, setIsLiked] = useState<Boolean>()
+  const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
 
   const { token, playbackInfo, currentRoom } = useSelector(selectSpotifyState)
   const dispatch = useDispatch()
@@ -73,6 +74,7 @@ export default function WebPlayer() {
           currentRoom.currentTrack!.position_ms -
           new Date(currentRoom.currentTrack!.timestamp).getTime()
         play(token, { uris: [currentRoom.currentTrack!.uri], deviceId, position_ms })
+        setEndOfTrack(false)
       }
       // check if current track should be paused or resumed
       if (currentRoom.currentTrack.paused) {
@@ -97,6 +99,17 @@ export default function WebPlayer() {
       setEndOfTrack(true)
     }
   }
+
+  useDebouncedEffect(
+    () => {
+      if (endOfTrack) {
+        sendSkipForward(currentRoom.id!)
+        console.log('skip Track')
+      }
+    },
+    100,
+    [endOfTrack]
+  )
 
   /**
    * Add listeners when player is ready
@@ -142,15 +155,6 @@ export default function WebPlayer() {
       player?.disconnect()
     }
   }, [player])
-
-  /**
-   * Skip to next track when end of track is reached
-   */
-  useEffect(() => {
-    if (endOfTrack) {
-      sendSkipForward(currentRoom.id!)
-    }
-  }, [endOfTrack])
 
   /**
    * Send toggle play command to backend

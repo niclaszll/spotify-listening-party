@@ -24,9 +24,6 @@ export default {
   setUser(state: SpotifyState, action: PayloadAction<SpotifyUser>) {
     return { ...state, user: action.payload }
   },
-  setCurrentTrack(state: SpotifyState, action: PayloadAction<CurrentTrackResponse>) {
-    return { ...state, currentTrack: action.payload }
-  },
   setPlaybackInfo(state: SpotifyState, action: PayloadAction<SpotifyPlayerStatus>) {
     return { ...state, playbackInfo: action.payload }
   },

@@ -18,7 +18,6 @@ export const {
   setQueue,
   setUser,
   setPlaybackInfo,
-  setCurrentTrack,
   setCurrentRoom,
   clearCurrentRoom,
   clearPlaybackInfo,
