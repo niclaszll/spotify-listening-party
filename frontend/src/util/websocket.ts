@@ -60,9 +60,10 @@ export function getAvailableRooms() {
   })
 }
 
-export function sendSkipTrack() {
+export function sendSkipForward(roomId: String) {
   socket.emit('skip-forward', {
     source: 'client',
+    message: { roomId },
   })
 }
 

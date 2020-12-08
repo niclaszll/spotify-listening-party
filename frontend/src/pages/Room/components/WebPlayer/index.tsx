@@ -20,13 +20,12 @@ import {
   WebPlaybackPlayer,
   WebPlaybackState,
 } from '../../../../util/types/spotify'
-import { sendSkipTrack, sendTogglePlay, sendCurrentTrack } from '../../../../util/websocket'
+import { sendSkipForward, sendTogglePlay } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
 
 export default function WebPlayer() {
   const [deviceId, setDeviceId] = useState<string>('')
-  const [isPaused, setIsPaused] = useState<Boolean>(true)
   const [player, setPlayer] = useState<WebPlaybackPlayer>()
   const [playbackState, setPlaybackState] = useState<WebPlaybackState>()
   const [endOfTrack, setEndOfTrack] = useState<Boolean>(false)
@@ -64,16 +63,11 @@ export default function WebPlayer() {
 
   useEffect(() => {
     // check if there is an active track in the room
-    console.log('check if überhaupt called')
-    console.log(deviceId)
     if (currentRoom.currentTrack && deviceId !== '') {
       // if user joins room and gets first track or the new track is a different one
       // play the new track (https request to spotify)
-      console.log('pre-if')
       if (playbackInfo === null || playbackInfo.item?.uri !== currentRoom.currentTrack.uri) {
         if (currentRoom.currentTrack.paused) return
-
-        console.log('correct')
         const position_ms =
           Date.now() +
           currentRoom.currentTrack!.position_ms -
@@ -88,26 +82,6 @@ export default function WebPlayer() {
       }
     }
   }, [currentRoom, deviceId])
-  /**
-   * Skip to the next track
-   */
-  const skipForward = () => {
-    if (currentRoom.queue.length > 0 && player !== undefined) {
-      const { uri, id } = currentRoom.queue[0]
-      play(token, { uris: [uri], deviceId }).then((res: any) => {
-        if (res.status === 204) {
-          if (currentRoom.queue.length === 1) {
-            // sendQueue([])
-          } else {
-            const newQueue = currentRoom.queue.slice(1, currentRoom.queue.length)
-            // sendQueue(newQueue)
-          }
-          setEndOfTrack(false)
-          setIsPaused(false)
-        }
-      })
-    }
-  }
 
   /**
    * Handle player state change
@@ -171,52 +145,12 @@ export default function WebPlayer() {
 
   /**
    * Skip to next track when end of track is reached
-   * skipForward() needs to be called in useEffect, else wrong queue is used
    */
   useEffect(() => {
     if (endOfTrack) {
-      skipForward()
+      sendSkipForward(currentRoom.id!)
     }
   }, [endOfTrack])
-
-  /**
-   * Setup socket connection and handler
-   */
-  // useEffect(() => {
-  //   if (deviceId) {
-  //     socket.on('play-song', (data: Response<string>) => {
-  //       play(token, { uris: [data.message.payload], deviceId })
-  //       setIsPaused(false)
-  //     })
-  //     socket.on('skip-forward', () => {
-  //       setEndOfTrack(true)
-  //     })
-  //   }
-  //   return () => {
-  //     socket.off('play-song')
-  //     socket.off('skip-forward')
-  //   }
-  // }, [deviceId])
-
-  // useEffect(() => {
-  //   if (currentRoom.queue.length > 0 && playbackState === undefined) {
-  //     sendCurrentTrack({ paused: false, position: 0, uri: currentRoom.queue[0].uri })
-  //     skipForward()
-  //   }
-  // }, [currentRoom.queue])
-
-  /**
-   * Handle pause/resume
-   */
-  useEffect(() => {
-    if (player !== undefined) {
-      if (isPaused) {
-        player.pause()
-      } else {
-        player.resume()
-      }
-    }
-  }, [isPaused])
 
   /**
    * Send toggle play command to backend
@@ -225,23 +159,6 @@ export default function WebPlayer() {
     if (player !== undefined && playbackState !== undefined) {
       sendTogglePlay(!currentRoom.currentTrack?.paused, currentRoom.id!)
     }
-  }
-
-  /**
-   * Handle click on skip forward button
-   */
-  const handleSkipForwardClick = () => {
-    if (playbackState === undefined) {
-      return false
-    }
-    // send skip command to backend
-    if (currentRoom.queue.length > 0) {
-      const { uri } = currentRoom.queue[0]
-      sendSkipTrack()
-      sendCurrentTrack({ paused: false, position: 0, uri })
-      return true
-    }
-    return false
   }
 
   /**
@@ -302,7 +219,7 @@ export default function WebPlayer() {
         <button id={styles.playPause} type="button" onClick={togglePlay}>
           {!currentRoom.currentTrack?.paused ? <Pause /> : <Play />}
         </button>
-        <button type="button" onClick={handleSkipForwardClick}>
+        <button type="button" onClick={() => sendSkipForward(currentRoom.id!)}>
           <SkipForward />
         </button>
       </div>

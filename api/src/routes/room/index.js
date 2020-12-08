@@ -12,6 +12,7 @@ import {
   updateAvailableRooms,
   setCurrentTrack,
   sendFullRoomInformation,
+  skipTrack,
 } from './handlers.js'
 
 export default function roomRouter(io) {
@@ -54,6 +55,10 @@ export default function roomRouter(io) {
 
     socket.on('toggle-play', (data) => {
       updateTrackState(io, socket, data.message)
+    })
+
+    socket.on('skip-forward', (data) => {
+      skipTrack(io, socket, data.message.roomId)
     })
 
     socket.on('get-available-rooms', () => {

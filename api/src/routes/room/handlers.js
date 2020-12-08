@@ -102,6 +102,23 @@ export function distributeMessage(io, socket, msg) {
   })
 }
 
+export function skipTrack(io, socket, roomId) {
+  findRoomById(roomId).then(room => {
+    if (room.queue.length > 0) {
+      const nextTrack = {
+        position_ms: 0,
+        paused: false,
+        uri: room.queue[0].uri,
+        timestamp: new Date()
+      }
+      room.queue.shift()
+      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue}).then(() => {
+        sendFullRoomInformation(io, socket, roomId, true)
+      })
+    }
+  })  
+}
+
 export function updateQueue(io, socket, msg) {
   findRoomById(msg.roomId).then(room => {
     const newQueue = [...room.queue, msg.track]
@@ -128,23 +145,6 @@ export function updateTrackState(io, socket, msg) {
     })
   })
   
-}
-
-export function skipTrack(io, socket, roomId) {
-  findRoomById(roomId).then(room => {
-    if (room.queue.length > 0) {
-      const nextTrack = {
-        position_ms: 0,
-        paused: false,
-        uri: room.queue[0].uri,
-        timestamp: new Date()
-      }
-      room.queue.shift()
-      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue}).then(() => {
-        sendFullRoomInformation(io, socket, roomId, true)
-      })
-    }
-  })  
 }
 
 export async function setCurrentTrack(io, socket, msg) {
