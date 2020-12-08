@@ -11,7 +11,7 @@ import Room from './pages/Room'
 function App() {
   return (
     <div className={styles.app}>
-      <Router>
+      <Router basename="/frontend">
         <Navbar />
         <Switch>
           <Route exact path="/" component={Login} />

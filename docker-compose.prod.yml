@@ -1,32 +1,52 @@
 version: "3.5"
 
 services:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.3
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      # - "8080:8080"
+    networks:
+      - app-network
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=false"
+
   frontend:
     build:
       context: ./frontend
     restart: always
-    ports:
-      - "80:3000"
     volumes:
       - ./frontend:/home/node
       - /home/node/node_modules
-    links:
-      - api
     networks:
       - app-network
+    labels:
+      - "traefik.backend=frontend"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
 
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
     restart: always
-    ports:
-      - "9000:9000"
     volumes:
       - ./api:/home/node
       - /home/node/node_modules
     networks:
       - app-network
+    labels:
+      - "traefik.backend=api"
+      - "traefik.http.routers.api.rule=PathPrefix(`/backend`)"
+      - "traefik.http.routers.api.middlewares=api-stripprefix"
+      - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/backend"
 
 networks:
   app-network:

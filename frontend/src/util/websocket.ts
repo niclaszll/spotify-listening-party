@@ -4,7 +4,9 @@ import { WebPlaybackTrack } from './types/spotify'
 
 const ENDPOINT = process.env.REACT_APP_API_URL || 'http://localhost:9000'
 
-export const socket = socketIOClient(`${ENDPOINT}`)
+export const socket = socketIOClient(`${ENDPOINT}`, {
+  path: '/backend/socket.io',
+})
 
 export type Response<T> = {
   source: string
