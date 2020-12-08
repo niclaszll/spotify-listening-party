@@ -6,7 +6,7 @@ services:
       context: ./frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "80:3000"
     volumes:
       - ./frontend:/home/node
       - /home/node/node_modules
