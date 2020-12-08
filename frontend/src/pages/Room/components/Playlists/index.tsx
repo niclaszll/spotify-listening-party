@@ -18,7 +18,8 @@ export default function Playlists() {
 
   return (
     <div className={styles.playlists}>
-      {(userPlaylists && userPlaylists.items) && (
+      {userPlaylists &&
+        userPlaylists.items &&
         (userPlaylists.items as SpotifyPlaylist[]).map((playlist: SpotifyPlaylist, index) => (
           <div
             key={playlist.id}
@@ -35,8 +36,7 @@ export default function Playlists() {
             </div>
             <p>{playlist.name}</p>
           </div>
-        ))
-      )}
+        ))}
     </div>
   )
 }

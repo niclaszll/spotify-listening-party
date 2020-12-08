@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
-import {
-  persistStore,
-} from 'redux-persist'
+import { persistStore } from 'redux-persist'
 import store from './store'
 import App from './App'
 
@@ -19,5 +17,5 @@ ReactDOM.render(
       </PersistGate>
     </Provider>
   </React.StrictMode>,
-  document.getElementById('root'),
+  document.getElementById('root')
 )

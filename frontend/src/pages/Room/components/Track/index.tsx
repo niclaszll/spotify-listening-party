@@ -3,7 +3,7 @@ import { WebPlaybackTrack } from '../../../../util/types/spotify'
 import * as styles from './style.module.sass'
 
 type TrackProps = {
-  track: WebPlaybackTrack,
+  track: WebPlaybackTrack
 }
 
 export default function Track(props: TrackProps) {

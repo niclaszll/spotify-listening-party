@@ -26,7 +26,8 @@ export default function VolumeControl({ player }: VolumeControlProps) {
   const volumeIcon = () => {
     if (values[0] >= 0.5) {
       return <VolumeUp />
-    } if (values[0] > 0) {
+    }
+    if (values[0] > 0) {
       return <VolumeDown />
     }
     return <VolumeOff />
@@ -34,9 +35,7 @@ export default function VolumeControl({ player }: VolumeControlProps) {
 
   return (
     <div className={styles.container}>
-      {
-        volumeIcon()
-      }
+      {volumeIcon()}
       <Range
         step={0.01}
         min={0}

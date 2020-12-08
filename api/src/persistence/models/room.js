@@ -16,7 +16,7 @@ const RoomSchema = new mongoose.Schema({
     required: true,
     default: true,
   },
-  active_listeners: {
+  activeListeners: {
     type: Number,
     required: true,
     default: 0,
@@ -29,11 +29,13 @@ const RoomSchema = new mongoose.Schema({
   creatorId: {
     type: String,
     required: true,
+    default: '',
+    immutable: (doc) => doc.creatorId !== '',
   },
   currentTrack: {
     type: Object,
     required: false,
-    default: {},
+    default: null,
   },
 })
 

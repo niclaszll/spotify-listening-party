@@ -1,9 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectSpotifyState } from '../../../../store/modules/spotify'
 import { getNextPagingObject, getPlaylistTracks } from '../../../../util/spotify'
-import { PagingObject, SpotifyPlaylistTrackObject, WebPlaybackTrack } from '../../../../util/types/spotify'
-import { sendQueue } from '../../../../util/websocket'
+import { PagingObject, SpotifyPlaylistTrackObject } from '../../../../util/types/spotify'
+import { addToQueue } from '../../../../util/websocket'
 import Track from '../Track'
 import * as styles from './style.module.sass'
 
@@ -21,13 +21,13 @@ export default function TrackList() {
   const [tracklist, setTracklist] = useState<PagingObject>(samplePagingObject)
   const [isLoading, setIsLoading] = useState<Boolean>(true)
 
-  const { token, activePlaylist, queue } = useSelector(selectSpotifyState)
+  const { token, activePlaylist, currentRoom } = useSelector(selectSpotifyState)
 
   /**
-    * Fetch all tracks of selected playlist
-    */
+   * Fetch all tracks of selected playlist
+   */
   const loadTrackList = async () => {
-    const tracks : PagingObject = await getPlaylistTracks(token, activePlaylist!.id)
+    const tracks: PagingObject = await getPlaylistTracks(token, activePlaylist!.id)
     setIsLoading(true)
     setTracklist(tracks)
   }
@@ -35,9 +35,11 @@ export default function TrackList() {
   useEffect(() => {
     if (tracklist?.next !== null) {
       getNextPagingObject(tracklist.next, token, activePlaylist!.id).then((tracks) => {
-        setTracklist((prevState) => (
-          { ...prevState, next: tracks.next, items: [...prevState.items, ...tracks.items] }
-        ))
+        setTracklist((prevState) => ({
+          ...prevState,
+          next: tracks.next,
+          items: [...prevState.items, ...tracks.items],
+        }))
       })
     } else {
       setIsLoading(false)
@@ -48,30 +50,26 @@ export default function TrackList() {
     loadTrackList()
   }, [activePlaylist])
 
-  const handleAdd = (track: WebPlaybackTrack) => {
-    // get queue
-    const q = queue.concat([track])
-    sendQueue(q)
-  }
-
   return (
     <div className={styles.tracks}>
-      {(tracklist.items !== [] && !isLoading) ? (
+      {tracklist.items !== [] && !isLoading ? (
         (tracklist.items as SpotifyPlaylistTrackObject[]).map(
           (trackObject: SpotifyPlaylistTrackObject, index) => (
             <div
               className={styles.track}
               key={index}
-              onClick={() => handleAdd(trackObject.track)}
+              onClick={() => addToQueue(trackObject.track, currentRoom.id!)}
               onKeyDown={() => {}}
               role="button"
               tabIndex={index}
             >
               <Track key={trackObject.track.id} track={trackObject.track} />
             </div>
-          ),
+          )
         )
-      ) : <span className={styles.loadingIndicator} />}
+      ) : (
+        <span className={styles.loadingIndicator} />
+      )}
     </div>
   )
 }

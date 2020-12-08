@@ -1,24 +1,9 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-  },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-  ],
+  env: { browser: true, es2021: true },
+  extends: ['plugin:prettier/recommended', 'plugin:react/recommended', 'airbnb'],
   parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 12,
-    sourceType: 'module',
-  },
-  plugins: [
-    'react',
-    '@typescript-eslint',
-  ],
+  parserOptions: { ecmaFeatures: { jsx: true }, ecmaVersion: 12, sourceType: 'module' },
+  plugins: ['react', '@typescript-eslint'],
   rules: {
     'import/extensions': 'off',
     'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
@@ -32,12 +17,23 @@ module.exports = {
     'react/no-array-index-key': 'off',
     'react/jsx-props-no-spreading': 'off',
     'no-nested-ternary': 'off',
-  },
-  settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        parser: 'typescript',
+        semi: false,
+        printWidth: 100,
       },
-    },
+    ],
+    'arrow-body-style': 'off',
+    'prefer-arrow-callback': 'off',
+    'comma-dangle': 'off',
+    'object-curly-newline': ['off'],
+    'operator-linebreak': ['error', 'after'],
+    'no-confusing-arrow': ['off'],
+    'implicit-arrow-linebreak': ['off'],
+    'function-paren-newline': ['off'],
   },
+  settings: { 'import/resolver': { node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] } } },
 }

@@ -11,9 +11,7 @@ export default function Auth() {
 
   useEffect(() => {
     hash()
-    const spotifyAuth: SpotifyAuthInfo = getData(
-      'spotifyAuthInfo',
-    ) as SpotifyAuthInfo
+    const spotifyAuth = getData('spotifyAuthInfo') as SpotifyAuthInfo
     if (spotifyAuth.access_token) {
       dispatch(setUserToken(spotifyAuth.access_token))
       history.push('/lobby')
@@ -21,7 +19,5 @@ export default function Auth() {
       history.push('/')
     }
   }, [])
-  return (
-    <div>Loading</div>
-  )
+  return <div>Loading</div>
 }

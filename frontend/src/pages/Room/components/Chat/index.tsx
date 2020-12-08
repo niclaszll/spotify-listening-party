@@ -16,7 +16,8 @@ export default function Chat() {
       setMessages((oldMessages) => [...oldMessages, data.message.payload])
     })
     const timer = setTimeout(() => {
-      setMessages((oldMessages) => [...oldMessages,
+      setMessages((oldMessages) => [
+        ...oldMessages,
         { user: 'SpotifyBot', msg: 'Hey, hope you have fun with our app! :)' },
       ])
     }, 5000)
@@ -54,10 +55,15 @@ export default function Chat() {
     <div className={styles.container}>
       <div className={styles.chat}>
         {messages.map((message, index) => (
-          <div key={index} className={`${message.user === user?.display_name ? styles.mine : styles.yours} ${styles.messages}`}>
+          <div
+            key={index}
+            className={`${message.user === user?.display_name ? styles.mine : styles.yours} ${
+              styles.messages
+            }`}
+          >
             <div className={`${styles.message} ${messages.length - 1 === index && styles.last}`}>
               {message.user !== user?.display_name && (
-              <div className={styles.username}>{message.user}</div>
+                <div className={styles.username}>{message.user}</div>
               )}
               {message.msg}
             </div>
@@ -68,7 +74,9 @@ export default function Chat() {
       <div className={styles.controls}>
         <form onSubmit={handleSubmit}>
           <input value={newMsg} onChange={handleChange} />
-          <button type="submit" onClick={handleSubmit}><Send /></button>
+          <button type="submit" onClick={handleSubmit}>
+            <Send />
+          </button>
         </form>
       </div>
     </div>

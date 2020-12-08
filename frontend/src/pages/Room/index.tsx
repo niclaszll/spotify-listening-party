@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  clearSpotifyState, selectSpotifyState, setCurrentTrack, setQueue, setUser,
+  clearCurrentRoom,
+  clearPlaybackInfo,
+  clearSpotifyState,
+  selectSpotifyState,
+  setCurrentRoom,
+  setQueue,
+  setUser,
 } from '../../store/modules/spotify'
-import { WebPlaybackTrack } from '../../util/types/spotify'
-import {
-  socket, Response, joinSocketRoom, sendQueue, leaveSocketRoom,
-} from '../../util/websocket'
+import { socket, Response, joinSocketRoom, leaveSocketRoom, clearQueue } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
@@ -17,11 +20,11 @@ import { ReactComponent as ChatIcon } from '../../img/icons/chat.svg'
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
 import { getCurrentUserInfo } from '../../util/spotify'
-import { RoomInfoResponse } from '../../util/types/rooms'
+import { RoomInfoResponse, Room as CurrentRoom } from '../../util/types/rooms'
 
 export default function Room() {
   const dispatch = useDispatch()
-  const { activePlaylist, token } = useSelector(selectSpotifyState)
+  const { activePlaylist, token, currentRoom } = useSelector(selectSpotifyState)
   const [chatVisible, setChatVisible] = useState<Boolean>(false)
 
   const params = useParams<any>()
@@ -32,6 +35,8 @@ export default function Room() {
 
     // leave room if user closes browser/tab
     window.addEventListener('beforeunload', () => {
+      dispatch(clearCurrentRoom())
+      dispatch(clearPlaybackInfo())
       leaveSocketRoom()
       return undefined
     })
@@ -46,16 +51,24 @@ export default function Room() {
     })
     socket.on('room-info', (data: RoomInfoResponse) => {
       dispatch(setQueue(data.message.payload.queue))
-      dispatch(setCurrentTrack(data.message.payload.currentTrack))
+    })
+    socket.on('room-full-info', (data: Response<CurrentRoom>) => {
+      console.log(data.message.payload)
+      dispatch(setCurrentRoom(data.message.payload))
     })
     return () => {
       window.removeEventListener('beforeunload', () => {
+        dispatch(clearCurrentRoom())
+        dispatch(clearPlaybackInfo())
         leaveSocketRoom()
         return undefined
       })
+      dispatch(clearCurrentRoom())
+      dispatch(clearPlaybackInfo())
       leaveSocketRoom()
       socket.off('error-event')
       socket.off('room-info')
+      socket.off('room-full-info')
     }
   }, [])
 
@@ -69,16 +82,19 @@ export default function Room() {
       </div>
       <div className={styles.tracklistContainer}>
         <h2 className={styles.title}>Tracklist</h2>
-        <div>
-          {activePlaylist && <TrackList />}
-        </div>
+        <div>{activePlaylist && <TrackList />}</div>
       </div>
       <div className={styles.queueContainer}>
         <div className={styles.title}>
-          <h2>
-            Queue
-          </h2>
-          <button className={styles.clearQueue} type="button" onClick={() => sendQueue([])}><DeleteAll /></button>
+          <h2>Queue</h2>
+          {/* TODO add clear queue function */}
+          <button
+            className={styles.clearQueue}
+            type="button"
+            onClick={() => clearQueue(currentRoom.id!)}
+          >
+            <DeleteAll />
+          </button>
         </div>
         <div>
           <QueueList />
@@ -87,7 +103,11 @@ export default function Room() {
       <div className={`${styles.chatContainer} ${chatVisible ? styles.visible : ''}`}>
         <Chat />
       </div>
-      <button type="button" className={styles.toggleChat} onClick={() => setChatVisible((prevState) => !prevState)}>
+      <button
+        type="button"
+        className={styles.toggleChat}
+        onClick={() => setChatVisible((prevState) => !prevState)}
+      >
         <ChatIcon />
       </button>
       <WebPlayer />

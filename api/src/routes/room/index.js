@@ -6,11 +6,13 @@ import {
   sendRoomInformation,
   leaveActiveRoom,
   distributeMessage,
-  sendNewQueue,
-  sendTogglePlay,
-  sendSkipForward,
+  updateQueue,
+  clearQueue,
+  updateTrackState,
   updateAvailableRooms,
   setCurrentTrack,
+  sendFullRoomInformation,
+  skipTrack,
 } from './handlers.js'
 
 export default function roomRouter(io) {
@@ -24,32 +26,43 @@ export default function roomRouter(io) {
     console.log('New client connected')
 
     socket.on('create', (data) => {
-      createNewRoom(socket, data.message)
+      createNewRoom(socket, data.message).then(() => {
+        sendFullRoomInformation(io, socket, data.message.roomId, true)
+      })
     })
 
     socket.on('join', (data) => {
-      joinRoom(io, socket, data.message.roomId)
+      joinRoom(io, socket, data.message.roomId).then(() => {
+        sendFullRoomInformation(io, socket, data.message.roomId, true)
+      })
       sendRoomInformation(socket, data.message.roomId)
     })
 
     socket.on('leave', () => {
-      leaveActiveRoom(io, socket)
+      leaveActiveRoom(io, socket).then((roomId) => {
+        console.log(roomId)
+        sendFullRoomInformation(io, socket, roomId, true)
+      })
     })
 
     socket.on('new-message', (data) => {
       distributeMessage(io, socket, data.message)
     })
 
-    socket.on('new-queue', (data) => {
-      sendNewQueue(io, socket, data.message.msg)
+    socket.on('add-to-queue', (data) => {
+      updateQueue(io, socket, data.message)
+    })
+
+    socket.on('clear-queue', (data) => {
+      clearQueue(io, socket, data.message)
     })
 
     socket.on('toggle-play', (data) => {
-      sendTogglePlay(io, socket, data.message.msg)
+      updateTrackState(io, socket, data.message)
     })
 
-    socket.on('skip-forward', () => {
-      sendSkipForward(io, socket)
+    socket.on('skip-forward', (data) => {
+      skipTrack(io, socket, data.message.roomId)
     })
 
     socket.on('get-available-rooms', () => {
@@ -57,7 +70,7 @@ export default function roomRouter(io) {
     })
 
     socket.on('current-track', (data) => {
-      setCurrentTrack(socket, data.message.msg)
+      setCurrentTrack(io, socket, data.message.msg)
     })
 
     socket.on('disconnect', () => {

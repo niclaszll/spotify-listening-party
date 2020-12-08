@@ -1,10 +1,10 @@
 import { SpotifyPlayOptions } from './types/spotify'
 
 interface ScriptAttributes {
-  async?: boolean;
-  defer?: boolean;
-  id?: string;
-  source: string;
+  async?: boolean
+  defer?: boolean
+  id?: string
+  source: string
 }
 
 // load the spotify web playback sdk via script and make it accessible
@@ -14,9 +14,7 @@ export function loadScript(attributes: ScriptAttributes): Promise<any> {
   }
 
   return new Promise((resolve, reject) => {
-    const {
-      async, defer, id, source,
-    }: ScriptAttributes = {
+    const { async, defer, id, source }: ScriptAttributes = {
       async: false,
       defer: false,
       ...attributes,
@@ -52,9 +50,7 @@ export async function loadSpotify() {
 
 export async function play(
   token: string | null,
-  {
-    context_uri, deviceId, offset = 0, uris,
-  }: SpotifyPlayOptions,
+  { context_uri, deviceId, offset = 0, uris, position_ms = 0 }: SpotifyPlayOptions
 ) {
   if (token === null) return false
   let body
@@ -67,9 +63,9 @@ export async function play(
       position = { position: offset }
     }
 
-    body = JSON.stringify({ context_uri, offset: position })
+    body = JSON.stringify({ context_uri, offset: position, position_ms })
   } else if (Array.isArray(uris) && uris.length) {
-    body = JSON.stringify({ uris, offset: { position: offset } })
+    body = JSON.stringify({ uris, offset: { position: offset }, position_ms })
   }
 
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
@@ -154,13 +150,16 @@ export async function getCurrentUserInfo(token: string | null) {
 
 export async function seekPosition(token: string | null, position: number, deviceId: string) {
   if (token === null) return false
-  return fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${position}&device_id=${deviceId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    method: 'PUT',
-  })
+  return fetch(
+    `https://api.spotify.com/v1/me/player/seek?position_ms=${position}&device_id=${deviceId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'PUT',
+    }
+  )
 }
 
 export async function addToLibrary(token: string | null, ids: Array<String>) {
