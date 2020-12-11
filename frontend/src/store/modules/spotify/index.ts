@@ -15,7 +15,6 @@ export const {
   setUserToken,
   clearSpotifyState,
   setActivePlaylist,
-  setQueue,
   setUser,
   setPlaybackInfo,
   setCurrentRoom,

@@ -7,7 +7,6 @@ import {
   clearSpotifyState,
   selectSpotifyState,
   setCurrentRoom,
-  setQueue,
   setUser,
 } from '../../store/modules/spotify'
 import { socket, Response, joinSocketRoom, leaveSocketRoom, clearQueue } from '../../util/websocket'
@@ -20,7 +19,7 @@ import { ReactComponent as ChatIcon } from '../../img/icons/chat.svg'
 import * as styles from './styles.module.sass'
 import Chat from './components/Chat'
 import { getCurrentUserInfo } from '../../util/spotify'
-import { RoomInfoResponse, Room as CurrentRoom } from '../../util/types/rooms'
+import { Room as CurrentRoom } from '../../util/types/rooms'
 
 export default function Room() {
   const dispatch = useDispatch()
@@ -49,10 +48,8 @@ export default function Room() {
       dispatch(clearSpotifyState())
       history.push('/')
     })
-    socket.on('room-info', (data: RoomInfoResponse) => {
-      dispatch(setQueue(data.message.payload.queue))
-    })
     socket.on('room-full-info', (data: Response<CurrentRoom>) => {
+      console.log(data.message.payload)
       dispatch(setCurrentRoom(data.message.payload))
     })
     return () => {

@@ -54,12 +54,12 @@ export async function createNewRoom(socket, message) {
   const newRoom = {id: roomId, name: roomName, roomPublic, activeListeners, creatorId}
 
   return createRoom(newRoom)
-    .then(
+    .then(() => {
       socket.emit('room', {
         source: 'server',
         message: {payload: roomId},
       })
-    )
+    })
     .catch((err) => console.log(err))
 }
 
@@ -84,16 +84,6 @@ export async function joinRoom(io, socket, roomId) {
   })
 }
 
-// TODO: delete
-export function sendRoomInformation(socket, roomId) {
-  findRoomById(roomId).then((room) => {
-    socket.emit('room-info', {
-      source: 'server',
-      message: {payload: {queue: room.queue, currentTrack: room.currentTrack}},
-    })
-  })
-}
-
 export function distributeMessage(io, socket, msg) {
   const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   io.sockets.in(room).emit('chat', {
@@ -103,48 +93,45 @@ export function distributeMessage(io, socket, msg) {
 }
 
 export function skipTrack(io, socket, roomId) {
-  findRoomById(roomId).then(room => {
+  findRoomById(roomId).then((room) => {
     if (room.queue.length > 0) {
       const nextTrack = {
         position_ms: 0,
         paused: false,
         uri: room.queue[0].uri,
-        timestamp: new Date()
+        timestamp: new Date(),
       }
       room.queue.shift()
       updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue}).then(() => {
         sendFullRoomInformation(io, socket, roomId, true)
       })
     }
-  })  
+  })
 }
 
 export function updateQueue(io, socket, msg) {
-  findRoomById(msg.roomId).then(room => {
+  findRoomById(msg.roomId).then((room) => {
     const newQueue = [...room.queue, msg.track]
-    updateRoom(msg.roomId, {queue: newQueue}).then(
+    updateRoom(msg.roomId, {queue: newQueue}).then(() => {
       sendFullRoomInformation(io, socket, msg.roomId, true).then(() => {
         if (room.currentTrack === null && newQueue.length > 0) {
           skipTrack(io, socket, msg.roomId)
         }
       })
-    )
+    })
   })
 }
 
 export function clearQueue(io, socket, msg) {
-  updateRoom(msg.roomId, {queue: []}).then(
-    sendFullRoomInformation(io, socket, msg.roomId, true)
-  )
+  updateRoom(msg.roomId, {queue: []}).then(() => sendFullRoomInformation(io, socket, msg.roomId, true))
 }
 
 export function updateTrackState(io, socket, msg) {
-  findRoomById(msg.roomId).then(room => {
+  findRoomById(msg.roomId).then((room) => {
     updateRoom(msg.roomId, {currentTrack: {...room.currentTrack, paused: msg.paused}}).then(() => {
       sendFullRoomInformation(io, socket, msg.roomId, true)
     })
   })
-  
 }
 
 export async function setCurrentTrack(io, socket, msg) {

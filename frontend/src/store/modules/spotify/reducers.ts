@@ -18,9 +18,6 @@ export default {
   setActivePlaylist(state: SpotifyState, action: PayloadAction<SpotifyPlaylist>) {
     return { ...state, activePlaylist: action.payload }
   },
-  setQueue(state: SpotifyState, action: PayloadAction<WebPlaybackTrack[]>) {
-    return { ...state, currentRoom: { ...state.currentRoom, queue: action.payload } }
-  },
   setUser(state: SpotifyState, action: PayloadAction<SpotifyUser>) {
     return { ...state, user: action.payload }
   },

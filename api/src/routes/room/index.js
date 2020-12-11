@@ -3,7 +3,6 @@ import express from 'express'
 import {
   createNewRoom,
   joinRoom,
-  sendRoomInformation,
   leaveActiveRoom,
   distributeMessage,
   updateQueue,
@@ -35,12 +34,10 @@ export default function roomRouter(io) {
       joinRoom(io, socket, data.message.roomId).then(() => {
         sendFullRoomInformation(io, socket, data.message.roomId, true)
       })
-      sendRoomInformation(socket, data.message.roomId)
     })
 
     socket.on('leave', () => {
       leaveActiveRoom(io, socket).then((roomId) => {
-        console.log(roomId)
         sendFullRoomInformation(io, socket, roomId, true)
       })
     })
