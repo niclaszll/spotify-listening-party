@@ -40,7 +40,6 @@ export default function WebPlayer() {
    */
   const initializePlayer = () => {
     if (token === null) return
-
     setPlayer(
       // @ts-ignore
       new window.Spotify.Player({
@@ -169,7 +168,6 @@ export default function WebPlayer() {
    * Toggle song like
    */
   const toggleLikeSong = () => {
-    console.log(playbackState)
     if (playbackState?.track_window.current_track.id === undefined) {
       return false
     }

@@ -22,21 +22,19 @@ export function loadScript(attributes: ScriptAttributes): Promise<any> {
 
     const scriptTag = document.getElementById('spotify-player')
 
-    if (!scriptTag) {
-      const script = document.createElement('script')
-
-      script.id = id || 'spotify-player'
-      script.type = 'text/javascript'
-      script.async = async
-      script.defer = defer
-      script.src = source
-      script.onload = () => resolve(undefined)
-      script.onerror = (error: any) => reject(new Error(`createScript: ${error.message}`))
-
-      document.head.appendChild(script)
-    } else {
-      resolve(undefined)
+    if (scriptTag && scriptTag.parentNode) {
+      scriptTag.parentNode.removeChild(scriptTag)
     }
+    const script = document.createElement('script')
+    script.id = id || 'spotify-player'
+    script.type = 'text/javascript'
+    script.async = async
+    script.defer = defer
+    script.src = source
+    script.onload = () => resolve(undefined)
+    script.onerror = (error: any) => reject(new Error(`createScript: ${error.message}`))
+
+    document.head.appendChild(script)
   })
 }
 
