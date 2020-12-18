@@ -23,20 +23,21 @@ import { Room as CurrentRoom } from '../../util/types/rooms'
 
 export default function Room() {
   const dispatch = useDispatch()
-  const { activePlaylist, token, currentRoom } = useSelector(selectSpotifyState)
+  const { activePlaylist, token, currentRoom, user } = useSelector(selectSpotifyState)
   const [chatVisible, setChatVisible] = useState<Boolean>(false)
 
   const params = useParams<any>()
   const history = useHistory<any>()
 
   useEffect(() => {
-    joinSocketRoom(params.id)
+    const username = user ? user.display_name : `anonymous_${Math.floor(Math.random() * 10000)}`
+    joinSocketRoom(params.id, username)
 
     // leave room if user closes browser/tab
     window.addEventListener('beforeunload', () => {
       dispatch(clearCurrentRoom())
       dispatch(clearPlaybackInfo())
-      leaveSocketRoom()
+      leaveSocketRoom(username)
       return undefined
     })
 
@@ -56,12 +57,12 @@ export default function Room() {
       window.removeEventListener('beforeunload', () => {
         dispatch(clearCurrentRoom())
         dispatch(clearPlaybackInfo())
-        leaveSocketRoom()
+        leaveSocketRoom(username)
         return undefined
       })
       dispatch(clearCurrentRoom())
       dispatch(clearPlaybackInfo())
-      leaveSocketRoom()
+      leaveSocketRoom(username)
       socket.off('error-event')
       socket.off('room-info')
       socket.off('room-full-info')

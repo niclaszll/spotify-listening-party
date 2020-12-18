@@ -22,16 +22,17 @@ export function newSocketRoom(room: Room) {
   })
 }
 
-export function joinSocketRoom(roomId: string) {
+export function joinSocketRoom(roomId: string, username: string) {
   socket.emit('join', {
     source: 'client',
-    message: { roomId },
+    message: { roomId, username },
   })
 }
 
-export function leaveSocketRoom() {
+export function leaveSocketRoom(username: string) {
   socket.emit('leave', {
     source: 'client',
+    message: username,
   })
 }
 

@@ -31,13 +31,14 @@ export default function roomRouter(io) {
     })
 
     socket.on('join', (data) => {
-      joinRoom(io, socket, data.message.roomId).then(() => {
+      const {roomId, username} = data.message
+      joinRoom(io, socket, roomId, username).then(() => {
         sendFullRoomInformation(io, socket, data.message.roomId, true)
       })
     })
 
-    socket.on('leave', () => {
-      leaveActiveRoom(io, socket).then((roomId) => {
+    socket.on('leave', (data) => {
+      leaveActiveRoom(io, socket, data.message).then((roomId) => {
         sendFullRoomInformation(io, socket, roomId, true)
       })
     })

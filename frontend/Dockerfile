@@ -1,7 +1,7 @@
 FROM node:14-alpine
 
-# install curl for healthcheck
-RUN apk --no-cache add curl
+# install dependencies
+RUN apk --no-cache add curl python make gcc g++
 
 # Switch into correct workspace (needed for permissions)
 WORKDIR /home/node

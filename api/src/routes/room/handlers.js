@@ -33,12 +33,14 @@ export function updateAvailableRooms(io, socket, distributeAll) {
   })
 }
 
-export async function leaveActiveRoom(io, socket) {
+export async function leaveActiveRoom(io, socket, username) {
   const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
   if (roomId) {
     socket.leave(roomId)
     return findRoomById(roomId)
-      .then((room) => updateRoom(roomId, {activeListeners: room.activeListeners - 1}))
+      .then((room) =>
+        updateRoom(roomId, {activeListeners: room.activeListeners.filter((listener) => listener !== username)})
+      )
       .then(() => updateAvailableRooms(io, socket, true))
       .then(() => roomId)
       .catch((err) => console.log(err))
@@ -63,19 +65,18 @@ export async function createNewRoom(socket, message) {
     .catch((err) => console.log(err))
 }
 
-export async function joinRoom(io, socket, roomId) {
+export async function joinRoom(io, socket, roomId, username) {
   socket.join(roomId)
 
   return findRoomById(roomId).then((room) => {
     console.log(`Joined room ${room.name} with id ${roomId}`)
 
-    const listenersCount =
-      io.sockets.adapter.rooms[room.id] !== undefined ? io.sockets.adapter.rooms[room.id].length : 0
+    const activeListeners = [...room.activeListeners, username]
 
-    return updateRoom(roomId, {activeListeners: listenersCount})
+    return updateRoom(roomId, {activeListeners})
       .then(() => {
         updateAvailableRooms(io, socket, true)
-        console.log(`Room ${room.name} has now ${listenersCount} listener(s)`)
+        console.log(`Room ${room.name} has now ${activeListeners.length} listener(s)`)
       })
       .catch((err) => {
         console.log(`Error joining the room ${err}`)

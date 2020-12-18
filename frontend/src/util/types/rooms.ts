@@ -4,7 +4,7 @@ export type Room = {
   id?: string
   name: string
   roomPublic: Boolean
-  activeListeners: number
+  activeListeners: string[]
   queue: WebPlaybackTrack[]
   creatorId: string
   currentTrack: CurrentTrackResponse | null

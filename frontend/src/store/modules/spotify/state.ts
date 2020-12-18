@@ -4,7 +4,7 @@ import { SpotifyPlaylist, SpotifyUser, SpotifyPlayerStatus } from '../../../util
 export const initialCurrentRoom = {
   name: '',
   roomPublic: true,
-  activeListeners: 0,
+  activeListeners: [],
   queue: [],
   creatorId: '',
   currentTrack: null,

@@ -37,7 +37,7 @@ export default function Lobby() {
     const newRoom = {
       name: roomName,
       roomPublic,
-      activeListeners: 0,
+      activeListeners: [],
       queue: [],
       creatorId: user?.id || '',
       currentTrack: null,
@@ -97,7 +97,7 @@ export default function Lobby() {
               <div className={styles.public}>{room.roomPublic ? <LockOpen /> : <Lock />}</div>
               <div className={styles.listeners}>
                 <People />
-                {` ${room.activeListeners}`}
+                {` ${room.activeListeners.length}`}
               </div>
             </div>
             <div>{room.name}</div>

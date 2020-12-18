@@ -17,9 +17,9 @@ const RoomSchema = new mongoose.Schema({
     default: true,
   },
   activeListeners: {
-    type: Number,
+    type: Array,
     required: true,
-    default: 0,
+    default: [],
   },
   queue: {
     type: Array,
