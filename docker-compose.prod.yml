@@ -4,18 +4,26 @@ services:
   reverse-proxy:
     # The official v2 Traefik docker image
     image: traefik:v2.3
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=hallo@niclaszll.de"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      # The HTTP port
+      # The HTTP(S) ports
       - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      # - "8080:8080"
+      - "443:443"
     networks:
       - app-network
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      - "./letsencrypt:/letsencrypt"
     labels:
       - "traefik.enable=false"
 
@@ -30,7 +38,10 @@ services:
       - app-network
     labels:
       - "traefik.backend=frontend"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
+      - "traefik.http.routers.frontend.rule=Host(`niclaszll.de`) && PathPrefix(`/frontend`)"
+      # https
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
 
   api:
     build:
@@ -44,9 +55,12 @@ services:
       - app-network
     labels:
       - "traefik.backend=api"
-      - "traefik.http.routers.api.rule=PathPrefix(`/backend`)"
+      - "traefik.http.routers.api.rule=Host(`niclaszll.de`) && PathPrefix(`/backend`)"
       - "traefik.http.routers.api.middlewares=api-stripprefix"
       - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/backend"
+      # https
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
 
 networks:
   app-network:
