@@ -44,7 +44,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=frontend"
-      - "traefik.frontend.priority=2"
       - "traefik.http.routers.frontend.rule=Host(`niclaszll.de`) && PathPrefix(`/frontend`)"
       # https
       - "traefik.http.routers.frontend.tls=true"
@@ -63,7 +62,6 @@ services:
       - app-network
     labels:
       - "traefik.enable=true"
-      - "traefik.frontend.priority=1"
       - "traefik.backend=api"
       - "traefik.http.routers.api.rule=Host(`niclaszll.de`) && PathPrefix(`/backend`)"
       - "traefik.http.routers.api.middlewares=api-stripprefix"
@@ -72,8 +70,6 @@ services:
       - "traefik.http.routers.api.tls=true"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
-      # necessary for wss connection?
-      #- "traefik.backend.loadbalancer.stickiness=true"
 
 networks:
   app-network:
