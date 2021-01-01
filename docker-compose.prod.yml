@@ -77,4 +77,4 @@ networks:
     # mtu adjustment needed, else "apk add" will not work
     driver: bridge
     driver_opts:
-      com.docker.network.driver.mtu: 1450
+      com.docker.network.driver.mtu: 1420
