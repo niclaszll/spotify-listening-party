@@ -1,4 +1,6 @@
-FROM node:alpine
+ARG NODE_VERSION=14
+
+FROM node:${NODE_VERSION}-alpine
 
 # install curl for healthcheck
 RUN apk --no-cache add curl

@@ -1,4 +1,6 @@
-FROM node:14-alpine
+ARG NODE_VERSION=14
+
+FROM node:${NODE_VERSION}-alpine
 
 # install dependencies
 RUN apk --no-cache add curl python make gcc g++

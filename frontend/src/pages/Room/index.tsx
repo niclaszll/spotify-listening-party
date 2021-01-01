@@ -30,8 +30,13 @@ export default function Room() {
   const history = useHistory<any>()
 
   useEffect(() => {
-    const username = user ? user.display_name : `anonymous_${Math.floor(Math.random() * 10000)}`
-    joinSocketRoom(params.id, username)
+    let username = ''
+
+    getCurrentUserInfo(token).then((res) => {
+      dispatch(setUser(res))
+      username = res.display_name !== null ? res.display_name : res.uri
+      joinSocketRoom(params.id, username)
+    })
 
     // leave room if user closes browser/tab
     window.addEventListener('beforeunload', () => {
@@ -39,10 +44,6 @@ export default function Room() {
       dispatch(clearPlaybackInfo())
       leaveSocketRoom(username)
       return undefined
-    })
-
-    getCurrentUserInfo(token).then((res) => {
-      dispatch(setUser(res))
     })
 
     socket.on('error-event', () => {
@@ -84,7 +85,6 @@ export default function Room() {
       <div className={styles.queueContainer}>
         <div className={styles.title}>
           <h2>Queue</h2>
-          {/* TODO add clear queue function */}
           <button
             className={styles.clearQueue}
             type="button"

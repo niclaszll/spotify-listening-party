@@ -40,7 +40,7 @@ export default function Navbar() {
                   .filter((listener) => listener !== user?.display_name)
                   .slice(0, 2)
                   .map((listener) => (
-                    <div className={styles.listenerCircle} title={listener}>
+                    <div key={listener} className={styles.listenerCircle} title={listener}>
                       {listener.charAt(0).toUpperCase()}
                     </div>
                   ))}
@@ -55,7 +55,9 @@ export default function Navbar() {
                   {listenerDetailsOpen && (
                     <div className={styles.listenerDetails}>
                       {currentRoom.activeListeners.map((listener) => (
-                        <div>{listener}</div>
+                        <div key={listener} title={listener}>
+                          {listener}
+                        </div>
                       ))}
                     </div>
                   )}
