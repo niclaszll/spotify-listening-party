@@ -9,13 +9,14 @@
   padding-top: 80px
 
   .roomName
-    input
+    > input
       padding: 10px 15px
       border-radius: 20px
       border: none
       outline: none
       font-size: 15px
       color: #000000
+      margin-right: 15px
 
   .roomActions
     width: 100%
@@ -51,6 +52,13 @@
     color: $spotifyTextLightGrey
     text-align: center
 
+  .rooms
+    display: flex
+    justify-content: space-between
+    width: 100%
+    > div
+      width: 49%
+
   .availableRoomsContainer
     display: flex
     flex-wrap: wrap
@@ -66,7 +74,7 @@
       min-height: 80px
       border: none
       cursor: pointer
-      margin: 0 15px 15px 0
+      margin: 0 15px 15px 15px
       display: flex
       align-items: center
       justify-content: center

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 import { Room } from '../../util/types/rooms'
 import { getAvailableRooms, newSocketRoom, Response, socket } from '../../util/websocket'
 import { ReactComponent as Lock } from '../../img/icons/lock.svg'
@@ -11,7 +14,7 @@ import { selectSpotifyState } from '../../store/modules/spotify'
 
 export default function Lobby() {
   const [roomName, setRoomName] = useState<string>('')
-  const [roomPublic, setRoomPublic] = useState<Boolean>(true)
+  const [roomPublic, setRoomPublic] = useState<boolean>(true)
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
   const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
@@ -71,10 +74,18 @@ export default function Lobby() {
     }
   }
 
+  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRoomPublic(event.target.checked)
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.roomName}>
         <input value={roomName} onChange={handleChange} placeholder="Room name" />
+        <FormControlLabel
+          control={<Switch color="primary" checked={roomPublic} onChange={handleSwitchChange} />}
+          label="Public Room"
+        />
       </div>
       <div className={styles.roomActions}>
         <button type="button" onClick={createRoom}>
@@ -84,25 +95,67 @@ export default function Lobby() {
           Join Room
         </button>
       </div>
-      <h4>Available rooms</h4>
-      <div className={styles.availableRoomsContainer}>
-        {visibleRooms.map((room) => (
-          <button
-            key={room.id}
-            type="button"
-            className={styles.room}
-            onClick={() => room.id && joinRoomViaList(room.id)}
-          >
-            <div className={styles.info}>
-              <div className={styles.public}>{room.roomPublic ? <LockOpen /> : <Lock />}</div>
-              <div className={styles.listeners}>
-                <People />
-                {` ${room.activeListeners.length}`}
-              </div>
-            </div>
-            <div>{room.name}</div>
-          </button>
-        ))}
+      <div className={styles.rooms}>
+        <div>
+          <h4>Public rooms</h4>
+          <div className={styles.availableRoomsContainer}>
+            {visibleRooms.filter((room) => room.roomPublic).length > 0 ? (
+              visibleRooms
+                .filter((room) => room.roomPublic)
+                .map((room) => (
+                  <button
+                    key={room.id}
+                    type="button"
+                    className={styles.room}
+                    onClick={() => room.id && joinRoomViaList(room.id)}
+                  >
+                    <div className={styles.info}>
+                      <div className={styles.public}>
+                        {room.roomPublic ? <LockOpen /> : <Lock />}
+                      </div>
+                      <div className={styles.listeners}>
+                        <People />
+                        {` ${room.activeListeners.length}`}
+                      </div>
+                    </div>
+                    <div>{room.name}</div>
+                  </button>
+                ))
+            ) : (
+              <span>No public rooms found.</span>
+            )}
+          </div>
+        </div>
+        <div>
+          <h4>Private rooms</h4>
+          <div className={styles.availableRoomsContainer}>
+            {visibleRooms.filter((room) => !room.roomPublic).length > 0 ? (
+              visibleRooms
+                .filter((room) => !room.roomPublic)
+                .map((room) => (
+                  <button
+                    key={room.id}
+                    type="button"
+                    className={styles.room}
+                    onClick={() => room.id && joinRoomViaList(room.id)}
+                  >
+                    <div className={styles.info}>
+                      <div className={styles.public}>
+                        {room.roomPublic ? <LockOpen /> : <Lock />}
+                      </div>
+                      <div className={styles.listeners}>
+                        <People />
+                        {` ${room.activeListeners.length}`}
+                      </div>
+                    </div>
+                    <div>{room.name}</div>
+                  </button>
+                ))
+            ) : (
+              <span>No private rooms found.</span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
