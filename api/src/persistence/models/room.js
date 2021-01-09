@@ -16,6 +16,12 @@ const RoomSchema = new mongoose.Schema({
     required: true,
     default: true,
   },
+  roomPassword: {
+    type: String,
+    required: true,
+    default: '',
+    select: false,
+  },
   activeListeners: {
     type: Array,
     required: true,

@@ -41,7 +41,7 @@ export default function Navbar() {
                   .slice(0, 2)
                   .map((listener) => (
                     <div key={listener} className={styles.listenerCircle} title={listener}>
-                      {listener.charAt(0).toUpperCase()}
+                      {listener !== undefined ? listener.charAt(0).toUpperCase() : '?'}
                     </div>
                   ))}
                 <div
@@ -54,11 +54,13 @@ export default function Navbar() {
                   <People />
                   {listenerDetailsOpen && (
                     <div className={styles.listenerDetails}>
-                      {currentRoom.activeListeners.map((listener) => (
-                        <div key={listener} title={listener}>
-                          {listener}
-                        </div>
-                      ))}
+                      {currentRoom.activeListeners
+                        .filter((listener) => listener !== undefined)
+                        .map((listener) => (
+                          <div key={listener} title={listener}>
+                            {listener}
+                          </div>
+                        ))}
                     </div>
                   )}
                 </div>

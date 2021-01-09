@@ -49,11 +49,11 @@ export async function leaveActiveRoom(io, socket, username) {
 }
 
 export async function createNewRoom(socket, message) {
-  const {name, roomPublic, activeListeners} = message
+  const {name, roomPublic, activeListeners, roomPassword} = message
   const roomId = `room${id()}`
   const roomName = name !== '' ? name : roomId
   const creatorId = socket.id
-  const newRoom = {id: roomId, name: roomName, roomPublic, activeListeners, creatorId}
+  const newRoom = {id: roomId, name: roomName, roomPublic, roomPassword, activeListeners, creatorId}
 
   return createRoom(newRoom)
     .then(() => {

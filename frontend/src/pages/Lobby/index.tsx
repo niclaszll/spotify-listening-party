@@ -15,6 +15,7 @@ import { selectSpotifyState } from '../../store/modules/spotify'
 export default function Lobby() {
   const [roomName, setRoomName] = useState<string>('')
   const [roomPublic, setRoomPublic] = useState<boolean>(true)
+  const [roomPassword, setRoomPassword] = useState<String>('pw')
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
   const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
@@ -42,6 +43,7 @@ export default function Lobby() {
       roomPublic,
       activeListeners: [],
       queue: [],
+      roomPassword,
       creatorId: user?.id || '',
       currentTrack: null,
     }
