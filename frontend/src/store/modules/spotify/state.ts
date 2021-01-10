@@ -6,6 +6,8 @@ export const initialCurrentRoom = {
   roomPublic: true,
   activeListeners: [],
   queue: [],
+  shuffledQueue: [],
+  shuffled: false,
   creatorId: '',
   currentTrack: null,
 }

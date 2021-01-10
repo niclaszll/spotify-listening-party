@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ReactComponent as Play } from '../../../../img/icons/play.svg'
 import { ReactComponent as Pause } from '../../../../img/icons/pause.svg'
+import { ReactComponent as Shuffle } from '../../../../img/icons/shuffle.svg'
 import { ReactComponent as SkipForward } from '../../../../img/icons/skip_next.svg'
 import { ReactComponent as SkipBackward } from '../../../../img/icons/skip_previous.svg'
 import { ReactComponent as Heart } from '../../../../img/icons/heart-shape-outline.svg'
@@ -20,7 +21,7 @@ import {
   WebPlaybackPlayer,
   WebPlaybackState,
 } from '../../../../util/types/spotify'
-import { sendSkipForward, sendTogglePlay } from '../../../../util/websocket'
+import { sendSkipForward, sendTogglePlay, sendToggleShuffle } from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
 import useDebouncedEffect from '../../../../util/useDebouncedEffect'
@@ -215,6 +216,13 @@ export default function WebPlayer() {
         </div>
       </div>
       <div className={styles.controls}>
+        <button
+          type="button"
+          onClick={() => sendToggleShuffle(!currentRoom.shuffled, currentRoom.id!)}
+          className={currentRoom.shuffled ? styles.shuffled : ''}
+        >
+          <Shuffle />
+        </button>
         <button type="button">
           <SkipBackward />
         </button>

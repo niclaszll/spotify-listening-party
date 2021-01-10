@@ -97,3 +97,10 @@ export function sendCurrentTrack(msg: { paused: Boolean; position: number; uri: 
     message: { msg },
   })
 }
+
+export function sendToggleShuffle(shuffled: Boolean, roomId: String) {
+  socket.emit('toggle-shuffle', {
+    source: 'client',
+    message: { shuffled, roomId },
+  })
+}

@@ -43,6 +43,8 @@ export default function Lobby() {
       roomPublic,
       activeListeners: [],
       queue: [],
+      shuffledQueue: [],
+      shuffled: false,
       roomPassword,
       creatorId: user?.id || '',
       currentTrack: null,

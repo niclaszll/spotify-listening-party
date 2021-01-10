@@ -7,6 +7,8 @@ export type Room = {
   roomPassword?: String
   activeListeners: string[]
   queue: WebPlaybackTrack[]
+  shuffledQueue: WebPlaybackTrack[]
+  shuffled: Boolean
   creatorId: string
   currentTrack: CurrentTrackResponse | null
 }

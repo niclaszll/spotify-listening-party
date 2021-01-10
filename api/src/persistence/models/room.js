@@ -32,6 +32,16 @@ const RoomSchema = new mongoose.Schema({
     required: true,
     default: [],
   },
+  shuffledQueue: {
+    type: Array,
+    required: true,
+    default: [],
+  },
+  shuffled: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   creatorId: {
     type: String,
     required: true,

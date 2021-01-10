@@ -1,4 +1,5 @@
 import {id} from '../../util/common.js'
+import shuffle from '../../util/shuffle.js'
 import {getAllRooms, createRoom, findRoomById, updateRoom} from '../../persistence/queries.js'
 
 export async function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
@@ -110,7 +111,19 @@ export function distributeMessage(io, socket, msg) {
 
 export function skipTrack(io, socket, roomId) {
   findRoomById(roomId).then((room) => {
-    if (room.queue.length > 0) {
+    if (room.shuffled && room.shuffledQueue.length) {
+      const nextTrack = {
+        position_ms: 0,
+        paused: false,
+        uri: room.shuffledQueue[0].uri,
+        timestamp: new Date(),
+      }
+      const item = room.shuffledQueue.shift()
+      room.queue.splice(room.queue.indexOf(item), 1)
+      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue, shuffledQueue: room.shuffledQueue}).then(() => {
+        sendFullRoomInformation(io, socket, roomId, true)
+      })
+    } else if (room.queue.length > 0) {
       const nextTrack = {
         position_ms: 0,
         paused: false,
@@ -160,5 +173,17 @@ export async function setCurrentTrack(io, socket, msg) {
   }
   updateRoom(roomId, {currentTrack}).then(() => {
     sendFullRoomInformation(io, socket, roomId, true)
+  })
+}
+
+export function toggleShuffle(io, socket, msg) {
+  findRoomById(msg.roomId).then((room) => {
+    let shuffledQueue = []
+    if (msg.shuffled && room.queue.length) {
+      shuffledQueue = shuffle(room.queue)
+    }
+    updateRoom(msg.roomId, {shuffled: msg.shuffled, shuffledQueue}).then(() => {
+      sendFullRoomInformation(io, socket, msg.roomId, true)
+    })
   })
 }

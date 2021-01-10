@@ -14,6 +14,7 @@ import {
   skipTrack,
   checkIfRoomIsPrivate,
   checkIfPasswordCorrect,
+  toggleShuffle,
 } from './handlers.js'
 
 export default function roomRouter(io) {
@@ -88,6 +89,10 @@ export default function roomRouter(io) {
 
     socket.on('current-track', (data) => {
       setCurrentTrack(io, socket, data.message.msg)
+    })
+
+    socket.on('toggle-shuffle', (data) => {
+      toggleShuffle(io, socket, data.message)
     })
 
     socket.on('disconnect', () => {
