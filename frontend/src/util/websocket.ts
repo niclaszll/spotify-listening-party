@@ -29,6 +29,20 @@ export function joinSocketRoom(roomId: string, username: string) {
   })
 }
 
+export function checkIfRoomIsPrivate(roomId: string) {
+  socket.emit('check-private', {
+    source: 'client',
+    message: roomId,
+  })
+}
+
+export function checkPassword(roomId: string, username: string, password: string) {
+  socket.emit('check-password', {
+    source: 'client',
+    message: { roomId, username, password },
+  })
+}
+
 export function leaveSocketRoom(username: string) {
   socket.emit('leave', {
     source: 'client',

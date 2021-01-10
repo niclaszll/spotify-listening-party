@@ -17,6 +17,21 @@ export async function sendFullRoomInformation(io, socket, roomId, distributeToRo
   })
 }
 
+export async function checkIfRoomIsPrivate(socket, roomId) {
+  return findRoomById(roomId).then((room) => {
+    socket.emit('check-private', {
+      source: 'server',
+      message: {payload: room.roomPublic},
+    })
+  })
+}
+
+export async function checkIfPasswordCorrect(roomId, password) {
+  return findRoomById(roomId, true).then((room) => {
+    return room.roomPassword === password
+  })
+}
+
 export function updateAvailableRooms(io, socket, distributeAll) {
   getAllRooms().then((rooms) => {
     if (distributeAll) {
