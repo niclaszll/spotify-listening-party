@@ -35,7 +35,6 @@ export default function Room() {
   const { activePlaylist, token, currentRoom, user } = useSelector(selectSpotifyState)
   const [chatVisible, setChatVisible] = useState<Boolean>(false)
   const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false)
-  const [username, setUsername] = useState<string>('')
 
   const params = useParams<any>()
   const history = useHistory<any>()
@@ -44,14 +43,13 @@ export default function Room() {
     setPasswordDialogOpen(open)
   }
 
-  useEffect(() => {
-    let localUserName = ''
+  let localUserName = ''
 
+  useEffect(() => {
     getCurrentUserInfo(token)
       .then((res) => {
         dispatch(setUser(res))
         localUserName = res.display_name !== null ? res.display_name : res.uri
-        setUsername(localUserName)
       })
       .then(() => {
         checkIfRoomIsPrivate(params.id)
@@ -66,9 +64,8 @@ export default function Room() {
     })
 
     socket.on('check-private', (data: Response<boolean>) => {
-      console.log(data)
       if (data.message.payload) {
-        joinSocketRoom(params.id, username)
+        joinSocketRoom(params.id, localUserName)
       } else {
         setPasswordDialogOpen(true)
       }
@@ -151,7 +148,7 @@ export default function Room() {
       <PasswordDialog
         open={passwordDialogOpen}
         togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
-        checkPassword={(password) => checkPassword(params.id, username, password)}
+        checkPassword={(password) => checkPassword(params.id, localUserName, password)}
       />
     </>
   )
