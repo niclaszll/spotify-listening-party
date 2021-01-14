@@ -22,10 +22,11 @@ export function newSocketRoom(room: Room) {
   })
 }
 
-export function joinSocketRoom(roomId: string, username: string) {
+export function joinSocketRoom(roomId: string, username: string, password: string = '') {
+  console.log(username)
   socket.emit('join', {
     source: 'client',
-    message: { roomId, username },
+    message: { roomId, username, password },
   })
 }
 
@@ -33,13 +34,6 @@ export function checkIfRoomIsPrivate(roomId: string) {
   socket.emit('check-private', {
     source: 'client',
     message: roomId,
-  })
-}
-
-export function checkPassword(roomId: string, username: string, password: string) {
-  socket.emit('check-password', {
-    source: 'client',
-    message: { roomId, username, password },
   })
 }
 

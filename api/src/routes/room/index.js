@@ -34,27 +34,17 @@ export default function roomRouter(io) {
     })
 
     socket.on('join', (data) => {
-      const {roomId, username} = data.message
-      joinRoom(io, socket, roomId, username).then(() => {
-        sendFullRoomInformation(io, socket, data.message.roomId, true)
-      })
+      const {roomId, username, password} = data.message
+      joinRoom(io, socket, roomId, username, password)
+        .then(() => {
+          sendFullRoomInformation(io, socket, data.message.roomId, true)
+        })
+        .catch((err) => console.log(err))
     })
 
     socket.on('check-private', (data) => {
       const roomId = data.message
       checkIfRoomIsPrivate(socket, roomId)
-    })
-
-    socket.on('check-password', (data) => {
-      const {roomId, username, password} = data.message
-      // TODO: put checkIfPasswordCorrect into joinRoom, else private rooms are accessible via public endpoint
-      checkIfPasswordCorrect(roomId, password).then((correct) => {
-        if (correct) {
-          joinRoom(io, socket, roomId, username).then(() => {
-            sendFullRoomInformation(io, socket, data.message.roomId, true)
-          })
-        }
-      })
     })
 
     socket.on('leave', (data) => {

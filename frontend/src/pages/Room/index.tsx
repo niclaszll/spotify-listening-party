@@ -16,7 +16,6 @@ import {
   leaveSocketRoom,
   clearQueue,
   checkIfRoomIsPrivate,
-  checkPassword,
 } from '../../util/websocket'
 import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
@@ -43,13 +42,12 @@ export default function Room() {
     setPasswordDialogOpen(open)
   }
 
-  let localUserName = ''
+  const backUpUserName = `Anonymous_${Math.floor(Math.random() * (1000 - 0)) + 0}`
 
   useEffect(() => {
     getCurrentUserInfo(token)
       .then((res) => {
         dispatch(setUser(res))
-        localUserName = res.display_name !== null ? res.display_name : res.uri
       })
       .then(() => {
         checkIfRoomIsPrivate(params.id)
@@ -59,13 +57,13 @@ export default function Room() {
     window.addEventListener('beforeunload', () => {
       dispatch(clearCurrentRoom())
       dispatch(clearPlaybackInfo())
-      leaveSocketRoom(localUserName)
+      leaveSocketRoom(user?.display_name || backUpUserName)
       return undefined
     })
 
     socket.on('check-private', (data: Response<boolean>) => {
       if (data.message.payload) {
-        joinSocketRoom(params.id, localUserName)
+        joinSocketRoom(params.id, user?.display_name || backUpUserName)
       } else {
         setPasswordDialogOpen(true)
       }
@@ -91,12 +89,12 @@ export default function Room() {
       window.removeEventListener('beforeunload', () => {
         dispatch(clearCurrentRoom())
         dispatch(clearPlaybackInfo())
-        leaveSocketRoom(localUserName)
+        leaveSocketRoom(user?.display_name || backUpUserName)
         return undefined
       })
       dispatch(clearCurrentRoom())
       dispatch(clearPlaybackInfo())
-      leaveSocketRoom(localUserName)
+      leaveSocketRoom(user?.display_name || backUpUserName)
       socket.off('error-event')
       socket.off('room-info')
       socket.off('room-full-info')
@@ -148,7 +146,9 @@ export default function Room() {
       <PasswordDialog
         open={passwordDialogOpen}
         togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
-        checkPassword={(password) => checkPassword(params.id, localUserName, password)}
+        checkPassword={(password) => {
+          return joinSocketRoom(params.id, user?.display_name || backUpUserName, password)
+        }}
       />
     </>
   )

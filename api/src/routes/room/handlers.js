@@ -81,24 +81,32 @@ export async function createNewRoom(socket, message) {
     .catch((err) => console.log(err))
 }
 
-export async function joinRoom(io, socket, roomId, username) {
+export async function joinRoom(io, socket, roomId, username, password = '') {
+  const room = await findRoomById(roomId)
+
+  // if room is private, check password
+  if (!room.roomPublic) {
+    const correct = await checkIfPasswordCorrect(roomId, password)
+    if (!correct) {
+      return Promise.reject(new Error('Wrong Password'))
+    }
+  }
+
   socket.join(roomId)
+  console.log(username)
+  const activeListeners = [...room.activeListeners, username]
 
-  return findRoomById(roomId).then((room) => {
-    console.log(`Joined room ${room.name} with id ${roomId}`)
+  console.log(`Joined room ${room.name} with id ${roomId}`)
 
-    const activeListeners = [...room.activeListeners, username]
-
-    return updateRoom(roomId, {activeListeners})
-      .then(() => {
-        updateAvailableRooms(io, socket, true)
-        console.log(`Room ${room.name} has now ${activeListeners.length} listener(s)`)
-      })
-      .catch((err) => {
-        console.log(`Error joining the room ${err}`)
-        socket.emit('error-event')
-      })
-  })
+  return updateRoom(roomId, {activeListeners})
+    .then(() => {
+      updateAvailableRooms(io, socket, true)
+      console.log(`Room ${room.name} has now ${activeListeners.length} listener(s)`)
+    })
+    .catch((err) => {
+      console.log(`Error joining the room ${err}`)
+      socket.emit('error-event')
+    })
 }
 
 export function distributeMessage(io, socket, msg) {

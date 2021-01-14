@@ -39,8 +39,8 @@ export default function Navbar() {
                 {currentRoom.activeListeners
                   .filter((listener) => listener !== user?.display_name)
                   .slice(0, 2)
-                  .map((listener) => (
-                    <div key={listener} className={styles.listenerCircle} title={listener}>
+                  .map((listener, index) => (
+                    <div key={listener + index} className={styles.listenerCircle} title={listener}>
                       {listener !== undefined ? listener.charAt(0).toUpperCase() : '?'}
                     </div>
                   ))}
@@ -56,8 +56,8 @@ export default function Navbar() {
                     <div className={styles.listenerDetails}>
                       {currentRoom.activeListeners
                         .filter((listener) => listener !== undefined)
-                        .map((listener) => (
-                          <div key={listener} title={listener}>
+                        .map((listener, index) => (
+                          <div key={listener + index} title={listener}>
                             {listener}
                           </div>
                         ))}
