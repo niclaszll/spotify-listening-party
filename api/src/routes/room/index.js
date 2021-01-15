@@ -13,8 +13,8 @@ import {
   sendFullRoomInformation,
   skipTrack,
   checkIfRoomIsPrivate,
-  checkIfPasswordCorrect,
   toggleShuffle,
+  handleError,
 } from './handlers.js'
 
 export default function roomRouter(io) {
@@ -39,7 +39,9 @@ export default function roomRouter(io) {
         .then(() => {
           sendFullRoomInformation(io, socket, data.message.roomId, true)
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          handleError(socket, err)
+        })
     })
 
     socket.on('check-private', (data) => {

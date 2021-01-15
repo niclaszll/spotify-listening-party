@@ -2,6 +2,14 @@ import {id} from '../../util/common.js'
 import shuffle from '../../util/shuffle.js'
 import {getAllRooms, createRoom, findRoomById, updateRoom} from '../../persistence/queries.js'
 
+export function handleError(socket, error) {
+  console.log(error)
+  socket.emit('server-error', {
+    source: 'server',
+    message: {payload: error.message},
+  })
+}
+
 export async function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
   return findRoomById(roomId).then((room) => {
     if (distributeToRoom) {
@@ -93,7 +101,6 @@ export async function joinRoom(io, socket, roomId, username, password = '') {
   }
 
   socket.join(roomId)
-  console.log(username)
   const activeListeners = [...room.activeListeners, username]
 
   console.log(`Joined room ${room.name} with id ${roomId}`)
@@ -104,8 +111,7 @@ export async function joinRoom(io, socket, roomId, username, password = '') {
       console.log(`Room ${room.name} has now ${activeListeners.length} listener(s)`)
     })
     .catch((err) => {
-      console.log(`Error joining the room ${err}`)
-      socket.emit('error-event')
+      handleError(socket, err)
     })
 }
 

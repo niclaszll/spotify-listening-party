@@ -34,6 +34,7 @@ export default function Room() {
   const { activePlaylist, token, currentRoom, user } = useSelector(selectSpotifyState)
   const [chatVisible, setChatVisible] = useState<Boolean>(false)
   const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false)
+  const [passwordError, setPasswordError] = useState<String>('')
 
   const params = useParams<any>()
   const history = useHistory<any>()
@@ -72,15 +73,21 @@ export default function Room() {
     socket.on('password-correct', (data: Response<boolean>) => {
       if (data.message.payload) {
         setPasswordDialogOpen(false)
+        setPasswordError('')
       } else {
         history.push('/lobby')
       }
     })
 
-    socket.on('error-event', () => {
-      dispatch(clearSpotifyState())
-      history.push('/')
+    socket.on('server-error', (data: Response<string>) => {
+      if (data.message.payload === 'Wrong Password') {
+        setPasswordError(data.message.payload)
+      } else {
+        dispatch(clearSpotifyState())
+        history.push('/')
+      }
     })
+
     socket.on('room-full-info', (data: Response<CurrentRoom>) => {
       setPasswordDialogOpen(false)
       dispatch(setCurrentRoom(data.message.payload))
@@ -145,6 +152,7 @@ export default function Room() {
       </div>
       <PasswordDialog
         open={passwordDialogOpen}
+        passwordError={passwordError}
         togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
         checkPassword={(password) => {
           return joinSocketRoom(params.id, user?.display_name || backUpUserName, password)
