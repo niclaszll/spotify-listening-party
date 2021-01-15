@@ -11,14 +11,14 @@ type PasswordDialogProps = {
   open: boolean
   passwordError: String
   togglePasswordDialog: (open: boolean) => void
-  checkPassword: (password: string) => void
+  submitPassword: (password: string) => void
 }
 
 export default function PasswordDialog({
   open,
   passwordError,
   togglePasswordDialog,
-  checkPassword,
+  submitPassword,
 }: PasswordDialogProps) {
   const [password, setPassword] = useState<string>('')
   const history = useHistory<any>()
@@ -49,7 +49,7 @@ export default function PasswordDialog({
             onChange={handleChange}
             onKeyPress={(ev) => {
               if (ev.key === 'Enter') {
-                checkPassword(password)
+                submitPassword(password)
                 ev.preventDefault()
               }
             }}
@@ -60,7 +60,7 @@ export default function PasswordDialog({
           <Button onClick={() => history.push('/lobby')} color="primary">
             Go Back
           </Button>
-          <Button onKeyDown={() => checkPassword(password)} color="primary">
+          <Button onClick={() => submitPassword(password)} color="primary">
             Enter
           </Button>
         </DialogActions>

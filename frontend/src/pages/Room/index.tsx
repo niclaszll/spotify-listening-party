@@ -21,7 +21,7 @@ import Playlists from './components/Playlists'
 import QueueList from './components/QueueList'
 import TrackList from './components/TrackList'
 import WebPlayer from './components/WebPlayer'
-import PasswordDialog from './components/PasswordDialog'
+import PasswordDialog from '../../components/PasswordDialog'
 import { ReactComponent as DeleteAll } from '../../img/icons/delete.svg'
 import { ReactComponent as ChatIcon } from '../../img/icons/chat.svg'
 import * as styles from './styles.module.sass'
@@ -154,7 +154,7 @@ export default function Room() {
         open={passwordDialogOpen}
         passwordError={passwordError}
         togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
-        checkPassword={(password) => {
+        submitPassword={(password) => {
           return joinSocketRoom(params.id, user?.display_name || backUpUserName, password)
         }}
       />

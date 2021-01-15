@@ -11,6 +11,7 @@ import { ReactComponent as LockOpen } from '../../img/icons/lock_open.svg'
 import { ReactComponent as People } from '../../img/icons/people.svg'
 import * as styles from './styles.module.sass'
 import { selectSpotifyState } from '../../store/modules/spotify'
+import PasswordDialog from '../../components/PasswordDialog'
 
 export default function Lobby() {
   const [roomName, setRoomName] = useState<string>('')
@@ -19,8 +20,16 @@ export default function Lobby() {
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
   const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
+
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false)
+  const [passwordError, setPasswordError] = useState<String>('')
+
   const history = useHistory()
   const { user } = useSelector(selectSpotifyState)
+
+  const togglePasswordDialog = (open: boolean) => {
+    setPasswordDialogOpen(open)
+  }
 
   useEffect(() => {
     getAvailableRooms()
@@ -45,12 +54,16 @@ export default function Lobby() {
       queue: [],
       shuffledQueue: [],
       shuffled: false,
-      roomPassword,
+      roomPassword: '',
       creatorId: user?.id || '',
       currentTrack: null,
     }
     if (roomName) {
-      newSocketRoom(newRoom)
+      if (!roomPublic) {
+        setPasswordDialogOpen(true)
+      } else {
+        newSocketRoom(newRoom)
+      }
     }
   }
 
@@ -161,6 +174,29 @@ export default function Lobby() {
           </div>
         </div>
       </div>
+      <PasswordDialog
+        open={passwordDialogOpen}
+        passwordError={passwordError}
+        togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
+        submitPassword={(password) => {
+          if (password === '') {
+            setPasswordError('Please enter a non empty password')
+          }
+          console.log(password)
+          const newRoom = {
+            name: roomName,
+            roomPublic,
+            activeListeners: [],
+            queue: [],
+            shuffledQueue: [],
+            shuffled: false,
+            roomPassword: password,
+            creatorId: user?.id || '',
+            currentTrack: null,
+          }
+          newSocketRoom(newRoom)
+        }}
+      />
     </div>
   )
 }
