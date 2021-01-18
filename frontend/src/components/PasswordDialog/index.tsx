@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom'
 type PasswordDialogProps = {
   open: boolean
   passwordError: String
+  closePasswordDialog: () => void
   togglePasswordDialog: (open: boolean) => void
   submitPassword: (password: string) => void
 }
@@ -17,6 +18,7 @@ type PasswordDialogProps = {
 export default function PasswordDialog({
   open,
   passwordError,
+  closePasswordDialog,
   togglePasswordDialog,
   submitPassword,
 }: PasswordDialogProps) {
@@ -57,7 +59,7 @@ export default function PasswordDialog({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => history.push('/lobby')} color="primary">
+          <Button onClick={() => closePasswordDialog()} color="primary">
             Go Back
           </Button>
           <Button onClick={() => submitPassword(password)} color="primary">

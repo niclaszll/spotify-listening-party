@@ -153,6 +153,7 @@ export default function Room() {
       <PasswordDialog
         open={passwordDialogOpen}
         passwordError={passwordError}
+        closePasswordDialog={() => history.push('/lobby')}
         togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
         submitPassword={(password) => {
           return joinSocketRoom(params.id, user?.display_name || backUpUserName, password)

@@ -18,7 +18,6 @@ const RoomSchema = new mongoose.Schema({
   },
   roomPassword: {
     type: String,
-    required: true,
     default: '',
     select: false,
   },

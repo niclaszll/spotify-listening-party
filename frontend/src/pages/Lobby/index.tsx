@@ -16,7 +16,6 @@ import PasswordDialog from '../../components/PasswordDialog'
 export default function Lobby() {
   const [roomName, setRoomName] = useState<string>('')
   const [roomPublic, setRoomPublic] = useState<boolean>(true)
-  const [roomPassword, setRoomPassword] = useState<String>('pw')
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([])
   const [visibleRooms, setVisibleRooms] = useState<Room[]>([])
@@ -177,6 +176,7 @@ export default function Lobby() {
       <PasswordDialog
         open={passwordDialogOpen}
         passwordError={passwordError}
+        closePasswordDialog={() => togglePasswordDialog(false)}
         togglePasswordDialog={() => togglePasswordDialog(passwordDialogOpen)}
         submitPassword={(password) => {
           if (password === '') {
