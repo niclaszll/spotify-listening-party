@@ -2,17 +2,47 @@
 
 Spotify Listening Party makes it possible to listen to music with friends and strangers in rooms together and synchronized via Spotify. All you need is a Spotify Premium account and a current version of Chrome or Firefox. Users can create their own public or password-protected rooms or join existing ones. In each room, there is a shared queue to which everyone can add songs from their own playlists. There is also a simple chat function for communication in the room.
 
-## TODO: Usage
+## Client Usage
 
-1. Login with your Spotify credentials.
+The following section describes the basic usage of the client.
 
-...
+![Startpage](./img/start.png "Startpage")
+
+1. Start off by clicking on "Connect with Spotify". You will get redirected to the Spotify Login page.
+
+![Login](./img/login.png "Login")
+
+2. Enter your Spotify credentials or simply click on "Agree", if you are already signed in.
+
+![Lobby](./img/lobby.png "Lobby")
+
+3. In the lobby you have the possibility to create rooms or join existing rooms.
+
+![Playing](./img/playing.png "Playing")
+
+4. In the room you have the possibility to select and play songs from your playlists. The general UI is based on the classic Spotify application.
+
+![Room](./img/room.png "Room")
+
+5. To enable a collaborative use of the room, songs are not played directly, but first added to a queue. Songs are then played one after the other.
+
+![Chat](./img/chat.png "Chat")
+
+6. You are also able to chat with everyone inside the room.
+
+![Join](./img/join.png "Join")
+
+7. To join an existing room, simply click on the room in the lobby.
+
+![Password](./img/password.png "Password")
+
+8. You may have to enter the room password, if you choose to join a private room. The password can be set when creating the room.
 
 ## Assignment of tasks in the team:
 
-Wei-Yun Chen: Features (linking, add to playlist, ...) and Presentation
-Cedric Partzsch: Frontend and Backend
-Niclas Zellerhoff: Frontend, Backend and Infrastructure (Docker, Hosting, ...)
+- **Wei-Yun Chen**: Features (linking, add to playlist, ...) and Presentation
+- **Cedric Partzsch**: Frontend and Backend
+- **Niclas Zellerhoff**: Frontend, Backend and Infrastructure (Docker, Hosting, ...)
 
 ## Technology
 
@@ -23,6 +53,12 @@ In order to use the client website, the user must first authenticate with Spotif
 ![Service Overview](./img/overview.png "Service Overview")
 
 ## TODO: Interface description
+
+The communication with the backend is done via WebSockets:
+
+The interface description can be found under `frontend/src/util/websocket.ts`.
+
+TODO: add comments
 
 ## TODO: Testing
 
