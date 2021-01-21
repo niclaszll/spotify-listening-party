@@ -98,7 +98,9 @@ Join an existing socket room.
 Check if room with the provided roomId is private.
 
 ```
-roomId: string
+{
+  roomId: string
+}
 ```
 
 ### room/leave
@@ -106,7 +108,9 @@ roomId: string
 Leave a socket room.
 
 ```
-username: string
+{
+  username: string
+}
 ```
 
 ### room/chat/new_message
@@ -114,8 +118,10 @@ username: string
 Send a chat message.
 
 ```
-msg: string
-user: string
+{
+  msg: string
+  user: string
+}
 ```
 
 ### room/queue/add_track

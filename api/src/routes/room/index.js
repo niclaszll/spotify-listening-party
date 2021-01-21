@@ -40,12 +40,13 @@ export default function roomRouter(io) {
     })
 
     socket.on('room/is_private', (data) => {
-      const roomId = data.message
+      const {roomId} = data.message
       checkIfRoomIsPrivate(socket, roomId)
     })
 
     socket.on('room/leave', (data) => {
-      leaveActiveRoom(io, socket, data.message).then((roomId) => {
+      const {username} = data.message
+      leaveActiveRoom(io, socket, username).then((roomId) => {
         sendFullRoomInformation(io, socket, roomId, true)
       })
     })

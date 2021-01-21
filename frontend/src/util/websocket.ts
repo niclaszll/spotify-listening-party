@@ -33,14 +33,14 @@ export function joinSocketRoom(roomId: string, username: string, password: strin
 export function checkIfRoomIsPrivate(roomId: string) {
   socket.emit('room/is_private', {
     source: 'client',
-    message: roomId,
+    message: { roomId },
   })
 }
 
 export function leaveSocketRoom(username: string) {
   socket.emit('room/leave', {
     source: 'client',
-    message: username,
+    message: { username },
   })
 }
 
