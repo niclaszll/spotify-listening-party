@@ -12,7 +12,7 @@ export default function Chat() {
   const { user } = useSelector(selectSpotifyState)
 
   useEffect(() => {
-    socket.on('chat', (data: Response<Message>) => {
+    socket.on('room/chat/new_message', (data: Response<Message>) => {
       setMessages((oldMessages) => [...oldMessages, data.message.payload])
     })
     const timer = setTimeout(() => {
@@ -23,7 +23,7 @@ export default function Chat() {
     }, 5000)
     return () => {
       clearTimeout(timer)
-      socket.off('chat')
+      socket.off('room/chat/new_message')
     }
   }, [])
 

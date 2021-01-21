@@ -62,20 +62,11 @@ export default function Room() {
       return undefined
     })
 
-    socket.on('check-private', (data: Response<boolean>) => {
+    socket.on('room/is_private', (data: Response<boolean>) => {
       if (data.message.payload) {
         joinSocketRoom(params.id, user?.display_name || backUpUserName)
       } else {
         setPasswordDialogOpen(true)
-      }
-    })
-
-    socket.on('password-correct', (data: Response<boolean>) => {
-      if (data.message.payload) {
-        setPasswordDialogOpen(false)
-        setPasswordError('')
-      } else {
-        history.push('/lobby')
       }
     })
 
@@ -88,7 +79,7 @@ export default function Room() {
       }
     })
 
-    socket.on('room-full-info', (data: Response<CurrentRoom>) => {
+    socket.on('room/full_info', (data: Response<CurrentRoom>) => {
       setPasswordDialogOpen(false)
       dispatch(setCurrentRoom(data.message.payload))
     })
@@ -104,9 +95,8 @@ export default function Room() {
       leaveSocketRoom(user?.display_name || backUpUserName)
       socket.off('error-event')
       socket.off('room-info')
-      socket.off('room-full-info')
-      socket.off('check-private')
-      socket.off('password-correct')
+      socket.off('room/full_info')
+      socket.off('room/is_private')
     }
   }, [])
 

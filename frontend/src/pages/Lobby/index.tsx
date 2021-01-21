@@ -32,16 +32,16 @@ export default function Lobby() {
 
   useEffect(() => {
     getAvailableRooms()
-    socket.on('room', (data: Response<string>) => {
+    socket.on('room/create', (data: Response<string>) => {
       history.push(`/room/${data.message.payload}`)
     })
-    socket.on('available-rooms', (data: Response<Room[]>) => {
+    socket.on('room/set_all', (data: Response<Room[]>) => {
       setAvailableRooms(data.message.payload)
       setVisibleRooms(data.message.payload)
     })
     return () => {
-      socket.off('room')
-      socket.off('available-rooms')
+      socket.off('room/create')
+      socket.off('room/set_all')
     }
   }, [])
 

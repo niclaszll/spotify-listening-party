@@ -13,12 +13,12 @@ export function handleError(socket, error) {
 export async function sendFullRoomInformation(io, socket, roomId, distributeToRoom) {
   return findRoomById(roomId).then((room) => {
     if (distributeToRoom) {
-      io.sockets.in(roomId).emit('room-full-info', {
+      io.sockets.in(roomId).emit('room/full_info', {
         source: 'server',
         message: {payload: room},
       })
     } else {
-      socket.emit('room-full-info', {
+      socket.emit('room/full_info', {
         source: 'server',
         message: {payload: room},
       })
@@ -28,7 +28,7 @@ export async function sendFullRoomInformation(io, socket, roomId, distributeToRo
 
 export async function checkIfRoomIsPrivate(socket, roomId) {
   return findRoomById(roomId).then((room) => {
-    socket.emit('check-private', {
+    socket.emit('room/is_private', {
       source: 'server',
       message: {payload: room.roomPublic},
     })
@@ -44,12 +44,12 @@ export async function checkIfPasswordCorrect(roomId, password) {
 export function updateAvailableRooms(io, socket, distributeAll) {
   getAllRooms().then((rooms) => {
     if (distributeAll) {
-      io.sockets.emit('available-rooms', {
+      io.sockets.emit('room/set_all', {
         source: 'server',
         message: {payload: rooms},
       })
     } else {
-      socket.emit('available-rooms', {
+      socket.emit('room/set_all', {
         source: 'server',
         message: {payload: rooms},
       })
@@ -81,7 +81,7 @@ export async function createNewRoom(socket, message) {
 
   return createRoom(newRoom)
     .then(() => {
-      socket.emit('room', {
+      socket.emit('room/create', {
         source: 'server',
         message: {payload: roomId},
       })
@@ -117,7 +117,7 @@ export async function joinRoom(io, socket, roomId, username, password = '') {
 
 export function distributeMessage(io, socket, msg) {
   const room = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-  io.sockets.in(room).emit('chat', {
+  io.sockets.in(room).emit('room/chat/new_message', {
     source: 'server',
     message: {payload: msg},
   })
