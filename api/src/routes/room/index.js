@@ -9,7 +9,6 @@ import {
   clearQueue,
   updateTrackState,
   updateAvailableRooms,
-  setCurrentTrack,
   sendFullRoomInformation,
   skipTrack,
   checkIfRoomIsPrivate,
@@ -27,13 +26,13 @@ export default function roomRouter(io) {
   io.on('connection', (socket) => {
     console.log('New client connected')
 
-    socket.on('create', (data) => {
+    socket.on('room/create', (data) => {
       createNewRoom(socket, data.message).then(() => {
         sendFullRoomInformation(io, socket, data.message.roomId, true)
       })
     })
 
-    socket.on('join', (data) => {
+    socket.on('room/join', (data) => {
       const {roomId, username, password} = data.message
       joinRoom(io, socket, roomId, username, password)
         .then(() => {
@@ -44,46 +43,42 @@ export default function roomRouter(io) {
         })
     })
 
-    socket.on('check-private', (data) => {
+    socket.on('room/is_private', (data) => {
       const roomId = data.message
       checkIfRoomIsPrivate(socket, roomId)
     })
 
-    socket.on('leave', (data) => {
+    socket.on('room/leave', (data) => {
       leaveActiveRoom(io, socket, data.message).then((roomId) => {
         sendFullRoomInformation(io, socket, roomId, true)
       })
     })
 
-    socket.on('new-message', (data) => {
+    socket.on('room/chat/new_message', (data) => {
       distributeMessage(io, socket, data.message)
     })
 
-    socket.on('add-to-queue', (data) => {
+    socket.on('room/queue/add_track', (data) => {
       updateQueue(io, socket, data.message)
     })
 
-    socket.on('clear-queue', (data) => {
+    socket.on('room/queue/clear', (data) => {
       clearQueue(io, socket, data.message)
     })
 
-    socket.on('toggle-play', (data) => {
+    socket.on('room/player/toggle_play', (data) => {
       updateTrackState(io, socket, data.message)
     })
 
-    socket.on('skip-forward', (data) => {
+    socket.on('room/player/skip_forward', (data) => {
       skipTrack(io, socket, data.message.roomId)
     })
 
-    socket.on('get-available-rooms', () => {
+    socket.on('room/get_all', () => {
       updateAvailableRooms(io, socket, false)
     })
 
-    socket.on('current-track', (data) => {
-      setCurrentTrack(io, socket, data.message.msg)
-    })
-
-    socket.on('toggle-shuffle', (data) => {
+    socket.on('room/player/toggle_shuffle', (data) => {
       toggleShuffle(io, socket, data.message)
     })
 

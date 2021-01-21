@@ -16,7 +16,7 @@ export type Response<T> = {
 }
 
 export function newSocketRoom(room: Room) {
-  socket.emit('create', {
+  socket.emit('room/create', {
     source: 'client',
     message: room,
   })
@@ -24,76 +24,69 @@ export function newSocketRoom(room: Room) {
 
 export function joinSocketRoom(roomId: string, username: string, password: string = '') {
   console.log(username)
-  socket.emit('join', {
+  socket.emit('room/join', {
     source: 'client',
     message: { roomId, username, password },
   })
 }
 
 export function checkIfRoomIsPrivate(roomId: string) {
-  socket.emit('check-private', {
+  socket.emit('room/is_private', {
     source: 'client',
     message: roomId,
   })
 }
 
 export function leaveSocketRoom(username: string) {
-  socket.emit('leave', {
+  socket.emit('room/leave', {
     source: 'client',
     message: username,
   })
 }
 
 export function sendMessage(msg: Message) {
-  socket.emit('new-message', {
+  socket.emit('room/chat/new_message', {
     source: 'client',
     message: msg,
   })
 }
 
 export function addToQueue(track: WebPlaybackTrack, roomId: String) {
-  socket.emit('add-to-queue', {
+  socket.emit('room/queue/add_track', {
     source: 'client',
     message: { track, roomId },
   })
 }
 
 export function clearQueue(roomId: String) {
-  socket.emit('clear-queue', {
-    source: 'client',
-    message: { roomId },
-  })
-}
-
-export function getAvailableRooms() {
-  socket.emit('get-available-rooms', {
-    source: 'client',
-  })
-}
-
-export function sendSkipForward(roomId: String) {
-  socket.emit('skip-forward', {
+  socket.emit('room/queue/clear', {
     source: 'client',
     message: { roomId },
   })
 }
 
 export function sendTogglePlay(paused: Boolean, roomId: String) {
-  socket.emit('toggle-play', {
+  socket.emit('room/player/toggle_play', {
     source: 'client',
     message: { paused, roomId },
   })
 }
 
-export function sendCurrentTrack(msg: { paused: Boolean; position: number; uri: string }) {
-  socket.emit('current-track', {
+export function getAvailableRooms() {
+  socket.emit('room/get_all', {
     source: 'client',
-    message: { msg },
+  })
+}
+
+export function sendSkipForward(roomId: String) {
+  socket.emit('room/player/skip_forward', {
+    source: 'client',
+    message: { roomId },
   })
 }
 
 export function sendToggleShuffle(shuffled: Boolean, roomId: String) {
-  socket.emit('toggle-shuffle', {
+  socket.emit('room/player/toggle_shuffle', {
     source: 'client',
     message: { shuffled, roomId },
   })

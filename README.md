@@ -52,13 +52,127 @@ In order to use the client website, the user must first authenticate with Spotif
 
 ![Service Overview](./img/overview.png "Service Overview")
 
-## TODO: Interface description
+## Interface description
 
-The communication with the backend is done via WebSockets:
+The communication with the backend is done via WebSockets. A message has the following structure, where `msg` contains the content of the request.
 
-The interface description can be found under `frontend/src/util/websocket.ts`.
+```
+{
+  source: 'client',
+  message: msg,
+}
+```
 
-TODO: add comments
+### room/create
+
+Creates a new socket room.
+
+```
+{
+  name: string
+  roomPublic: Boolean
+  roomPassword?: string
+  activeListeners: string[]
+  queue: WebPlaybackTrack[]
+  shuffledQueue: WebPlaybackTrack[]
+  shuffled: boolean
+  creatorId: string
+  currentTrack: CurrentTrackResponse | null
+}
+```
+
+### room/join
+
+Join an existing socket room.
+
+```
+{
+  roomId: string,
+  username: string,
+  password: string
+}
+```
+
+### room/is_private
+
+Check if room with the provided roomId is private.
+
+```
+roomId: string
+```
+
+### room/leave
+
+Leave a socket room.
+
+```
+username: string
+```
+
+### room/chat/new_message
+
+Send a chat message.
+
+```
+msg: string
+user: string
+```
+
+### room/queue/add_track
+
+Add a track to the current queue
+
+```
+{
+  track: WebPlayBackTrack,
+  roomId: string
+}
+```
+
+### room/queue/clear
+
+Clear the current queue
+
+```
+{
+  roomId: string
+}
+```
+
+### room/player/toggle_play
+
+Toggle between paused and playing state.
+
+```
+{
+  paused: Boolean, roomId: String
+}
+```
+
+### room/player/skip_forward
+
+Skip to the next track.
+
+```
+{
+  roomId: string
+}
+```
+
+### room/get_all
+
+Get all available rooms.
+
+### room/player/toggle_shuffle
+
+Toggle between shuffled mode.
+
+```
+{
+  shuffled: Boolean,
+  roomId: string
+}
+```
 
 ## TODO: Testing
 

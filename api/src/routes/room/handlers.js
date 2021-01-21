@@ -177,19 +177,6 @@ export function updateTrackState(io, socket, msg) {
   })
 }
 
-export async function setCurrentTrack(io, socket, msg) {
-  const roomId = Object.keys(socket.rooms).filter((item) => item !== socket.id)[0]
-  const currentTrack = {
-    position_ms: msg.duration_ms || 0,
-    paused: msg.paused ? msg.paused : false,
-    uri: msg.uri,
-    timestamp: new Date(),
-  }
-  updateRoom(roomId, {currentTrack}).then(() => {
-    sendFullRoomInformation(io, socket, roomId, true)
-  })
-}
-
 export function toggleShuffle(io, socket, msg) {
   findRoomById(msg.roomId).then((room) => {
     let shuffledQueue = []
