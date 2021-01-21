@@ -19,10 +19,6 @@ import {
 export default function roomRouter(io) {
   const router = express.Router()
 
-  router.get('/health', (req, res) => {
-    res.send('Healthy')
-  })
-
   io.on('connection', (socket) => {
     console.log('New client connected')
 

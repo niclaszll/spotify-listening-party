@@ -57,6 +57,10 @@ app.use(express.urlencoded({extended: false}))
 app.use(cookieParser())
 app.use('/room', rr)
 
+app.get('/health', (req, res) => {
+  res.send('Healthy')
+})
+
 /**
  * Listen on provided port, on all network interfaces.
  */

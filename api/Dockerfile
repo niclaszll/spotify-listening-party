@@ -18,4 +18,4 @@ EXPOSE 9000
 CMD ["yarn", "start"]
 
 HEALTHCHECK --interval=30s \
-  CMD curl -f http://localhost:9000/room/health || exit 1
+  CMD curl -f http://localhost:9000/health || exit 1
