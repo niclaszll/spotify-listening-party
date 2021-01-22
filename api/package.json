@@ -6,7 +6,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node src/app.js",
-    "start.dev": "nodemon --ignore './src/data/' -L src/app.js"
+    "start.dev": "nodemon --ignore './src/data/' -L src/app.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --runInBand ./tests"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -20,12 +21,19 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "@jest/globals": "^26.6.2",
     "eslint": "^7.12.1",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.6.3",
+    "mongodb-memory-server": "^6.9.3",
     "nodemon": "^2.0.6",
     "prettier": "^2.1.2"
+  },
+  "jest": {
+    "transform": {},
+    "testEnvironment": "node"
   }
 }
