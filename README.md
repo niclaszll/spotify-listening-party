@@ -8,35 +8,35 @@ The following section describes the basic usage of the client.
 
 ![Startpage](./img/start.png "Startpage")
 
-1. Start off by clicking on "Connect with Spotify". You will get redirected to the Spotify Login page.
+Start off by clicking on "Connect with Spotify". You will get redirected to the Spotify Login page.
 
 ![Login](./img/login.png "Login")
 
-2. Enter your Spotify credentials or simply click on "Agree", if you are already signed in.
+Enter your Spotify credentials or simply click on "Agree", if you are already signed in.
 
 ![Lobby](./img/lobby.png "Lobby")
 
-3. In the lobby you have the possibility to create rooms or join existing rooms.
+In the lobby you have the possibility to create rooms or join existing rooms.
 
 ![Playing](./img/playing.png "Playing")
 
-4. In the room you have the possibility to select and play songs from your playlists. The general UI is based on the classic Spotify application.
+In the room you have the possibility to select and play songs from your playlists. The general UI is based on the classic Spotify application.
 
 ![Room](./img/room.png "Room")
 
-5. To enable a collaborative use of the room, songs are not played directly, but first added to a queue. Songs are then played one after the other.
+To enable a collaborative use of the room, songs are not played directly, but first added to a queue. Songs are then played one after the other.
 
 ![Chat](./img/chat.png "Chat")
 
-6. You are also able to chat with everyone inside the room.
+You are also able to chat with everyone inside the room.
 
 ![Join](./img/join.png "Join")
 
-7. To join an existing room, simply click on the room in the lobby.
+To join an existing room, simply click on the room in the lobby.
 
 ![Password](./img/password.png "Password")
 
-8. You may have to enter the room password, if you choose to join a private room. The password can be set when creating the room.
+You may have to enter the room password, if you choose to join a private room. The password can be set when creating the room.
 
 ## Assignment of tasks in the team:
 
@@ -188,9 +188,9 @@ To create mock MongoDBs, [mongodb-memory-server](https://github.com/nodkz/mongod
 
 ## Deployment
 
-Each push to the Bitbucket repository used triggers a bitbucket-pipelines.yml defined pipeline that automatically builds the Docker images and then pushes them to a public AWS ECR repository. In the production application, the necessary images can then simply be pulled and launched from there.
+Each push to the Bitbucket repository triggers a pipeline (defined in `bitbucket-pipelines.yml`) that automatically builds the Docker images and then pushes them to a public AWS ECR repository. In the production application, the necessary images can then simply be pulled and launched from there.
 
-For a simple deployment, the docker-compose.prod.yml is still used for this purpose so far, which also contains Traeffic as a reverse proxy to run both application parts on port 80. In addition, an SSL certificate for the use of https is issued with the help of Traeffic and LetsEncrypt.
+For a simple deployment, the docker-compose.prod.yml is still used for this purpose so far, which also contains `Traeffic` as a reverse proxy to run both application parts on port 80. In addition, an SSL certificate for the use of https is issued with the help of Traeffic and LetsEncrypt.
 
 ## Further Development
 
