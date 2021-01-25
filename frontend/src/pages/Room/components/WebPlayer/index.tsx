@@ -219,7 +219,7 @@ export default function WebPlayer() {
         <button
           type="button"
           onClick={() => sendToggleShuffle(!currentRoom.shuffled, currentRoom.id!)}
-          className={currentRoom.shuffled ? styles.shuffled : ''}
+          className={currentRoom.shuffled ? `${styles.shuffle} ${styles.shuffled}` : styles.shuffle}
         >
           <Shuffle />
         </button>

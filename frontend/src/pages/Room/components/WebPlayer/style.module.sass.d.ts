@@ -8,4 +8,5 @@ export const additionalControls: string
 export const thumbnail: string
 export const name: string
 export const artists: string
+export const shuffle: string
 export const shuffled: string
