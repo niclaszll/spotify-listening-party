@@ -1,8 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, Link } from 'react-router-dom'
+import Button from '@material-ui/core/Button'
+import Tooltip from '@material-ui/core/Tooltip'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import { clearSpotifyState, selectSpotifyState } from '../../store/modules/spotify'
 import { ReactComponent as ArrowBack } from '../../img/icons/arrow_back.svg'
+import { ReactComponent as Share } from '../../img/icons/share.svg'
 import * as styles from './styles.module.sass'
 import { ReactComponent as People } from '../../img/icons/people.svg'
 
@@ -16,6 +20,29 @@ export default function Navbar() {
   const handleClick = () => {
     dispatch(clearSpotifyState())
     history.push('/')
+  }
+
+  const [open, setOpen] = React.useState(false)
+
+  const handleTooltipClose = () => {
+    setOpen(false)
+  }
+
+  const handleTooltipOpen = () => {
+    setOpen(true)
+  }
+
+  const copyCurrentLinkToClipboard = () => {
+    const helperElement = document.createElement('textarea')
+    document.body.appendChild(helperElement)
+    helperElement.value = window.location.href
+    helperElement.select()
+    document.execCommand('copy')
+    document.body.removeChild(helperElement)
+    handleTooltipOpen()
+    setTimeout(() => {
+      handleTooltipClose()
+    }, 2000)
   }
 
   return (
@@ -65,9 +92,29 @@ export default function Navbar() {
                   )}
                 </div>
               </div>
+              <Tooltip
+                PopperProps={{
+                  disablePortal: true,
+                }}
+                onClose={handleTooltipClose}
+                open={open}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                title="Copied link to clipboard!"
+              >
+                <button
+                  title="Copy Room Link"
+                  onClick={copyCurrentLinkToClipboard}
+                  className={styles.share}
+                  type="button"
+                >
+                  <Share />
+                </button>
+              </Tooltip>
             </>
           )}
-          <button type="button" onClick={handleClick}>
+          <button className={styles.endSession} type="button" onClick={handleClick}>
             End Session
           </button>
         </div>
