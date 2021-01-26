@@ -151,7 +151,8 @@ Toggle between paused and playing state.
 
 ```
 {
-  paused: Boolean, roomId: String
+  paused: Boolean,
+  roomId: string
 }
 ```
 
