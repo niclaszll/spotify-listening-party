@@ -190,7 +190,9 @@ To create mock MongoDBs, [mongodb-memory-server](https://github.com/nodkz/mongod
 
 Each push to the Bitbucket repository triggers a pipeline (defined in `bitbucket-pipelines.yml`) that automatically builds the Docker images and then pushes them to a public AWS ECR repository. In the production application, the necessary images can then simply be pulled and launched from there.
 
-For a simple deployment, the docker-compose.prod.yml is still used for this purpose so far, which also contains `Traeffic` as a reverse proxy to run both application parts on port 80. In addition, an SSL certificate for the use of https is issued with the help of Traeffic and LetsEncrypt.
+![Pipeline](./img/pipeline.png "Pipeline")
+
+To start the application, the docker-compose.prod.yml is used, which also contains `Traeffic` as a reverse proxy to run both application parts on port 80. In addition, an SSL certificate for the use of https is issued with the help of Traeffic and LetsEncrypt.
 
 ## Further Development
 
