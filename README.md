@@ -54,7 +54,7 @@ In order to use the client website, the user must first authenticate with Spotif
 
 ## Interface description
 
-The communication with the backend is done via WebSockets. A message has the following structure, where `msg` contains the content of the request.
+The communication with the backend is done via WebSockets. A message has the following structure, where `msg` contains the payload of the request. Detailed descriptions of the types can be found at `frontend/src/util/types`.
 
 ```
 {
