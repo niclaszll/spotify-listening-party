@@ -41,7 +41,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=frontend"
-      - "traefik.http.routers.frontend.rule=Host(`${PROD_URL}`) && PathPrefix(`/frontend`)"
+      - "traefik.http.routers.frontend.rule=Host(`${PROD_URL}`)"
+      # the middleware 'add-context' must be defined so that the regex rules can be attached to it
+      - "traefik.http.routers.frontend.middlewares=add-context"
+      - "traefik.http.middlewares.add-context.redirectregex.regex=^https:\\/\\/([^\\/]+)\\/?$$"
+      - "traefik.http.middlewares.add-context.redirectregex.replacement=https://$$1/frontend"
       # https
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.entrypoints=websecure"

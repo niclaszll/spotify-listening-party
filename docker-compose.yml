@@ -30,7 +30,13 @@ services:
       - app-network
     labels:
       - "traefik.backend=frontend"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
+      - "traefik.http.routers.frontend.rule=Host(`${DEV_URL}`)"
+      # the middleware 'add-context' must be defined so that the regex rules can be attached to it
+      - "traefik.http.routers.frontend.middlewares=add-context"
+      - "traefik.http.middlewares.add-context.redirectregex.regex=^http:\\/\\/([^\\/]+)\\/?$$"
+      - "traefik.http.middlewares.add-context.redirectregex.replacement=http://$$1/frontend"
+    env_file:
+      - .env
 
   api:
     build:
@@ -44,9 +50,11 @@ services:
       - app-network
     labels:
       - "traefik.backend=api"
-      - "traefik.http.routers.api.rule=PathPrefix(`/backend`)"
+      - "traefik.http.routers.api.rule=Host(`${DEV_URL}`) && PathPrefix(`/backend`)"
       - "traefik.http.routers.api.middlewares=api-stripprefix"
       - "traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/backend"
+    env_file:
+      - .env
       
 networks:
   app-network:

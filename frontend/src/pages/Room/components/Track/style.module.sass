@@ -7,14 +7,16 @@
   &.playing
     .left, .left >div:nth-child(2), .right
       color: $spotifyGreen
-  .left > div
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
-    &:first-child
-      font-weight: 500
-    &:nth-child(2)
-      font-size: 13px
-      color: $spotifyTextLightGrey
+  .left
+    max-width: 80%
+    > div
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+      &:first-child
+        font-weight: 500
+      &:nth-child(2)
+        font-size: 13px
+        color: $spotifyTextLightGrey
   .right
     color: $spotifyTextLightGrey
