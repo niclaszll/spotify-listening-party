@@ -65,7 +65,7 @@ The communication with the backend is done via WebSockets. A message has the fol
 
 ### room/create
 
-Creates a new socket room.
+Create a new socket room.
 
 ```
 {
@@ -77,7 +77,7 @@ Creates a new socket room.
   shuffledQueue: WebPlaybackTrack[]
   shuffled: boolean
   creatorId: string
-  currentTrack: CurrentTrackResponse | null
+  currentTrack: CurrentTrack | null
 }
 ```
 
@@ -126,7 +126,7 @@ Send a chat message.
 
 ### room/queue/add_track
 
-Add a track to the current queue
+Add a track to the current queue.
 
 ```
 {

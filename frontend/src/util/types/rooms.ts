@@ -1,5 +1,8 @@
 import { WebPlaybackTrack } from './spotify'
 
+/**
+ * Corresponds to a virtual room where music is listened to.
+ */
 export type Room = {
   id?: string
   name: string
@@ -10,27 +13,23 @@ export type Room = {
   shuffledQueue: WebPlaybackTrack[]
   shuffled: Boolean
   creatorId: string
-  currentTrack: CurrentTrackResponse | null
+  currentTrack: CurrentTrack | null
 }
 
+/**
+ * A chat message
+ */
 export type Message = {
   msg: string
   user: string
 }
 
-export type CurrentTrackResponse = {
+/**
+ * Type of the currently active track inside a room
+ */
+export type CurrentTrack = {
   position_ms: number
   paused: Boolean
   uri: string
   timestamp: Date
-}
-
-export type RoomInfoResponse = {
-  source: string
-  message: {
-    payload: {
-      queue: WebPlaybackTrack[]
-      currentTrack: CurrentTrackResponse
-    }
-  }
 }

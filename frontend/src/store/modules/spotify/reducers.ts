@@ -1,5 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { CurrentTrackResponse, Room } from '../../../util/types/rooms'
+import { Room } from '../../../util/types/rooms'
 import {
   SpotifyPlaylist,
   SpotifyUser,
