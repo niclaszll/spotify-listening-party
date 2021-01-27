@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable camelcase */
 type SpotifyPlayerMethod<T = void> = () => Promise<T>
 
 export type SpotifyPlayerCallback = (token: string) => void
