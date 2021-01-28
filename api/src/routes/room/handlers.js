@@ -123,7 +123,7 @@ export function distributeMessage(io, socket, msg) {
   })
 }
 
-export function skipTrack(io, socket, roomId) {
+export function skipForward(io, socket, roomId) {
   findRoomById(roomId).then((room) => {
     if (room.shuffled && room.shuffledQueue.length) {
       const nextTrack = {
@@ -134,7 +134,13 @@ export function skipTrack(io, socket, roomId) {
       }
       const item = room.shuffledQueue.shift()
       room.queue.splice(room.queue.indexOf(item), 1)
-      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue, shuffledQueue: room.shuffledQueue}).then(() => {
+      room.history.push(room.currentTrack)
+      updateRoom(roomId, {
+        currentTrack: nextTrack,
+        queue: room.queue,
+        shuffledQueue: room.shuffledQueue,
+        history: room.history,
+      }).then(() => {
         sendFullRoomInformation(io, socket, roomId, true)
       })
     } else if (room.queue.length > 0) {
@@ -145,10 +151,25 @@ export function skipTrack(io, socket, roomId) {
         timestamp: new Date(),
       }
       room.queue.shift()
-      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue}).then(() => {
+      room.history.push(room.currentTrack)
+      updateRoom(roomId, {currentTrack: nextTrack, queue: room.queue, history: room.history}).then(() => {
         sendFullRoomInformation(io, socket, roomId, true)
       })
     }
+  })
+}
+
+export function skipBackward(io, socket, roomId) {
+  findRoomById(roomId).then((room) => {
+    const nextTrack = {
+      position_ms: 0,
+      paused: false,
+      uri: room.history.pop().uri,
+      timestamp: new Date(),
+    }
+    updateRoom(roomId, {currentTrack: nextTrack, history: room.history}).then(() => {
+      sendFullRoomInformation(io, socket, roomId, true)
+    })
   })
 }
 
@@ -158,7 +179,7 @@ export function updateQueue(io, socket, msg) {
     updateRoom(msg.roomId, {queue: newQueue}).then(() => {
       sendFullRoomInformation(io, socket, msg.roomId, true).then(() => {
         if (room.currentTrack === null && newQueue.length > 0) {
-          skipTrack(io, socket, msg.roomId)
+          skipForward(io, socket, msg.roomId)
         }
       })
     })

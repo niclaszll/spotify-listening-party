@@ -11,6 +11,7 @@ export type Room = {
   activeListeners: string[]
   queue: WebPlaybackTrack[]
   shuffledQueue: WebPlaybackTrack[]
+  history: WebPlaybackTrack[]
   shuffled: Boolean
   creatorId: string
   currentTrack: CurrentTrack | null

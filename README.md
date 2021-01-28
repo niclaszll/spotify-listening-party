@@ -158,7 +158,17 @@ Toggle between paused and playing state.
 
 ### room/player/skip_forward
 
-Skip to the next track.
+Skip forward to the next track.
+
+```
+{
+  roomId: string
+}
+```
+
+### room/player/skip_backward
+
+Skip back to the last track.
 
 ```
 {

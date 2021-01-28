@@ -21,7 +21,12 @@ import {
   WebPlaybackPlayer,
   WebPlaybackState,
 } from '../../../../util/types/spotify'
-import { sendSkipForward, sendTogglePlay, sendToggleShuffle } from '../../../../util/websocket'
+import {
+  sendSkipForward,
+  sendSkipBackward,
+  sendTogglePlay,
+  sendToggleShuffle,
+} from '../../../../util/websocket'
 import * as styles from './style.module.sass'
 import VolumeControl from './components/VolumeControl'
 import useDebouncedEffect from '../../../../util/useDebouncedEffect'
@@ -223,7 +228,7 @@ export default function WebPlayer() {
         >
           <Shuffle />
         </button>
-        <button type="button">
+        <button type="button" onClick={() => sendSkipBackward(currentRoom.id!)}>
           <SkipBackward />
         </button>
         <button id={styles.playPause} type="button" onClick={togglePlay}>

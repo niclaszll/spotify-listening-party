@@ -10,7 +10,8 @@ import {
   updateTrackState,
   updateAvailableRooms,
   sendFullRoomInformation,
-  skipTrack,
+  skipForward,
+  skipBackward,
   checkIfRoomIsPrivate,
   toggleShuffle,
   handleError,
@@ -68,7 +69,11 @@ export default function roomRouter(io) {
     })
 
     socket.on('room/player/skip_forward', (data) => {
-      skipTrack(io, socket, data.message.roomId)
+      skipForward(io, socket, data.message.roomId)
+    })
+
+    socket.on('room/player/skip_backward', (data) => {
+      skipBackward(io, socket, data.message.roomId)
     })
 
     socket.on('room/get_all', () => {

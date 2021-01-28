@@ -66,6 +66,8 @@ export async function play(
     body = JSON.stringify({ uris, offset: { position: offset }, position_ms })
   }
 
+  console.log('called')
+
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     body,
     headers: {

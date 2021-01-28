@@ -131,6 +131,17 @@ export function sendSkipForward(roomId: string) {
 }
 
 /**
+ * Skip to the beginning of the current track or to the last track.
+ * @param {string} roomId - The id of the associated room
+ */
+export function sendSkipBackward(roomId: string) {
+  socket.emit('room/player/skip_backward', {
+    source: 'client',
+    message: { roomId },
+  })
+}
+
+/**
  * Toggle between shuffled mode.
  * @param {Boolean} shuffled - Is shuffle enabled
  * @param {string} roomId - The id of the associated room

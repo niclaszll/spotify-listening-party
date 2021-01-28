@@ -52,6 +52,7 @@ export default function Lobby() {
       activeListeners: [],
       queue: [],
       shuffledQueue: [],
+      history: [],
       shuffled: false,
       roomPassword: '',
       creatorId: user?.id || '',
@@ -182,13 +183,13 @@ export default function Lobby() {
           if (password === '') {
             setPasswordError('Please enter a non empty password')
           }
-          console.log(password)
           const newRoom = {
             name: roomName,
             roomPublic,
             activeListeners: [],
             queue: [],
             shuffledQueue: [],
+            history: [],
             shuffled: false,
             roomPassword: password,
             creatorId: user?.id || '',
