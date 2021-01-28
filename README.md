@@ -282,3 +282,12 @@ Stop the application using
 ```bash
 docker-compose down
 ```
+
+### Possible Future Enhancements
+
+- security improvements
+- roles (moderator, guest, ...)
+- other music streaming services, such as Apple Music or YouTube
+- more chat features
+- upgrade socket.io to 3.x
+- general bugfixing (linked songs are sometimes buggy, ...)
