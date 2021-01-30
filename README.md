@@ -245,9 +245,27 @@ For developing the application it is recommended to use Firefox, since [Chrome d
 
 ### Setup
 
-Copy the `env.example` files in both /frontend and /api and rename them to `.env`. These already contain all necessary keys, however, some of the values have to be replaced.
+This project uses 3 .env files, one in `/frontend`, on in `/api` and one in the root of the project. In each location .env.example files are already prepared for this purpose.
 
-To enable the database connection, add your MongoDB-URI to the api-`.env` file (e.g. from MongoDB-Atlas).
+**Root:**
+```
+DEV_URL=<IP OF YOUR LOCAL MACHINE>
+PROD_URL=<PRODUCTION DOMAIN>
+ACME_EMAIL=<ACME EMAIL FOR LETS ENCRYPT>
+```
+
+**Frontend:**
+```
+REACT_APP_API_URL=<IP OF YOUR API>
+REACT_APP_REDIRECT_URL=<SPOTIFY AFTER LOGIN REDIRECT URL>
+REACT_APP_CLIENT_ID=<SPOTIFY APP CLIENT ID>
+```
+
+**Api:**
+```
+API_PORT=<PORT OF YOUR API>
+DB_CONNECTION_URI=<MONGODB CONNECTION URI>
+```
 
 For the local development of the app it is necessary to create a Spotify-Developer-App. Head to [https://developer.spotify.com/dashboard/](https://developer.spotify.com/dashboard/) and login with your Spotify-Account.
 
@@ -255,7 +273,7 @@ Then click on `"Create An App"`, give it a name and description and click on `"C
 
 Go back to the Spotify dashboard and click on `"Edit Settings"` inside your newly created app.
 
-Inside the opening pop-up add `http://localhost:3000/auth` to your Redirect URIs and hit `"Save"`.
+Inside the opening pop-up add your preffered redirect URIs to the Redirect URI list and hit `"Save"`.
 
 ### Run the application
 
