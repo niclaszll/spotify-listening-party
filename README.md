@@ -193,7 +193,7 @@ Toggle between shuffled mode.
 
 ## Testing
 
-The tests are performed with [Jest](https://jestjs.io/). Currently, tests for database accesses of the API are implemented. In the future the React frontend could (and should) also be tested additionally. However, since the frontend is only an exemplary implementation of the client, only the backend has been addressed so far.
+Tests are performed with [Jest](https://jestjs.io/). Currently, tests for database accesses of the API are implemented. In the future the React frontend could (and should) also be tested additionally. However, since the frontend is only an exemplary implementation of the client, only the backend has been addressed so far.
 
 To create mock MongoDBs, [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server) is used. This package spins up an actual/real MongoDB server programmatically from node, for testing or mocking during development. By default it holds the data in memory. A fresh spun up mongod process takes about 7Mb of memory.
 
