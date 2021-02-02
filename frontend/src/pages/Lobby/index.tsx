@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
@@ -10,8 +10,9 @@ import { ReactComponent as Lock } from '../../img/icons/lock.svg'
 import { ReactComponent as LockOpen } from '../../img/icons/lock_open.svg'
 import { ReactComponent as People } from '../../img/icons/people.svg'
 import * as styles from './styles.module.sass'
-import { selectSpotifyState } from '../../store/modules/spotify'
+import { selectSpotifyState, setUser } from '../../store/modules/spotify'
 import PasswordDialog from '../../components/PasswordDialog'
+import { getCurrentUserInfo } from '../../util/spotify'
 
 export default function Lobby() {
   const [roomName, setRoomName] = useState<string>('')
@@ -23,8 +24,9 @@ export default function Lobby() {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false)
   const [passwordError, setPasswordError] = useState<String>('')
 
+  const dispatch = useDispatch()
   const history = useHistory()
-  const { user } = useSelector(selectSpotifyState)
+  const { user, token } = useSelector(selectSpotifyState)
 
   const togglePasswordDialog = (open: boolean) => {
     setPasswordDialogOpen(open)
@@ -32,6 +34,9 @@ export default function Lobby() {
 
   useEffect(() => {
     getAvailableRooms()
+    getCurrentUserInfo(token).then((res) => {
+      dispatch(setUser(res))
+    })
     socket.on('room/create', (data: Response<string>) => {
       history.push(`/room/${data.message.payload}`)
     })

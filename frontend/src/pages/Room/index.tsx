@@ -46,13 +46,7 @@ export default function Room() {
   const backUpUserName = `Anonymous_${Math.floor(Math.random() * (1000 - 0)) + 0}`
 
   useEffect(() => {
-    getCurrentUserInfo(token)
-      .then((res) => {
-        dispatch(setUser(res))
-      })
-      .then(() => {
-        checkIfRoomIsPrivate(params.id)
-      })
+    checkIfRoomIsPrivate(params.id)
 
     // leave room if user closes browser/tab
     window.addEventListener('beforeunload', () => {

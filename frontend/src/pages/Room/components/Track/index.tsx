@@ -22,7 +22,7 @@ export default function Track(props: TrackProps) {
   return (
     <div className={styles.container}>
       <div
-        className={`${styles.trackInfo} ${playbackInfo?.item.id === track.id && styles.playing}`}
+        className={`${styles.trackInfo} ${playbackInfo?.item?.id === track.id && styles.playing}`}
       >
         <div className={styles.left}>
           <div>{track.name}</div>
