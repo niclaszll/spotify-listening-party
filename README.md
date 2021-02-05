@@ -1,5 +1,7 @@
 # Spotify Listening Party
 
+**Disclaimer: This project is only a mirror of the project work within the Service and Cloud Computing module. The application is not production-ready and is for demonstration purposes only. Features such as security have only been implemented in a rudimentary way so far!**
+
 Spotify Listening Party makes it possible to listen to music with friends and strangers in rooms together and synchronized via Spotify. All you need is a Spotify Premium account and a current version of Chrome or Firefox. Users can create their own public or password-protected rooms or join existing ones. In each room, there is a shared queue to which everyone can add songs from their own playlists. There is also a simple chat function for communication in the room.
 
 ## Client Usage
@@ -40,7 +42,7 @@ You may have to enter the room password, if you choose to join a private room. T
 
 ## Assignment of tasks in the team:
 
-- **Wei-Yun Chen**: Features (linking, add to playlist, ...) and Presentation
+- **Wei-Yun Chen**: Features (liking songs, add to playlist, ...) and Presentation
 - **Cedric Partzsch**: Frontend and Backend
 - **Niclas Zellerhoff**: Frontend, Backend and Infrastructure (Docker, Hosting, ...)
 
@@ -308,4 +310,4 @@ docker-compose down
 - other music streaming services, such as Apple Music or YouTube
 - more chat features
 - upgrade socket.io to 3.x
-- general bugfixing (linked songs are sometimes buggy, ...)
+- general bugfixing (liked songs are sometimes buggy, ...)
