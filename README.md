@@ -1,6 +1,6 @@
 # Spotify Listening Party
 
-**Disclaimer: This project is only a mirror of the project work within the Service and Cloud Computing module at TU Dresden. The application is not production-ready and is for demonstration purposes only. Features such as security have only been implemented in a rudimentary way so far!**
+**Disclaimer: The application is not production-ready and is for demonstration purposes only. Features such as security have only been implemented in a rudimentary way so far!**
 
 Spotify Listening Party makes it possible to listen to music with friends and strangers in rooms together and synchronized via Spotify. All you need is a Spotify Premium account and a current version of Chrome or Firefox. Users can create their own public or password-protected rooms or join existing ones. In each room, there is a shared queue to which everyone can add songs from their own playlists. There is also a simple chat function for communication in the room.
 
